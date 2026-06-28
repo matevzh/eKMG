@@ -1,0 +1,10 @@
+/* Basic font setup; extend as needed */
+@font-face {
+  font-family: system-ui;
+  src: local("system-ui");
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+

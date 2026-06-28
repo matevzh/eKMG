@@ -1,0 +1,28 @@
+import { Expose } from "class-transformer";
+import { User } from "../../users/entity/user.entity";
+import { Column, CreateDateColumn, Entity, OneToMany,  PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
+@Entity('farms')
+export class Farm {
+    @PrimaryGeneratedColumn()
+    @Expose()
+    id!: number;
+    @Column()
+    name!: string;
+    @Column()
+    location!: string;
+    @Column({ nullable: false })
+    kmg_mid!: string;
+    @Column()
+    province!: string;
+    @Column()
+    postOffice!: string;
+    @CreateDateColumn()
+    createdAt!: Date;
+    @UpdateDateColumn()
+    updatedAt!: Date;
+
+    @OneToMany(() => User, (users) => users.farm)
+    users!: User[]
+
+}
