@@ -75,14 +75,14 @@ export class AnimalsService {
     }
 
     //todo: fix
-    async findBySiId(si_id:string, id: number): Promise<Animal | null> {
-        const animal = await this.animalRepository.findOne({
-            where: { id: id }
-        })
-        if(!animal) {
-            throw new NotFoundException('Animal not found');
-        }
-    }
+    // async findBySiId(si_id:string, id: number): Promise<Animal | null> {
+    //     const animal = await this.animalRepository.findOne({
+    //         where: { id: id }
+    //     })
+    //     if(!animal) {
+    //         throw new NotFoundException('Animal not found');
+    //     }
+    // }
 
     async delete(id: number): Promise<void> {
         await this.animalRepository.delete(id);
