@@ -7,16 +7,16 @@ export class Farm {
     @PrimaryGeneratedColumn()
     @Expose()
     id!: number;
-    @Column()
-    name!: string;
-    @Column()
-    location!: string;
-    @Column({ nullable: false })
+    @Column({ nullable: true })
+    name?: string;
+    @Column({ nullable: true })
+    location?: string;
+    @Column({ nullable: false, unique: true })
     kmg_mid!: string;
-    @Column()
-    province!: string;
-    @Column()
-    postOffice!: string;
+    @Column({ nullable: true })
+    province?: string;
+    @Column({ nullable: true })
+    postOffice?: string;
     @CreateDateColumn()
     createdAt!: Date;
     @UpdateDateColumn()

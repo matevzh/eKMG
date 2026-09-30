@@ -2,6 +2,7 @@
 
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { UsersService } from "../users/user.service";
+import { FarmService } from "../farms/farm.service";
 import { UserRegisterDto } from "./user-register.dto";
 import { JwtService } from "@nestjs/jwt";
 import { UserLoginDto } from "./user-login.dto";
@@ -12,11 +13,16 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
     private readonly logger = new Logger(AuthService.name);
 
-    constructor(private readonly userService: UsersService, private readonly jwtService: JwtService) {}
+    constructor(
+        private readonly userService: UsersService,
+        private readonly farmService: FarmService,
+        private readonly jwtService: JwtService,
+    ) {}
 
     async register(userRegisterDto: UserRegisterDto) {
         try {
-            const user = await this.userService.create(userRegisterDto);
+            const farm = await this.farmService.findOrCreateByKmgMid(userRegisterDto.kmg_mid);
+            const user = await this.userService.create(userRegisterDto, farm);
 
             const payload = {
                 email: user.email,
@@ -33,6 +39,7 @@ export class AuthService {
                     name: user.name,
                     email: user.email,
                     role: user.role,
+                    farm: { id: farm.id, kmg_mid: farm.kmg_mid },
                     createdAt: user.createdAt,
                     updatedAt: user.updatedAt,
                     access_token: token
@@ -100,7 +107,15 @@ export class AuthService {
 
             const response = {
                 access_token: token,
-                user: user
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    farm: user.farm ? { id: user.farm.id, kmg_mid: user.farm.kmg_mid } : null,
+                    createdAt: user.createdAt,
+                    updatedAt: user.updatedAt,
+                }
             };
             this.logger.log('Login successful, returning response');
             return response;

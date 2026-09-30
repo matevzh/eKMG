@@ -1,52 +1,57 @@
-import { IsDate, IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsIn, IsInt, IsNumber, IsOptional, IsString } from "class-validator";
+import { ANIMAL_STATUSES } from "./animal-status";
 
 export class UpdateAnimalDto {
     @IsOptional()
     @IsString()
-    si_id!: string;
+    si_id?: string;
 
     @IsOptional()
     @IsString()
-    name!: string;
+    name?: string;
 
     @IsOptional()
     @IsString()
-    breed!: string;
+    breed?: string;
 
     @IsOptional()
     @IsDateString()
-    dateOfBirth!: Date;
-    
-    @IsOptional()
-    @IsString()
-    gender!: string;
+    dateOfBirth?: string;
 
     @IsOptional()
     @IsString()
-    status!: string;
+    gender?: string;
+
+    @IsOptional()
+    @IsIn(ANIMAL_STATUSES)
+    status?: string;
+
+    @IsOptional()
+    @IsInt()
+    lactation?: number;
 
     @IsOptional()
     @IsDateString()
-    acquisitionDate!: Date;
+    acquisitionDate?: string;
 
     @IsOptional()
     @IsString()
-    acquisitionType!: string
+    acquisitionType?: string;
 
     @IsOptional()
     @IsDateString()
-    dateOfTagging!: Date;
+    dateOfTagging?: string;
 
     @IsOptional()
     @IsNumber()
-    fatherId!: number | null;
+    fatherId?: number | null;
 
     @IsOptional()
     @IsNumber()
-    motherId!: number | null;
+    motherId?: number | null;
 
     @IsOptional()
     @IsNumber()
-    birthFarmId!: number;
-    
+    birthFarmId?: number;
+
 }

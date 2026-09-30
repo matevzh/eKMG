@@ -29,6 +29,20 @@ export class FarmService {
         return farm;
     }
 
+    async findByKmgMid(kmg_mid: string): Promise<Farm | null> {
+        return this.farmRepository.findOne({ where: { kmg_mid } });
+    }
+
+    async findOrCreateByKmgMid(kmg_mid: string): Promise<Farm> {
+        const existing = await this.findByKmgMid(kmg_mid);
+        if (existing) {
+            return existing;
+        }
+
+        const farm = this.farmRepository.create({ kmg_mid });
+        return this.farmRepository.save(farm);
+    }
+
     async findAll(): Promise<Farm[]> {
         const farms = await this.farmRepository.find({
             relations: ['users']

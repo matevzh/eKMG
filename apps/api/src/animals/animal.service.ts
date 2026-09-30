@@ -1,10 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { QueryFailedError, Repository } from "typeorm";
 import { Animal } from "./entities/animal.entity";
-import { CreateAnimalDto, PregnancyStatus } from "./entities/create-animal.dto";
+import { CreateAnimalDto } from "./entities/create-animal.dto";
 import { UpdateAnimalDto } from "./entities/update-animal.dto";
-import { Farm } from "../farms/entities/farm.entity";
 import { FarmService } from "../farms/farm.service";
 
 @Injectable()
@@ -19,11 +18,18 @@ export class AnimalsService {
         return await this.animalRepository.find();
     }
 
+    async findByFarm(farmId: number): Promise<Animal[]> {
+        return await this.animalRepository.find({
+            where: { birthFarmId: farmId },
+            order: { createdAt: 'DESC' },
+        });
+    }
+
     async findById(id: number): Promise<Animal | null> {
         if(!id) {
             throw new NotFoundException('Animal ID is required');
         }
-        return await this.animalRepository.findOne({ 
+        return await this.animalRepository.findOne({
             where: { id }
         });
     }
@@ -34,7 +40,7 @@ export class AnimalsService {
         if(!birthfarm)
             throw new NotFoundException('Farm not found');
 
-        const animalData: any = {
+        const newAnimal = this.animalRepository.create({
             si_id: animal.si_id,
             name: animal.name,
             breed: animal.breed,
@@ -42,26 +48,30 @@ export class AnimalsService {
             pregnancyStatus: animal.pregnancyStatus,
             status: animal.status,
             birthCountry: animal.birthCountry,
+            lactation: animal.lactation,
             dateOfBirth: animal.dateOfBirth,
             acquisitionDate: animal.acquisitionDate,
             dateOfTagging: animal.dateOfTagging,
             birthFarmId: birthfarm.id,
-            father: animal.fatherId,
-            mother: animal.motherId
+            fatherId: animal.fatherId ?? null,
+            motherId: animal.motherId ?? null,
+        });
+
+        try {
+            return await this.animalRepository.save(newAnimal);
+        } catch (error) {
+            // Unique violation on si_id (Postgres error code 23505).
+            if (error instanceof QueryFailedError && (error as any).code === '23505') {
+                throw new ConflictException(`Žival z ušesno znamko ${animal.si_id} že obstaja.`);
+            }
+            throw error;
         }
-        
-        const newAnimal = this.animalRepository.create(animalData);
-        const savedAnimal = await this.animalRepository.save(newAnimal);
-        if(Array.isArray(savedAnimal)) {
-            return savedAnimal[0];
-        }
-        return savedAnimal;
     }
 
-    async update(id: number, updateAnimalDto: UpdateAnimalDto): Promise<Animal> {
-        //find animal by id
+    async update(id: number, updateAnimalDto: UpdateAnimalDto, farmId: number): Promise<Animal> {
+        //find animal by id, scoped to the caller's farm
         const animal = await this.findById(id);
-        if(!animal)
+        if(!animal || animal.birthFarmId !== farmId)
             throw new NotFoundException('Animal not found');
 
         await this.animalRepository.update(id, updateAnimalDto);
@@ -70,21 +80,15 @@ export class AnimalsService {
         })
         if(!updatedAnimal)
             throw new NotFoundException('Animal does not exist');
-            
+
         return updatedAnimal;
     }
 
-    //todo: fix
-    // async findBySiId(si_id:string, id: number): Promise<Animal | null> {
-    //     const animal = await this.animalRepository.findOne({
-    //         where: { id: id }
-    //     })
-    //     if(!animal) {
-    //         throw new NotFoundException('Animal not found');
-    //     }
-    // }
+    async delete(id: number, farmId: number): Promise<void> {
+        const animal = await this.findById(id);
+        if (!animal || animal.birthFarmId !== farmId)
+            throw new NotFoundException('Animal not found');
 
-    async delete(id: number): Promise<void> {
         await this.animalRepository.delete(id);
     }
 }

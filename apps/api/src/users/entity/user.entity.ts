@@ -20,7 +20,7 @@ export class User {
     updatedAt!: Date;
 
     @ManyToOne(() => Farm, (farm) => farm.users)
-    farm!: Farm[]; 
+    farm!: Farm;
 
     @BeforeInsert()
     async hashPassword() {

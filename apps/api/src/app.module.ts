@@ -10,6 +10,10 @@ import { FarmsModule } from './farms/farm.module';
 import { Farm } from './farms/entities/farm.entity';
 import { Animal } from './animals/entities/animal.entity';
 import { AnimalsModule } from './animals/animal.module';
+import { CalendarEvent } from './events/entities/event.entity';
+import { EventsModule } from './events/event.module';
+import { PushToken } from './notifications/entities/push-token.entity';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -22,7 +26,7 @@ import { AnimalsModule } from './animals/animal.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       schema: process.env.DB_SCHEMA,
-      entities: [User, Farm, Animal],
+      entities: [User, Farm, Animal, CalendarEvent, PushToken],
       synchronize: process.env.NODE_ENV === 'development', // Sync only in development
       dropSchema: false,
       migrationsRun: false
@@ -31,7 +35,9 @@ import { AnimalsModule } from './animals/animal.module';
     UsersModule,
     AuthModule,
     FarmsModule,
-    AnimalsModule
+    AnimalsModule,
+    NotificationsModule,
+    EventsModule
   ],
   controllers: [AppController],
   providers: [AppService],

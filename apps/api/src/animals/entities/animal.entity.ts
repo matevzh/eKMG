@@ -1,4 +1,4 @@
-import { CreateDateColumn, Entity, ManyToOne, OneToOne, UpdateDateColumn } from "typeorm";
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, UpdateDateColumn } from "typeorm";
 import { PrimaryGeneratedColumn, Column } from "typeorm";
 import { Farm } from "../../farms/entities/farm.entity";
 
@@ -13,17 +13,33 @@ export class Animal {
     @Column()
     name!: string;
 
-    @Column()
-    breed!: string;
+    @Column({ nullable: true })
+    breed?: string;
 
-    @Column()
-    dateOfBirth!: Date;
+    @Column({ nullable: true })
+    gender?: string;
 
-    @Column()
-    gender!: string;
+    @Column({ nullable: true })
+    status?: string;
 
-    @Column()
-    status!: string;
+    @Column({ nullable: true })
+    pregnancyStatus?: string;
+
+    @Column({ nullable: true })
+    birthCountry?: string;
+
+    // Current lactation number, surfaced in the mobile app.
+    @Column({ type: 'int', nullable: true })
+    lactation?: number;
+
+    @Column({ type: 'date', nullable: true })
+    dateOfBirth?: string;
+
+    @Column({ type: 'date', nullable: true })
+    acquisitionDate?: string;
+
+    @Column({ type: 'date', nullable: true })
+    dateOfTagging?: string;
 
     @CreateDateColumn()
     createdAt!: Date;
@@ -31,18 +47,16 @@ export class Animal {
     @UpdateDateColumn()
     updatedAt!: Date;
 
-    @Column()
-    acquisitionDate!: Date;
+    @Column({ type: 'int', nullable: true })
+    fatherId?: number | null;
+
+    @Column({ type: 'int', nullable: true })
+    motherId?: number | null;
+
+    @ManyToOne(() => Farm, { nullable: false, onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'birthFarmId' })
+    birthFarm!: Farm;
 
     @Column()
-    dateOfTagging!: Date;
-
-    @OneToOne(() => Animal, (animal) => animal.id)
-    father!: number | null;
-
-    @OneToOne(() => Animal, (animal) => animal.id)
-    mother!: number | null;
-
-    @ManyToOne(() => Farm, (farm) => farm.id)
     birthFarmId!: number;
 }

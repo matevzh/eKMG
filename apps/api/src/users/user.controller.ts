@@ -1,5 +1,6 @@
-import { Controller, Get, InternalServerErrorException, Logger, NotFoundException, Request } from "@nestjs/common";
+import { Controller, Get, InternalServerErrorException, Logger, NotFoundException, Request, UseGuards } from "@nestjs/common";
 import { UsersService } from "./user.service";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
 @Controller('users')
 export class UsersController {
@@ -7,6 +8,7 @@ export class UsersController {
 
     constructor(private readonly usersService: UsersService) {}
 
+    @UseGuards(JwtAuthGuard)
     @Get('profile')
     async getProfile(@Request() req) {
         try {

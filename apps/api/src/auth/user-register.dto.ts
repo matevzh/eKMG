@@ -13,4 +13,7 @@ export class UserRegisterDto {
     @IsNotEmpty()
     @IsStrongPassword()
     password!: string;
+    @IsNotEmpty()
+    @IsString()
+    kmg_mid!: string;
 }

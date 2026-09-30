@@ -3,18 +3,20 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entity/user.entity";
 import { Repository } from "typeorm";
 import { UserRegisterDto } from "../auth/user-register.dto";
+import { Farm } from "../farms/entities/farm.entity";
 
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
-    
-    async create(user: UserRegisterDto): Promise<User> {
-        const newUser = this.userRepository.create(user);
+
+    async create(user: UserRegisterDto, farm: Farm): Promise<User> {
+        const { kmg_mid, ...rest } = user;
+        const newUser = this.userRepository.create({ ...rest, farm });
         return await this.userRepository.save(newUser);
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        return await this.userRepository.findOne({ where: { email } })
+        return await this.userRepository.findOne({ where: { email }, relations: ['farm'] })
     }
 
     async findById(id: number): Promise<User> {
@@ -24,7 +26,7 @@ export class UsersService {
 
         const user = await this.userRepository.findOne({
             where: { id },
-            relations: ['farms']
+            relations: ['farm']
         })
 
         if(!user) {
