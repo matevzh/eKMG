@@ -15,9 +15,12 @@
     },
     "preview": {
       "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
       "env": {
         "APP_VARIANT": "preview",
-        "EXPO_PUBLIC_API_URL": "https://CHANGE_ME.up.railway.app",
+        "EXPO_PUBLIC_API_URL": "https://api-production-3a6de.up.railway.app",
         "EXPO_PUBLIC_ENV": "preview"
       }
     },
@@ -25,7 +28,7 @@
       "autoIncrement": true,
       "env": {
         "APP_VARIANT": "production",
-        "EXPO_PUBLIC_API_URL": "https://CHANGE_ME.up.railway.app",
+        "EXPO_PUBLIC_API_URL": "https://api-production-3a6de.up.railway.app",
         "EXPO_PUBLIC_ENV": "production"
       }
     }
