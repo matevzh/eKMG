@@ -11,7 +11,7 @@ import { PushToken } from '../notifications/entities/push-token.entity';
 // the Nest app (before ConfigModule initialises) or run standalone by the
 // TypeORM CLI. In hosted environments (Railway/Render) there is no .env file and
 // this call is a harmless no-op — the platform injects the vars directly.
-loadEnv();
+loadEnv({ path: `.env.${process.env.NODE_ENV || 'development'}` });
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
