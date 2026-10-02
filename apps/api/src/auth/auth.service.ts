@@ -13,11 +13,22 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
     private readonly logger = new Logger(AuthService.name);
 
+    // Verbose diagnostics are kept out of production: logs there must never carry
+    // secrets (JWTs) or personal data (emails). This gate only enables extra
+    // non-sensitive debug lines in development.
+    private readonly isProduction = process.env.NODE_ENV === 'production';
+
     constructor(
         private readonly userService: UsersService,
         private readonly farmService: FarmService,
         private readonly jwtService: JwtService,
     ) {}
+
+    private debug(message: string, ...rest: unknown[]) {
+        if (!this.isProduction) {
+            this.logger.debug(message, ...rest);
+        }
+    }
 
     async register(userRegisterDto: UserRegisterDto) {
         try {
@@ -29,9 +40,8 @@ export class AuthService {
                 sub: user.id,
             };
 
-            this.logger.log('Payload: ', payload);
             const token = this.jwtService.sign(payload);
-            this.logger.log('Token: ', token);
+            this.debug('Registered new user', user.id);
 
             const response = {
                 data: {
@@ -46,10 +56,9 @@ export class AuthService {
                 }
             };
 
-            this.logger.log('Returning response: ', response);
             return response;
         } catch (error: any) {
-            this.logger.error('Registration error: ', error)
+            this.logger.error('Registration error', error?.stack ?? error?.message);
 
             if(error.code == '2305') { //PostgreSQL unique violation code (check if email is already in use)
                 throw new Error('Email already exists');
@@ -59,37 +68,27 @@ export class AuthService {
     }
 
     async validateUser(userLoginDto: UserLoginDto) {
-        try {
-            this.logger.log('Validating user: ', userLoginDto.email);
-            const user = await this.userService.findByEmail(userLoginDto.email);
+        const user = await this.userService.findByEmail(userLoginDto.email);
 
-            if(!user) {
-                this.logger.warn('User not found: ', userLoginDto.email);
-                throw new UnauthorizedException('Bad login');
-            }
-
-            const isPasswordValid = await bcrypt.compare(userLoginDto.password, user.password);
-
-            if(!isPasswordValid) {
-                this.logger.warn('Invalid password for user: ', userLoginDto.email);
-                throw new UnauthorizedException('Invalid password');
-            }
-
-            return user;
-        } catch (error: any) {
-            this.logger.error('User validation error: ', {
-                error: error,
-                message: error.message,
-                stack: error.stack
-            });
-            throw error;
+        if(!user) {
+            this.logger.warn('Login failed: user not found');
+            throw new UnauthorizedException('Bad login');
         }
+
+        const isPasswordValid = await bcrypt.compare(userLoginDto.password, user.password);
+
+        if(!isPasswordValid) {
+            this.logger.warn('Login failed: invalid password');
+            throw new UnauthorizedException('Invalid password');
+        }
+
+        return user;
     }
 
     async login(userLoginDto: UserLoginDto) {
         try {
             const user = await this.validateUser(userLoginDto);
-            this.logger.log('User validated successfully: ', user.id);
+            this.debug('User validated successfully', user.id);
 
             const payload = {
                 email: user.email,
@@ -99,9 +98,8 @@ export class AuthService {
             let token: string;
             try {
                 token = this.jwtService.sign(payload);
-                this.logger.log('Token created successfully');
-            } catch (jwtError) {
-                this.logger.error('JWT signing error: ', jwtError);
+            } catch (jwtError: any) {
+                this.logger.error('JWT signing error', jwtError?.stack ?? jwtError?.message);
                 throw new Error('Failed to create authentication token');
             }
 
@@ -117,20 +115,15 @@ export class AuthService {
                     updatedAt: user.updatedAt,
                 }
             };
-            this.logger.log('Login successful, returning response');
+            this.debug('Login successful', user.id);
             return response;
         } catch (error: any) {
-            this.logger.error('Login error details: ', {
-                error: error,
-                message: error.message,
-                stack: error.stack,
-                name: error.name
-            });
             if(error instanceof UnauthorizedException)
                 throw error;
-            
+
+            this.logger.error('Login error', error?.stack ?? error?.message);
             throw new Error('Internal server error during login');
         }
-    } 
+    }
 
 }
