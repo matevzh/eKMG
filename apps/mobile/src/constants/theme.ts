@@ -16,13 +16,15 @@ export const C = {
 } as const;
 
 // With custom fonts, React Native needs the exact family name per weight.
+// One grotesque (Libre Franklin) across the UI; headings and body are set apart
+// by weight rather than a separate display serif. Mono stays for IDs/ear tags.
 export const F = {
-  display: "Fraunces_500Medium",
-  displayRegular: "Fraunces_400Regular",
-  displaySemiBold: "Fraunces_600SemiBold",
-  sans: "Inter_400Regular",
-  sansMedium: "Inter_500Medium",
-  sansSemiBold: "Inter_600SemiBold",
+  display: "LibreFranklin_600SemiBold",
+  displayRegular: "LibreFranklin_500Medium",
+  displaySemiBold: "LibreFranklin_700Bold",
+  sans: "LibreFranklin_400Regular",
+  sansMedium: "LibreFranklin_500Medium",
+  sansSemiBold: "LibreFranklin_600SemiBold",
   mono: "JetBrainsMono_500Medium",
   monoSemiBold: "JetBrainsMono_600SemiBold",
 } as const;

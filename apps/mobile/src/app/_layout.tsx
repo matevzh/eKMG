@@ -1,9 +1,7 @@
-import { Fraunces_400Regular } from "@expo-google-fonts/fraunces/400Regular";
-import { Fraunces_500Medium } from "@expo-google-fonts/fraunces/500Medium";
-import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold";
-import { Inter_400Regular } from "@expo-google-fonts/inter/400Regular";
-import { Inter_500Medium } from "@expo-google-fonts/inter/500Medium";
-import { Inter_600SemiBold } from "@expo-google-fonts/inter/600SemiBold";
+import { LibreFranklin_400Regular } from "@expo-google-fonts/libre-franklin/400Regular";
+import { LibreFranklin_500Medium } from "@expo-google-fonts/libre-franklin/500Medium";
+import { LibreFranklin_600SemiBold } from "@expo-google-fonts/libre-franklin/600SemiBold";
+import { LibreFranklin_700Bold } from "@expo-google-fonts/libre-franklin/700Bold";
 import { JetBrainsMono_500Medium } from "@expo-google-fonts/jetbrains-mono/500Medium";
 import { JetBrainsMono_600SemiBold } from "@expo-google-fonts/jetbrains-mono/600SemiBold";
 import { useFonts } from "expo-font";
@@ -22,12 +20,10 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    Fraunces_400Regular,
-    Fraunces_500Medium,
-    Fraunces_600SemiBold,
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
+    LibreFranklin_400Regular,
+    LibreFranklin_500Medium,
+    LibreFranklin_600SemiBold,
+    LibreFranklin_700Bold,
     JetBrainsMono_500Medium,
     JetBrainsMono_600SemiBold,
   });

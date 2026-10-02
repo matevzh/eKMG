@@ -141,7 +141,17 @@ export function login(payload: LoginPayload): Promise<AuthResult> {
 }
 
 export function getProfile(token: string): Promise<Profile> {
-  return get<Profile>("/users/profile", token);
+  return get<Profile>("/users/me", token);
+}
+
+// GDPR Art. 15/20 — the full personal-data export for the signed-in user.
+export function exportMyData(token: string): Promise<unknown> {
+  return get<unknown>("/users/me/export", token);
+}
+
+// GDPR Art. 17 — permanently delete the signed-in user's account.
+export function deleteMyAccount(token: string): Promise<void> {
+  return del("/users/me", token);
 }
 
 export interface UpdateFarmPayload {

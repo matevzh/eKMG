@@ -1,6 +1,6 @@
 import { User } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, Text, View } from "react-native";
 
 import { Screen } from "@/components/screen";
 import { Card, PrimaryButton, Row, SectionLabel } from "@/components/ui";
@@ -13,6 +13,8 @@ const DASH = "—";
 export default function ProfileScreen() {
   const { user, token, signOut } = useAuth();
   const [profile, setProfile] = useState<api.Profile | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -29,6 +31,47 @@ export default function ProfileScreen() {
       active = false;
     };
   }, [token]);
+
+  async function handleExport() {
+    if (!token || exporting) return;
+    setExporting(true);
+    try {
+      const data = await api.exportMyData(token);
+      await Share.share({
+        title: "Izvoz mojih podatkov",
+        message: JSON.stringify(data, null, 2),
+      });
+    } catch {
+      Alert.alert("Napaka", "Izvoz podatkov ni uspel. Poskusi znova.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  function confirmDelete() {
+    if (!token || deleting) return;
+    Alert.alert(
+      "Izbris računa",
+      "Tvoj račun in osebni podatki bodo trajno izbrisani. Tega dejanja ni mogoče razveljaviti.",
+      [
+        { text: "Prekliči", style: "cancel" },
+        {
+          text: "Izbriši",
+          style: "destructive",
+          onPress: async () => {
+            setDeleting(true);
+            try {
+              await api.deleteMyAccount(token);
+              await signOut();
+            } catch {
+              setDeleting(false);
+              Alert.alert("Napaka", "Izbris računa ni uspel. Poskusi znova.");
+            }
+          },
+        },
+      ],
+    );
+  }
 
   const name = profile?.name ?? user?.name ?? DASH;
   const role = profile?.role ?? user?.role ?? DASH;
@@ -57,6 +100,27 @@ export default function ProfileScreen() {
         <Row label="Lokacija" value={farm?.location || DASH} compact />
         <Row label="Občina" value={farm?.province || DASH} compact />
         <Row label="Pošta" value={farm?.postOffice || DASH} compact />
+      </Card>
+
+      <SectionLabel>Zasebnost</SectionLabel>
+      <Card>
+        <Pressable
+          onPress={handleExport}
+          disabled={exporting}
+          style={({ pressed }) => [styles.privacyRow, pressed && styles.pressed]}
+        >
+          <Text style={styles.privacyLabel}>Izvozi moje podatke</Text>
+          {exporting && <ActivityIndicator size="small" color={C.green} />}
+        </Pressable>
+        <View style={styles.divider} />
+        <Pressable
+          onPress={confirmDelete}
+          disabled={deleting}
+          style={({ pressed }) => [styles.privacyRow, pressed && styles.pressed]}
+        >
+          <Text style={[styles.privacyLabel, styles.deleteLabel]}>Izbriši račun</Text>
+          {deleting && <ActivityIndicator size="small" color={C.red} />}
+        </Pressable>
       </Card>
 
       <View style={styles.signOutWrap}>
@@ -91,6 +155,27 @@ const styles = StyleSheet.create({
     color: C.faint,
     fontSize: 12,
     fontFamily: F.sans,
+  },
+  privacyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+  },
+  privacyLabel: {
+    color: C.ink,
+    fontSize: 14,
+    fontFamily: F.sansMedium,
+  },
+  deleteLabel: {
+    color: C.red,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: C.line,
+  },
+  pressed: {
+    opacity: 0.6,
   },
   signOutWrap: {
     marginTop: 24,
