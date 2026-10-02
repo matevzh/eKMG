@@ -1,4 +1,4 @@
-import { Controller, Get, InternalServerErrorException, Logger, NotFoundException, Request, UseGuards } from "@nestjs/common";
+import { Controller, Delete, Get, HttpCode, InternalServerErrorException, Logger, NotFoundException, Request, UseGuards } from "@nestjs/common";
 import { UsersService } from "./user.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
@@ -9,7 +9,7 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @UseGuards(JwtAuthGuard)
-    @Get('profile')
+    @Get('me')
     async getProfile(@Request() req) {
         try {
             if(!req.user?.userId) {
@@ -38,5 +38,26 @@ export class UsersController {
 
             throw new InternalServerErrorException('Error fetching user profile');
         }
+    }
+
+    // GDPR Art. 15/20 — let the user download all personal data we hold on them.
+    @UseGuards(JwtAuthGuard)
+    @Get('me/export')
+    async exportData(@Request() req) {
+        if (!req.user?.userId) {
+            throw new NotFoundException('User ID not found in request');
+        }
+        return this.usersService.exportData(req.user.userId);
+    }
+
+    // GDPR Art. 17 — hard-delete the user's account and personal data.
+    @UseGuards(JwtAuthGuard)
+    @Delete('me')
+    @HttpCode(204)
+    async deleteAccount(@Request() req) {
+        if (!req.user?.userId) {
+            throw new NotFoundException('User ID not found in request');
+        }
+        await this.usersService.deleteAccount(req.user.userId);
     }
 }
