@@ -3,6 +3,12 @@ import { CalendarDays, Droplet, Home, Tag, User, Wallet } from "lucide-react-nat
 
 import { C, F } from "@/constants/theme";
 
+// Milk and Finance still run on mock data, so keep their tabs out of the
+// production build. The routes stay navigable (e.g. the home quick actions)
+// in every build — only the tab-bar buttons are hidden in production.
+const isProduction = process.env.EXPO_PUBLIC_ENV === "production";
+const hiddenInProd = isProduction ? null : undefined;
+
 export default function TabsLayout() {
   return (
     <Tabs
@@ -39,6 +45,7 @@ export default function TabsLayout() {
         name="milk"
         options={{
           title: "Mleko",
+          href: hiddenInProd,
           tabBarIcon: ({ color, focused }) => <Droplet size={20} color={color} strokeWidth={focused ? 2.4 : 1.8} />,
         }}
       />
@@ -53,6 +60,7 @@ export default function TabsLayout() {
         name="finance"
         options={{
           title: "Finance",
+          href: hiddenInProd,
           tabBarIcon: ({ color, focused }) => <Wallet size={20} color={color} strokeWidth={focused ? 2.4 : 1.8} />,
         }}
       />

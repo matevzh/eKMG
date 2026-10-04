@@ -30,7 +30,7 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>E - Kmetijsko Gospodarstvo</Text>
+          <Text style={styles.title}>E-KmG</Text>
           <Text style={styles.subtitle}>Prijavi se v svoj račun</Text>
 
           <View style={styles.form}>

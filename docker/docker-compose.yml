@@ -1,5 +1,5 @@
 # Local development database. Brings up a disposable Postgres that matches the
-# values in apps/api/.env, so `dev` never touches the Railway production DB.
+# values in apps/api/.env.development, so `dev` never touches the Railway production DB.
 #
 #   docker compose -f docker/docker-compose.yml up -d     # start
 #   docker compose -f docker/docker-compose.yml down      # stop (keeps data)
