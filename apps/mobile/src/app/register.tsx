@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
-import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { PillTabs, PrimaryButton, TextField } from "@/components/ui";
@@ -14,6 +14,7 @@ const ROLE_TABS: { key: "Lastnik" | "Član"; label: string }[] = [
 
 export default function RegisterScreen() {
   const { signUp } = useAuth();
+  const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"Lastnik" | "Član">("Lastnik");
@@ -21,6 +22,33 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const step1Valid = Boolean(name.trim() && email.trim() && password);
+  const step2Valid = Boolean(kmgMid.trim());
+
+  // On Android, the hardware back button should return to step 1 rather than
+  // leaving the screen while the user is on step 2.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (step === 2) {
+        setStep(1);
+        return true;
+      }
+      return false;
+    });
+    return () => sub.remove();
+  }, [step]);
+
+  function goNext() {
+    setError(null);
+    if (!step1Valid) return;
+    setStep(2);
+  }
+
+  function goBack() {
+    setError(null);
+    setStep(1);
+  }
 
   async function onSubmit() {
     setError(null);
@@ -44,54 +72,81 @@ export default function RegisterScreen() {
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Ustvari račun</Text>
-          <Text style={styles.subtitle}>Vnesi KMG-MID, da te povežemo s pravo kmetijo</Text>
+          <Text style={styles.stepLabel}>Korak {step} od 2</Text>
+          {step === 1 ? (
+            <>
+              <Text style={styles.title}>Ustvari račun</Text>
+              <Text style={styles.subtitle}>Najprej nekaj o tebi</Text>
 
-          <View style={styles.form}>
-            <TextField label="Ime in priimek" value={name} onChangeText={setName} placeholder="Janez Novak" autoCapitalize="words" />
-            <TextField
-              label="E-pošta"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="ime@primer.si"
-              keyboardType="email-address"
-            />
-            <View style={styles.fieldWrap}>
-              <Text style={styles.fieldLabel}>Vloga</Text>
-              <PillTabs tabs={ROLE_TABS} active={role} onChange={setRole} />
-            </View>
-            <TextField
-              label="KMG-MID"
-              value={kmgMid}
-              onChangeText={setKmgMid}
-              placeholder="100482-031"
-              autoCapitalize="characters"
-            />
-            <Text style={styles.hint}>
-              Če KMG-MID že obstaja, se pridružiš tisti kmetiji. Če je nov, ustvarimo novo kmetijo.
-            </Text>
-            <TextField
-              label="Geslo"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Najmanj 8 znakov"
-              secureTextEntry
-            />
-            {error && <Text style={styles.error}>{error}</Text>}
-            <PrimaryButton
-              label="Registriraj se"
-              onPress={onSubmit}
-              loading={submitting}
-              disabled={!name.trim() || !email.trim() || !kmgMid.trim() || !password}
-            />
-          </View>
+              <View style={styles.form}>
+                <TextField
+                  label="Ime in priimek"
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Janez Novak"
+                  autoCapitalize="words"
+                />
+                <TextField
+                  label="E-pošta"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="ime@primer.si"
+                  keyboardType="email-address"
+                />
+                <TextField
+                  label="Geslo"
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Najmanj 8 znakov"
+                  secureTextEntry
+                />
+                <PrimaryButton label="Naprej" onPress={goNext} disabled={!step1Valid} />
+              </View>
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Že imaš račun?</Text>
-            <Link href="/login" style={styles.footerLink}>
-              Prijavi se
-            </Link>
-          </View>
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Že imaš račun?</Text>
+                <Link href="/login" style={styles.footerLink}>
+                  Prijavi se
+                </Link>
+              </View>
+            </>
+          ) : (
+            <>
+              <Text style={styles.title}>Tvoja kmetija</Text>
+              <Text style={styles.subtitle}>Vnesi KMG-MID, da te povežemo s pravo kmetijo</Text>
+
+              <View style={styles.form}>
+                <View style={styles.fieldWrap}>
+                  <Text style={styles.fieldLabel}>Vloga</Text>
+                  <PillTabs tabs={ROLE_TABS} active={role} onChange={setRole} />
+                </View>
+                <TextField
+                  label="KMG-MID"
+                  value={kmgMid}
+                  onChangeText={setKmgMid}
+                  placeholder="100482-031"
+                  autoCapitalize="characters"
+                />
+                <Text style={styles.hint}>
+                  Če KMG-MID že obstaja, se pridružiš tisti kmetiji. Če je nov, ustvarimo novo kmetijo.
+                </Text>
+                {error && <Text style={styles.error}>{error}</Text>}
+                <PrimaryButton
+                  label="Registriraj se"
+                  onPress={onSubmit}
+                  loading={submitting}
+                  disabled={!step2Valid}
+                />
+                <Pressable
+                  onPress={goBack}
+                  disabled={submitting}
+                  style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
+                >
+                  <Text style={styles.backButtonText}>Nazaj</Text>
+                </Pressable>
+              </View>
+            </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -112,6 +167,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 32,
     gap: 24,
+  },
+  stepLabel: {
+    fontFamily: F.sansSemiBold,
+    fontSize: 12,
+    color: C.soil,
+    textAlign: "center",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: -12,
   },
   title: {
     fontFamily: F.display,
@@ -147,6 +211,19 @@ const styles = StyleSheet.create({
     color: C.red,
     fontSize: 13,
     fontFamily: F.sans,
+  },
+  backButton: {
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButtonText: {
+    color: C.soil,
+    fontSize: 15,
+    fontFamily: F.sansSemiBold,
+  },
+  pressed: {
+    opacity: 0.6,
   },
   footer: {
     flexDirection: "row",
