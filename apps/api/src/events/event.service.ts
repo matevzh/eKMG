@@ -36,7 +36,7 @@ export class EventsService {
             note: event.note ?? null,
             date: event.date,
             notificationId: event.notificationId ?? null,
-            reminderSent: event.reminderSentAt != null,
+            reminderSent: event.reminderDaySentAt != null,
             animalId: event.animalId ?? null,
             animalName: event.animal?.name ?? null,
             animalSiId: event.animal?.si_id ?? null,

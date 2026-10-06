@@ -21,10 +21,15 @@ export class CalendarEvent {
     @Column({ type: 'varchar', nullable: true })
     notificationId?: string | null;
 
-    // Set once the server has sent the "one week before" push reminder, so the
-    // scheduler never sends it twice.
+    // Set once the server has handled the "one week before" push reminder, so
+    // the scheduler never sends it twice. "Handled" covers both a sent push and
+    // a slot that was already too far overdue to be worth sending.
     @Column({ type: 'timestamp', nullable: true })
-    reminderSentAt?: Date | null;
+    reminderWeekSentAt?: Date | null;
+
+    // Same, for the "one day before" push reminder.
+    @Column({ type: 'timestamp', nullable: true })
+    reminderDaySentAt?: Date | null;
 
     // Optional animal this event relates to. Deleting the animal nulls the link
     // rather than removing the event.
