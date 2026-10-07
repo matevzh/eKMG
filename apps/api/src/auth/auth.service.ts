@@ -32,7 +32,13 @@ export class AuthService {
 
     async register(userRegisterDto: UserRegisterDto) {
         try {
-            const farm = await this.farmService.findOrCreateByKmgMid(userRegisterDto.kmg_mid);
+            // Whether this registration created a brand-new farm or joined an
+            // existing one. Only the creator of a new farm should be sent to
+            // farm setup; a user joining an existing farm must never overwrite
+            // the shared farm details.
+            const existingFarm = await this.farmService.findByKmgMid(userRegisterDto.kmg_mid);
+            const farm = existingFarm ?? await this.farmService.findOrCreateByKmgMid(userRegisterDto.kmg_mid);
+            const isNewFarm = !existingFarm;
             const user = await this.userService.create(userRegisterDto, farm);
 
             const payload = {
@@ -48,8 +54,8 @@ export class AuthService {
                     id: user.id,
                     name: user.name,
                     email: user.email,
-                    role: user.role,
                     farm: { id: farm.id, kmg_mid: farm.kmg_mid },
+                    needsFarmSetup: isNewFarm,
                     createdAt: user.createdAt,
                     updatedAt: user.updatedAt,
                     access_token: token
@@ -109,7 +115,6 @@ export class AuthService {
                     id: user.id,
                     name: user.name,
                     email: user.email,
-                    role: user.role,
                     farm: user.farm ? { id: user.farm.id, kmg_mid: user.farm.kmg_mid } : null,
                     createdAt: user.createdAt,
                     updatedAt: user.updatedAt,

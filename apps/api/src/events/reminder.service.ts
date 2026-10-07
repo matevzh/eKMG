@@ -69,8 +69,7 @@ export class ReminderService implements OnModuleInit, OnModuleDestroy {
         for (const event of pending) {
             const eventDate = new Date(`${event.date}T00:00:00`);
 
-            // Past events never get a reminder; mark every slot handled so we
-            // stop scanning them.
+            // Past events never get a reminder; mark every slot handled so we stop scanning them.
             if (eventDate.getTime() < startOfToday.getTime()) {
                 for (const { column } of REMINDER_OFFSETS) {
                     if (event[column] == null) event[column] = now;

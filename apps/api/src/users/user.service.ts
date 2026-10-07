@@ -16,8 +16,15 @@ export class UsersService {
     ) {}
 
     async create(user: UserRegisterDto, farm: Farm): Promise<User> {
-        const { kmg_mid, ...rest } = user;
-        const newUser = this.userRepository.create({ ...rest, farm });
+        const { kmg_mid, acceptedTerms, policyVersion, ...rest } = user;
+        const newUser = this.userRepository.create({
+            ...rest,
+            farm,
+            // Record proof of consent at the moment of registration; the DTO has
+            // already enforced that acceptedTerms is true.
+            consentAcceptedAt: new Date(),
+            consentVersion: policyVersion,
+        });
         return await this.userRepository.save(newUser);
     }
 

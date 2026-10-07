@@ -11,9 +11,17 @@ export class User {
     @Column({ unique:true })
     email!: string;
     @Column()
-    role!: string;
-    @Column()
     password!: string;
+
+    // GDPR proof of consent: when the user accepted the Terms/Privacy texts and
+    // which version they accepted. Nullable for accounts created before consent
+    // capture existed; always set for new registrations.
+    @Column({ type: 'timestamp', nullable: true })
+    consentAcceptedAt?: Date | null;
+
+    @Column({ type: 'varchar', nullable: true })
+    consentVersion?: string | null;
+
     @CreateDateColumn()
     createdAt!: Date;
     @UpdateDateColumn()
