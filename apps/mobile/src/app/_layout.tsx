@@ -65,8 +65,11 @@ function AppShell({ fontsLoaded }: { fontsLoaded: boolean }) {
   useEffect(() => {
     if (!ready) return;
     const inAuthGroup = segments[0] === "login" || segments[0] === "register";
+    // Legal screens are public: reachable from the signup form before an
+    // account exists, so they must not trigger the redirect to /login.
+    const onPublicDoc = segments[0] === "privacy" || segments[0] === "terms";
     const onFarmSetup = segments[0] === "farm-setup";
-    if (!user && !inAuthGroup) {
+    if (!user && !inAuthGroup && !onPublicDoc) {
       router.replace("/login");
     } else if (user && needsFarmSetup && !onFarmSetup) {
       router.replace("/farm-setup");
@@ -89,6 +92,8 @@ function AppShell({ fontsLoaded }: { fontsLoaded: boolean }) {
         <Stack.Screen name="login" />
         <Stack.Screen name="register" />
         <Stack.Screen name="farm-setup" />
+        <Stack.Screen name="privacy" />
+        <Stack.Screen name="terms" />
       </Stack>
     </>
   );

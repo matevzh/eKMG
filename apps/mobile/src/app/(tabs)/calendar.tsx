@@ -142,21 +142,33 @@ export default function CalendarScreen() {
     }
   };
 
-  // A reminder is expected if the server already sent it, or its moment (a week
-  // before the event, at 08:00) is still in the future.
-  const reminderActive = (o: Opravilo) => {
-    if (o.reminderSent) return true;
-    const r = parseKey(o.datum);
-    r.setDate(r.getDate() - 7);
-    return r.getTime() > Date.now();
+  // Lead times (days before the event, at 08:00) the server sends reminders at.
+  // Keep in sync with REMINDER_OFFSETS in the API's reminder.service.ts.
+  const REMINDER_LEADS = [7, 1];
+
+  // The next reminder still due to fire for an event, or null if its last
+  // reminder moment has already passed.
+  const nextReminderMoment = (o: Opravilo): Date | null => {
+    const now = Date.now();
+    // Largest lead first → earliest moment first, so we surface the next to fire.
+    for (const lead of [...REMINDER_LEADS].sort((a, b) => b - a)) {
+      const r = parseKey(o.datum);
+      r.setDate(r.getDate() - lead);
+      r.setHours(8, 0, 0, 0);
+      if (r.getTime() > now) return r;
+    }
+    return null;
   };
+
+  // A reminder is expected if the server already sent the final one, or a
+  // reminder moment is still in the future.
+  const reminderActive = (o: Opravilo) => o.reminderSent || nextReminderMoment(o) != null;
 
   const reminderLabel = (o: Opravilo) => {
     if (o.reminderSent) return "Opomnik poslan";
-    const r = parseKey(o.datum);
-    r.setDate(r.getDate() - 7);
-    if (r.getTime() <= Date.now()) return "Brez opomnika";
-    return `Opomnik ${r.getDate()}. ${r.getMonth() + 1}. ob 8.00`;
+    const next = nextReminderMoment(o);
+    if (!next) return "Brez opomnika";
+    return `Opomnik ${next.getDate()}. ${next.getMonth() + 1}. ob 8.00`;
   };
 
   const TaskCard = ({ o, showDate }: { o: Opravilo; showDate?: boolean }) => (

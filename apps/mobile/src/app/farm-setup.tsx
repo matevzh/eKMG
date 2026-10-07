@@ -43,7 +43,7 @@ export default function FarmSetupScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <Text style={styles.title}>Podatki o kmetiji</Text>
-          <Text style={styles.subtitle}>Kot lastnik vnesi osnovne podatke o svoji kmetiji</Text>
+          <Text style={styles.subtitle}>Vnesi osnovne podatke o svoji kmetiji</Text>
 
           <View style={styles.form}>
             <TextField label="Ime kmetije" value={name} onChangeText={setName} placeholder="Kmetija Novak" autoCapitalize="words" />

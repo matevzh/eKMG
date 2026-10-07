@@ -22,8 +22,6 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
 }
 
-const OWNER_ROLE = "Lastnik";
-
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -61,7 +59,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signUp: async (payload) => {
         const result = await api.register(payload);
-        setNeedsFarmSetup(payload.role === OWNER_ROLE);
+        // Farm setup only when the server created a new farm — never when
+        // joining an existing one, so shared farm details can't be overwritten.
+        setNeedsFarmSetup(result.needsFarmSetup ?? false);
         await persist({ token: result.access_token, user: result.user });
       },
       completeFarmSetup: () => setNeedsFarmSetup(false),

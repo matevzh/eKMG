@@ -385,6 +385,27 @@ export function PrimaryButton({
   );
 }
 
+// A tappable checkbox with an arbitrary label (e.g. consent text with inline
+// links). The whole row toggles; links inside the label handle their own taps.
+export function Checkbox({
+  checked,
+  onToggle,
+  children,
+}: {
+  checked: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <Pressable onPress={onToggle} hitSlop={4} style={styles.checkboxRow}>
+      <View style={[styles.checkboxBox, checked && styles.checkboxBoxChecked]}>
+        {checked && <Check size={14} color={C.paper} />}
+      </View>
+      <View style={styles.checkboxLabel}>{children}</View>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   earTag: {
     alignSelf: "flex-start",
@@ -625,6 +646,29 @@ const styles = StyleSheet.create({
     color: C.red,
     fontSize: 12,
     fontFamily: F.sans,
+  },
+  checkboxRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+  checkboxBox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: C.line,
+    backgroundColor: C.card,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 1,
+  },
+  checkboxBoxChecked: {
+    backgroundColor: C.green,
+    borderColor: C.green,
+  },
+  checkboxLabel: {
+    flex: 1,
   },
   primaryButton: {
     backgroundColor: C.green,

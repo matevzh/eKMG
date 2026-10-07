@@ -1,30 +1,27 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { PillTabs, PrimaryButton, TextField } from "@/components/ui";
+import { Checkbox, PrimaryButton, TextField } from "@/components/ui";
 import { C, F } from "@/constants/theme";
+import { POLICY_VERSION } from "@/constants/legal";
 import { useAuth } from "@/lib/auth-context";
-
-const ROLE_TABS: { key: "Lastnik" | "Član"; label: string }[] = [
-  { key: "Lastnik", label: "Lastnik" },
-  { key: "Član", label: "Član" },
-];
 
 export default function RegisterScreen() {
   const { signUp } = useAuth();
+  const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"Lastnik" | "Član">("Lastnik");
   const [kmgMid, setKmgMid] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const step1Valid = Boolean(name.trim() && email.trim() && password);
-  const step2Valid = Boolean(kmgMid.trim());
+  const step2Valid = Boolean(kmgMid.trim()) && acceptedTerms;
 
   // On Android, the hardware back button should return to step 1 rather than
   // leaving the screen while the user is on step 2.
@@ -57,9 +54,10 @@ export default function RegisterScreen() {
       await signUp({
         name: name.trim(),
         email: email.trim(),
-        role,
         password,
         kmg_mid: kmgMid.trim(),
+        acceptedTerms,
+        policyVersion: POLICY_VERSION,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registracija ni uspela.");
@@ -116,10 +114,6 @@ export default function RegisterScreen() {
               <Text style={styles.subtitle}>Vnesi KMG-MID, da te povežemo s pravo kmetijo</Text>
 
               <View style={styles.form}>
-                <View style={styles.fieldWrap}>
-                  <Text style={styles.fieldLabel}>Vloga</Text>
-                  <PillTabs tabs={ROLE_TABS} active={role} onChange={setRole} />
-                </View>
                 <TextField
                   label="KMG-MID"
                   value={kmgMid}
@@ -130,6 +124,19 @@ export default function RegisterScreen() {
                 <Text style={styles.hint}>
                   Če KMG-MID že obstaja, se pridružiš tisti kmetiji. Če je nov, ustvarimo novo kmetijo.
                 </Text>
+                <Checkbox checked={acceptedTerms} onToggle={() => setAcceptedTerms((v) => !v)}>
+                  <Text style={styles.consentText}>
+                    Strinjam se s{" "}
+                    <Text style={styles.consentLink} onPress={() => router.push("/terms")}>
+                      Pogoji uporabe
+                    </Text>{" "}
+                    in{" "}
+                    <Text style={styles.consentLink} onPress={() => router.push("/privacy")}>
+                      Politiko zasebnosti
+                    </Text>
+                    .
+                  </Text>
+                </Checkbox>
                 {error && <Text style={styles.error}>{error}</Text>}
                 <PrimaryButton
                   label="Registriraj se"
@@ -193,14 +200,6 @@ const styles = StyleSheet.create({
   form: {
     gap: 14,
   },
-  fieldWrap: {
-    gap: 6,
-  },
-  fieldLabel: {
-    color: C.soil,
-    fontSize: 12,
-    fontFamily: F.sansMedium,
-  },
   hint: {
     color: C.faint,
     fontSize: 12,
@@ -211,6 +210,16 @@ const styles = StyleSheet.create({
     color: C.red,
     fontSize: 13,
     fontFamily: F.sans,
+  },
+  consentText: {
+    color: C.muted,
+    fontSize: 13,
+    lineHeight: 19,
+    fontFamily: F.sans,
+  },
+  consentLink: {
+    color: C.green,
+    fontFamily: F.sansSemiBold,
   },
   backButton: {
     paddingVertical: 12,

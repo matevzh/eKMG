@@ -74,7 +74,6 @@ export default function ProfileScreen() {
   }
 
   const name = profile?.name ?? user?.name ?? DASH;
-  const role = profile?.role ?? user?.role ?? DASH;
   const email = profile?.email ?? user?.email ?? DASH;
   const farm = profile?.farm;
   const kmgMid = farm?.kmg_mid ?? user?.farm?.kmg_mid ?? DASH;
@@ -87,7 +86,6 @@ export default function ProfileScreen() {
         </View>
         <View>
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.role}>{role}</Text>
           <Text style={styles.role}>{email}</Text>
         </View>
       </View>
@@ -95,7 +93,7 @@ export default function ProfileScreen() {
       <SectionLabel>Kmetija</SectionLabel>
       <Card>
         <Row label="Ime" value={farm?.name || DASH} compact />
-        <Row label="Lastnik" value={name} compact />
+        <Row label="Uporabnik" value={name} compact />
         <Row label="KMG-MID" value={kmgMid} compact />
         <Row label="Lokacija" value={farm?.location || DASH} compact />
         <Row label="Občina" value={farm?.province || DASH} compact />

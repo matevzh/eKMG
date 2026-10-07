@@ -1,4 +1,3 @@
-// Design tokens ported from FarmApp.jsx
 export const C = {
   bg: "#F6F1E4", // cream
   card: "#FDFBF6", // milk white

@@ -12,13 +12,15 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
-  role: string;
   farm: AuthFarm | null;
 }
 
 export interface AuthResult {
   access_token: string;
   user: AuthUser;
+  // Only set on registration: true when a brand-new farm was created, so the
+  // owner should complete farm setup. Absent/false when joining an existing farm.
+  needsFarmSetup?: boolean;
 }
 
 export interface ProfileFarm {
@@ -34,7 +36,6 @@ export interface Profile {
   id: number;
   name: string;
   email: string;
-  role: string;
   farm: ProfileFarm | null;
 }
 
@@ -47,8 +48,11 @@ export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
-  role: string;
   kmg_mid: string;
+  // GDPR consent captured at registration: must be true, with the version of
+  // the Terms/Privacy texts the user accepted.
+  acceptedTerms: boolean;
+  policyVersion: string;
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
@@ -166,9 +170,12 @@ export function updateFarm(token: string, payload: UpdateFarmPayload): Promise<P
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthResult> {
-  const { data } = await post<{ data: AuthUser & { access_token: string } }>("/auth/register", payload);
-  const { access_token, ...user } = data;
-  return { access_token, user };
+  const { data } = await post<{ data: AuthUser & { access_token: string; needsFarmSetup?: boolean } }>(
+    "/auth/register",
+    payload,
+  );
+  const { access_token, needsFarmSetup, ...user } = data;
+  return { access_token, user, needsFarmSetup };
 }
 
 // Animal shape returned by the backend (subset of the `animals` entity).
