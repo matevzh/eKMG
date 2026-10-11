@@ -6,7 +6,10 @@ export class UserRegisterDto {
     email!: string;
     @IsNotEmpty()
     @IsString()
-    name!: string;
+    firstName!: string;
+    @IsNotEmpty()
+    @IsString()
+    lastName!: string;
     @IsNotEmpty()
     @IsStrongPassword()
     password!: string;

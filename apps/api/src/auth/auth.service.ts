@@ -13,9 +13,9 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
     private readonly logger = new Logger(AuthService.name);
 
-    // Verbose diagnostics are kept out of production: logs there must never carry
-    // secrets (JWTs) or personal data (emails). This gate only enables extra
-    // non-sensitive debug lines in development.
+    /* Verbose diagnostics are kept out of production: logs there must never carry 
+    secrets (JWTs) or personal data (emails). This gate only enables extra
+    non-sensitive debug lines in development. */
     private readonly isProduction = process.env.NODE_ENV === 'production';
 
     constructor(
@@ -32,10 +32,8 @@ export class AuthService {
 
     async register(userRegisterDto: UserRegisterDto) {
         try {
-            // Whether this registration created a brand-new farm or joined an
-            // existing one. Only the creator of a new farm should be sent to
-            // farm setup; a user joining an existing farm must never overwrite
-            // the shared farm details.
+            /* Whether this registration created a brand-new farm or joined an existing one. Only the creator of a new farm should be sent to
+            farm setup; a user joining an existing farm must never overwrite the shared farm details. */
             const existingFarm = await this.farmService.findByKmgMid(userRegisterDto.kmg_mid);
             const farm = existingFarm ?? await this.farmService.findOrCreateByKmgMid(userRegisterDto.kmg_mid);
             const isNewFarm = !existingFarm;
@@ -52,7 +50,8 @@ export class AuthService {
             const response = {
                 data: {
                     id: user.id,
-                    name: user.name,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
                     email: user.email,
                     farm: { id: farm.id, kmg_mid: farm.kmg_mid },
                     needsFarmSetup: isNewFarm,
@@ -113,7 +112,8 @@ export class AuthService {
                 access_token: token,
                 user: {
                     id: user.id,
-                    name: user.name,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
                     email: user.email,
                     farm: user.farm ? { id: user.farm.id, kmg_mid: user.farm.kmg_mid } : null,
                     createdAt: user.createdAt,
