@@ -59,8 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signUp: async (payload) => {
         const result = await api.register(payload);
-        // Farm setup only when the server created a new farm — never when
-        // joining an existing one, so shared farm details can't be overwritten.
+        // Farm setup only when the server created a new farm — never when joining an existing one, so shared farm details can't be overwritten.
         setNeedsFarmSetup(result.needsFarmSetup ?? false);
         await persist({ token: result.access_token, user: result.user });
       },

@@ -10,7 +10,8 @@ export interface AuthFarm {
 
 export interface AuthUser {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   farm: AuthFarm | null;
 }
@@ -18,8 +19,7 @@ export interface AuthUser {
 export interface AuthResult {
   access_token: string;
   user: AuthUser;
-  // Only set on registration: true when a brand-new farm was created, so the
-  // owner should complete farm setup. Absent/false when joining an existing farm.
+  // Only set on registration: true when a brand-new farm was created, so the owner should complete farm setup. Absent/false when joining an existing farm.
   needsFarmSetup?: boolean;
 }
 
@@ -34,7 +34,8 @@ export interface ProfileFarm {
 
 export interface Profile {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   farm: ProfileFarm | null;
 }
@@ -45,12 +46,12 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   kmg_mid: string;
-  // GDPR consent captured at registration: must be true, with the version of
-  // the Terms/Privacy texts the user accepted.
+  // GDPR consent captured at registration: must be true, with the version of the Terms/Privacy texts the user accepted.
   acceptedTerms: boolean;
   policyVersion: string;
 }

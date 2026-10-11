@@ -1,7 +1,4 @@
 import { C } from "./theme";
-
-// Mock data mirroring the backend data model. Replace with API calls later.
-
 export interface Farm {
   ime: string;
   lastnik: string;

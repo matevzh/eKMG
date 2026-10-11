@@ -12,7 +12,8 @@ export default function RegisterScreen() {
   const { signUp } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [kmgMid, setKmgMid] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +21,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const step1Valid = Boolean(name.trim() && email.trim() && password);
+  const step1Valid = Boolean(firstName.trim() && lastName.trim() && email.trim() && password);
   const step2Valid = Boolean(kmgMid.trim()) && acceptedTerms;
 
   // On Android, the hardware back button should return to step 1 rather than
@@ -52,7 +53,8 @@ export default function RegisterScreen() {
     setSubmitting(true);
     try {
       await signUp({
-        name: name.trim(),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
         email: email.trim(),
         password,
         kmg_mid: kmgMid.trim(),
@@ -78,10 +80,17 @@ export default function RegisterScreen() {
 
               <View style={styles.form}>
                 <TextField
-                  label="Ime in priimek"
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="Janez Novak"
+                  label="Ime"
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  placeholder="Janez"
+                  autoCapitalize="words"
+                />
+                <TextField
+                  label="Priimek"
+                  value={lastName}
+                  onChangeText={setLastName}
+                  placeholder="Novak"
                   autoCapitalize="words"
                 />
                 <TextField
