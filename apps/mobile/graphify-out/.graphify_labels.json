@@ -1,0 +1,21 @@
+{
+  "0": "ui.tsx",
+  "1": "calendar.tsx",
+  "2": "api.ts",
+  "3": "dependencies",
+  "4": "expo",
+  "5": "new.tsx",
+  "6": "package.json",
+  "7": "useAuth",
+  "8": "legal.ts",
+  "9": "notifications.ts",
+  "10": "app/_layout.tsx",
+  "11": "tsconfig.json",
+  "12": "scripts",
+  "13": "Welcome to your Expo app 👋",
+  "14": "eslint.config.js",
+  "15": "devDependencies",
+  "16": "app.config.ts",
+  "17": "AGENTS.md",
+  "18": "CLAUDE.md"
+}

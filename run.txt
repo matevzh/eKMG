@@ -1,0 +1,19 @@
+1. Start Docker Desktop, then the dev DB
+
+Launch Docker Desktop (Start menu) and wait for it to say "running", then:
+docker compose -f docker/docker-compose.yml up -d
+Postgres comes up on localhost:5432 with db kmetija (user/pass postgres/postgres) — matching apps/api/.env. One-time; it stays up and auto-restarts.
+
+2. Start the API (terminal 2)
+
+cd apps/api
+npm run start:dev
+Runs on http://localhost:3000 with NODE_ENV=development, so TypeORM synchronize auto-creates the schema in the fresh DB — no migration step needed in dev. Watch mode reloads on save.
+
+3. Start the mobile app (terminal 3)
+
+cd apps/mobile
+npx expo start
+This auto-loads .env.development, so the app talks to EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 and shows as "Krave (Dev)". Then:
+- press a → Android emulator (10.0.2.2 already maps to your PC)
+- physical device via Expo Go → scan the QR, but first change 10.0.2.2 to your PC's LAN IP in .env.development (a device can't reach 10.0.2.2)

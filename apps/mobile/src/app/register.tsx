@@ -21,7 +21,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const step1Valid = Boolean(firstName.trim() && lastName.trim() && email.trim() && password);
+  const step1FormValid = Boolean(firstName.trim() && lastName.trim() && email.trim() && password);
   const step2Valid = Boolean(kmgMid.trim()) && acceptedTerms;
 
   // On Android, the hardware back button should return to step 1 rather than
@@ -37,15 +37,14 @@ export default function RegisterScreen() {
     return () => sub.remove();
   }, [step]);
 
-  function goNext() {
-    setError(null);
-    if (!step1Valid) return;
-    setStep(2);
-  }
-
   function goBack() {
     setError(null);
     setStep(1);
+  }
+
+  async function goNext() {
+    setError(null);
+    setStep(2);
   }
 
   async function onSubmit() {
@@ -62,7 +61,8 @@ export default function RegisterScreen() {
         policyVersion: POLICY_VERSION,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registracija ni uspela.");
+      setError(err instanceof Error ? err.message : "Prišlo je do napake. Poskusi znova.");
+      setStep(1);
     } finally {
       setSubmitting(false);
     }
@@ -107,7 +107,8 @@ export default function RegisterScreen() {
                   placeholder="Najmanj 8 znakov"
                   secureTextEntry
                 />
-                <PrimaryButton label="Naprej" onPress={goNext} disabled={!step1Valid} />
+                {error && <Text style={styles.error}>{error}</Text>}
+                <PrimaryButton label="Naprej" onPress={goNext} disabled={!step1FormValid} />
               </View>
 
               <View style={styles.footer}>

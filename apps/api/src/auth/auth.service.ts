@@ -24,6 +24,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) {}
 
+    // Dev logger
     private debug(message: string, ...rest: unknown[]) {
         if (!this.isProduction) {
             this.logger.debug(message, ...rest);
@@ -65,8 +66,8 @@ export class AuthService {
         } catch (error: any) {
             this.logger.error('Registration error', error?.stack ?? error?.message);
 
-            if(error.code == '2305') { //PostgreSQL unique violation code (check if email is already in use)
-                throw new Error('Email already exists');
+            if(error.code == '23505') { //PostgreSQL unique violation code (check if email is already in use)
+                throw new Error('E-pošta je že v uporabi.');
             }
             throw error;
         }
@@ -88,6 +89,10 @@ export class AuthService {
         }
 
         return user;
+    }
+
+    async validateEmail(email: string) {
+        
     }
 
     async login(userLoginDto: UserLoginDto) {
