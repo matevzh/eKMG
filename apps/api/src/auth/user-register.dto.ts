@@ -2,7 +2,7 @@ import { Equals, IsBoolean, IsEmail, IsNotEmpty, IsString, IsStrongPassword } fr
 
 export class UserRegisterDto {
     @IsNotEmpty()
-    @IsEmail()
+    @IsEmail({}, { message: "Neveljaven e-poštni naslov." })
     email!: string;
     @IsNotEmpty()
     @IsString()
@@ -11,7 +11,7 @@ export class UserRegisterDto {
     @IsString()
     lastName!: string;
     @IsNotEmpty()
-    @IsStrongPassword()
+    @IsStrongPassword({}, { message: "Geslo mora vsebovati vsaj 8 znakov, eno veliko črko, eno malo črko, eno številko in en poseben znak." })
     password!: string;
     @IsNotEmpty()
     @IsString()

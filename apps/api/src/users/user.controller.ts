@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, HttpCode, InternalServerErrorException, Logger, NotFoundException, Request, UseGuards } from "@nestjs/common";
+import { Controller, Delete, Get, HttpCode, InternalServerErrorException, Logger, NotFoundException, Request, UseGuards, Patch } from "@nestjs/common";
 import { UsersService } from "./user.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
@@ -60,4 +60,11 @@ export class UsersController {
         }
         await this.usersService.deleteAccount(req.user.userId);
     }
+/*
+    @UseGuards(JwtAuthGuard)
+    @Patch('me')
+    async updateProfile(@Requeest() req, @Body() updateUserDto: UpdateUserDto) {
+        if (!req.user?.userId) {
+            throw new NotFoundException('User ID not found in request');
+        }*/
 }

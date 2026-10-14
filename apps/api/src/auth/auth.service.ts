@@ -1,6 +1,6 @@
 /* Registracija, login in validacija/generiranje JWT */
 
-import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { UsersService } from "../users/user.service";
 import { FarmService } from "../farms/farm.service";
 import { UserRegisterDto } from "./user-register.dto";
@@ -67,7 +67,7 @@ export class AuthService {
             this.logger.error('Registration error', error?.stack ?? error?.message);
 
             if(error.code == '23505') { //PostgreSQL unique violation code (check if email is already in use)
-                throw new Error('E-pošta je že v uporabi.');
+                throw new ConflictException('E-pošta je že v uporabi.');
             }
             throw error;
         }
@@ -78,14 +78,14 @@ export class AuthService {
 
         if(!user) {
             this.logger.warn('Login failed: user not found');
-            throw new UnauthorizedException('Bad login');
+            throw new UnauthorizedException('E-pošta ni v uporabi');
         }
 
         const isPasswordValid = await bcrypt.compare(userLoginDto.password, user.password);
 
         if(!isPasswordValid) {
             this.logger.warn('Login failed: invalid password');
-            throw new UnauthorizedException('Invalid password');
+            throw new UnauthorizedException('Geslo je napačno');
         }
 
         return user;

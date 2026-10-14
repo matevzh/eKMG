@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, HttpStatus, Logger, Post,  } from "@nestjs/common";
+import { Body, Controller, HttpException, HttpStatus, Logger, Post } from "@nestjs/common";
 import { UserRegisterDto } from "./user-register.dto";
 import { AuthService } from "./auth.service";
 import { UserLoginDto } from "./user-login.dto";
@@ -8,8 +8,6 @@ export class AuthController {
     private readonly logger = new Logger(AuthController.name);
 
     constructor(private readonly authService: AuthService) {}
-    
-    
 
     @Post('register')
     async register(@Body() userRegisterDto: UserRegisterDto) {
