@@ -122,4 +122,18 @@ export class UsersService {
             }
         });
     }
+
+    async updateUser(id: number, updateUserDto: Partial<User>): Promise<User> {
+        const user = await this.findById(id);
+        if(!user) {
+            throw new NotFoundException("User not found");
+        }
+
+        await this.userRepository.update(id, updateUserDto);
+        const updatedUser = await this.findById(id);
+        if(!updatedUser) {
+            throw new NotFoundException("User not found after update");
+        }
+        return updatedUser;
+    }
 }

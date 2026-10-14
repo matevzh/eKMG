@@ -1,4 +1,4 @@
-import { User } from "lucide-react-native";
+import { Pencil, User } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, Text, View } from "react-native";
 
@@ -31,6 +31,10 @@ export default function ProfileScreen() {
       active = false;
     };
   }, [token]);
+
+  async function handleEditProfile() {
+    
+  }
 
   async function handleExport() {
     if (!token || exporting) return;
@@ -93,6 +97,14 @@ export default function ProfileScreen() {
 
       <SectionLabel>Kmetija</SectionLabel>
       <Card>
+        <Pressable
+          onPress={handleEditProfile}
+          style={({ pressed }) => [styles.privacyRow, pressed && styles.pressed]}
+        >
+          <Pencil 
+            style={styles.editUserButton}
+          />
+        </Pressable>
         <Row label="Ime" value={farm?.name || DASH} compact />
         <Row label="Uporabnik" value={firstName} compact />
         <Row label="KMG-MID" value={kmgMid} compact />
@@ -130,6 +142,14 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  editUserButton: {
+    backgroundColor: C.green,
+    color: C.paper,
+    padding: 12,
+    borderRadius: 12,
+    flexDirection: "row",
+    marginLeft: "auto",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
