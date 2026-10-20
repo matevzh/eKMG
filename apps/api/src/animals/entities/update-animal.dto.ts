@@ -1,5 +1,4 @@
-import { IsDateString, IsIn, IsInt, IsNumber, IsOptional, IsString } from "class-validator";
-import { ANIMAL_STATUSES } from "./animal-status";
+import { IsBoolean, IsDateString, IsInt, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class UpdateAnimalDto {
     @IsOptional()
@@ -23,8 +22,12 @@ export class UpdateAnimalDto {
     gender?: string;
 
     @IsOptional()
-    @IsIn(ANIMAL_STATUSES)
-    status?: string;
+    @IsBoolean()
+    isLactating?: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    isPregnant?: boolean;
 
     @IsOptional()
     @IsInt()

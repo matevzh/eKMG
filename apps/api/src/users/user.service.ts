@@ -65,23 +65,23 @@ export class UsersService {
         }
 
         const { password, ...account } = user;
-        const farmId = user.farm?.id;
+        const farmId = user.farm.id;
 
         const pushTokens = await this.dataSource
             .getRepository(PushToken)
             .find({ where: { userId: id } });
 
-        const animals = farmId
-            ? await this.dataSource.getRepository(Animal).find({ where: { birthFarmId: farmId } })
-            : [];
-        const events = farmId
-            ? await this.dataSource.getRepository(CalendarEvent).find({ where: { farmId } })
-            : [];
+        const animals = await this.dataSource
+            .getRepository(Animal)
+            .find({ where: { birthFarmId: farmId } });
+        const events = await this.dataSource
+            .getRepository(CalendarEvent)
+            .find({ where: { farmId } });
 
         return {
             exportedAt: new Date().toISOString(),
             account,
-            farm: user.farm ?? null,
+            farm: user.farm,
             animals,
             events,
             pushTokens,
@@ -108,7 +108,7 @@ export class UsersService {
                 throw new NotFoundException(`User with ID ${id} not found`);
             }
 
-            const farmId = user.farm?.id;
+            const farmId = user.farm.id;
 
             await manager.delete(User, id);
 

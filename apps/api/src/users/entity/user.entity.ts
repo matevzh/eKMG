@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import * as bcrypt from "bcrypt"
 import { Farm } from "../../farms/entities/farm.entity";
 
@@ -29,7 +29,7 @@ export class User {
     @UpdateDateColumn()
     updatedAt!: Date;
 
-    @ManyToOne(() => Farm, (farm) => farm.users)
+    @ManyToOne(() => Farm, (farm) => farm.users, { nullable: false })
     farm!: Farm;
 
     @BeforeInsert()

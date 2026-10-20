@@ -19,11 +19,11 @@ export class Animal {
     @Column({ nullable: true })
     gender?: string;
 
-    @Column({ nullable: true })
-    status?: string;
+    @Column({ type: 'boolean', default: false })
+    isLactating!: boolean;
 
-    @Column({ nullable: true })
-    pregnancyStatus?: string;
+    @Column({ type: 'boolean', default: false })
+    isPregnant!: boolean;
 
     @Column({ nullable: true })
     birthCountry?: string;

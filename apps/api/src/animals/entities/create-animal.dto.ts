@@ -1,5 +1,4 @@
-import { IsDateString, IsIn, IsInt, IsOptional, IsString } from "class-validator";
-import { ANIMAL_STATUSES } from "./animal-status";
+import { IsBoolean, IsDateString, IsInt, IsOptional, IsString } from "class-validator";
 
 export class CreateAnimalDto {
     @IsString()
@@ -8,39 +7,30 @@ export class CreateAnimalDto {
     @IsString()
     si_id!: string;
 
-    @IsOptional()
     @IsString()
     breed?: string;
 
-    @IsOptional()
     @IsString()
     gender?: string;
 
-    @IsOptional()
-    @IsIn(ANIMAL_STATUSES)
-    status?: string;
+    @IsBoolean()
+    isLactating?: boolean;
 
-    @IsOptional()
-    @IsString()
-    pregnancyStatus?: string;
+    @IsBoolean()
+    isPregnant?: boolean;
 
-    @IsOptional()
     @IsString()
     birthCountry?: string;
 
-    @IsOptional()
     @IsInt()
     lactation?: number;
 
-    @IsOptional()
     @IsDateString()
     dateOfBirth?: string;
 
-    @IsOptional()
     @IsDateString()
     acquisitionDate?: string;
 
-    @IsOptional()
     @IsDateString()
     dateOfTagging?: string;
 

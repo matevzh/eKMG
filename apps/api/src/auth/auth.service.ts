@@ -120,7 +120,7 @@ export class AuthService {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
-                    farm: user.farm ? { id: user.farm.id, kmg_mid: user.farm.kmg_mid } : null,
+                    farm: { id: user.farm.id, kmg_mid: user.farm.kmg_mid },
                     createdAt: user.createdAt,
                     updatedAt: user.updatedAt,
                 }
