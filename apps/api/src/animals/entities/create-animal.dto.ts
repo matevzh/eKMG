@@ -19,6 +19,7 @@ export class CreateAnimalDto {
     @IsBoolean()
     isPregnant?: boolean;
 
+    @IsOptional()
     @IsString()
     birthCountry?: string;
 
