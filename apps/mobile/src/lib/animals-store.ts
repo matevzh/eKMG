@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-import { breedLabel, STATUS_STYLE, type AnimalStatus, type Zival } from "@/constants/data";
+import { breedLabel, type Zival } from "@/constants/data";
 import * as api from "@/lib/api";
 
 // Live animal list backed by the API. Screens read it with `useAnimals()`;
@@ -25,17 +25,14 @@ function getSnapshot() {
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-function toStatus(value: string | null): AnimalStatus {
-  return value && value in STATUS_STYLE ? (value as AnimalStatus) : "aktivna";
-}
-
 function toZival(a: api.ApiAnimal): Zival {
   return {
     id: a.id,
     si_id: a.si_id,
     ime: a.name,
     pasma: a.breed ? breedLabel(a.breed) : "—",
-    status: toStatus(a.status),
+    isLactating: a.isLactating,
+    isPregnant: a.isPregnant,
     datum_rojstva: a.dateOfBirth ?? "—",
     laktacija: a.lactation ?? 0,
   };
@@ -47,7 +44,8 @@ export interface NewAnimalInput {
   si_id: string;
   breed: string; // breed code
   spol: string; // gender
-  status: AnimalStatus;
+  isLactating: boolean;
+  isPregnant: boolean;
   datum_rojstva: string;
   datum_pridobitve: string;
   datum_oznacitve: string;
@@ -65,7 +63,8 @@ function toPayload(input: NewAnimalInput): api.CreateAnimalPayload {
     si_id: input.si_id,
     breed: input.breed || undefined,
     gender: input.spol || undefined,
-    status: input.status,
+    isLactating: input.isLactating,
+    isPregnant: input.isPregnant,
     dateOfBirth: isoOrUndefined(input.datum_rojstva),
     acquisitionDate: isoOrUndefined(input.datum_pridobitve),
     dateOfTagging: isoOrUndefined(input.datum_oznacitve),
@@ -86,8 +85,12 @@ export async function addAnimal(token: string, input: NewAnimalInput): Promise<Z
   return created;
 }
 
-export async function updateAnimalStatus(token: string, id: number, status: AnimalStatus): Promise<void> {
-  const updated = toZival(await api.updateAnimal(token, id, { status }));
+export async function updateAnimalState(
+  token: string,
+  id: number,
+  state: Partial<Pick<Zival, "isLactating" | "isPregnant">>,
+): Promise<void> {
+  const updated = toZival(await api.updateAnimal(token, id, state));
   animals = animals.map((a) => (a.id === id ? updated : a));
   emit();
 }

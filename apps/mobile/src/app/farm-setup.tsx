@@ -49,7 +49,7 @@ export default function FarmSetupScreen() {
             <TextField label="Ime kmetije" value={name} onChangeText={setName} placeholder="Kmetija Novak" autoCapitalize="words" />
             <TextField label="Lokacija" value={location} onChangeText={setLocation} placeholder="Trbovlje" autoCapitalize="words" />
             <TextField label="Občina" value={province} onChangeText={setProvince} placeholder="Trbovlje" autoCapitalize="words" />
-            <TextField label="Pošta" value={postOffice} onChangeText={setPostOffice} placeholder="1420 Trbovlje" autoCapitalize="words" />
+            <TextField label="Pošta" value={postOffice} onChangeText={setPostOffice} placeholder="1420 " autoCapitalize="words" />
             {error && <Text style={styles.error}>{error}</Text>}
             <PrimaryButton
               label="Shrani kmetijo"

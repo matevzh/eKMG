@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Card, EarTag, Empty, PillTabs, Row, SectionLabel, StatusPicker, TopBar } from "@/components/ui";
-import { EMPTY_DETAIL, type AnimalStatus } from "@/constants/data";
+import { Card, EarTag, Empty, PillTabs, Row, SectionLabel, StatePicker, TopBar } from "@/components/ui";
+import { EMPTY_DETAIL } from "@/constants/data";
 import { C, F } from "@/constants/theme";
-import { removeAnimal, updateAnimalStatus, useAnimals } from "@/lib/animals-store";
+import { removeAnimal, updateAnimalState, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
 import { addEventPushListener } from "@/lib/notifications";
 import { loadOpravila, type Opravilo } from "@/lib/tasks";
@@ -31,7 +31,7 @@ export default function AnimalDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [tab, setTab] = useState<DetailTab>("pregled");
   const [deleting, setDeleting] = useState(false);
-  const [savingStatus, setSavingStatus] = useState(false);
+  const [savingState, setSavingState] = useState(false);
   const [opravila, setOpravila] = useState<Opravilo[]>([]);
   const animals = useAnimals();
 
@@ -78,19 +78,19 @@ export default function AnimalDetailScreen() {
     );
   }
 
-  async function onChangeStatus(next: AnimalStatus) {
-    if (!z || savingStatus) return;
+  async function onChangeState(state: "isLactating" | "isPregnant", value: boolean) {
+    if (!z || savingState) return;
     if (!token) {
       Alert.alert("Seja je potekla", "Prijavi se znova.");
       return;
     }
-    setSavingStatus(true);
+    setSavingState(true);
     try {
-      await updateAnimalStatus(token, z.id, next);
+      await updateAnimalState(token, z.id, { [state]: value });
     } catch (err) {
-      Alert.alert("Napaka", err instanceof Error ? err.message : "Statusa ni bilo mogoče spremeniti.");
+      Alert.alert("Napaka", err instanceof Error ? err.message : "Podatka ni bilo mogoče spremeniti.");
     } finally {
-      setSavingStatus(false);
+      setSavingState(false);
     }
   }
 
@@ -146,8 +146,25 @@ export default function AnimalDetailScreen() {
             <Text style={styles.name}>{z.ime}</Text>
             <EarTag size={11}>{z.si_id}</EarTag>
           </View>
-          <View style={styles.badgeWrap}>
-            <StatusPicker status={z.status} onChange={onChangeStatus} saving={savingStatus} />
+          <View style={styles.stateControls}>
+            <StatePicker
+              label="Molznost"
+              enabledLabel="Molzena"
+              disabledLabel="Presušena"
+              tone="green"
+              value={z.isLactating}
+              onChange={(value) => onChangeState("isLactating", value)}
+              saving={savingState}
+            />
+            <StatePicker
+              label="Brejost"
+              enabledLabel="Breja"
+              disabledLabel="Ni breja"
+              tone="amber"
+              value={z.isPregnant}
+              onChange={(value) => onChangeState("isPregnant", value)}
+              saving={savingState}
+            />
           </View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}>
@@ -301,8 +318,10 @@ const styles = StyleSheet.create({
     fontSize: 19,
     color: C.ink,
   },
-  badgeWrap: {
+  stateControls: {
     marginLeft: "auto",
+    alignItems: "flex-end",
+    gap: 6,
   },
   deleteButton: {
     padding: 4,

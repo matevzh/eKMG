@@ -16,7 +16,6 @@ import {
   type ViewStyle,
 } from "react-native";
 
-import { STATUS_STYLE, type AnimalStatus } from "@/constants/data";
 import { C, F } from "@/constants/theme";
 
 export function EarTag({ children, size = 12 }: { children: ReactNode; size?: number }) {
@@ -27,27 +26,27 @@ export function EarTag({ children, size = 12 }: { children: ReactNode; size?: nu
   );
 }
 
-export function Badge({ status }: { status: AnimalStatus }) {
-  const s = STATUS_STYLE[status] ?? STATUS_STYLE.aktivna;
-  return (
-    <View style={[styles.badge, { backgroundColor: s.bg }]}>
-      <Text style={[styles.badgeText, { color: s.fg }]}>{s.label}</Text>
-    </View>
-  );
-}
-
-// A tappable status Badge that opens a modal to pick a new animal status.
-export function StatusPicker({
-  status,
+export function StatePicker({
+  label,
+  enabledLabel,
+  disabledLabel,
+  tone,
+  value,
   onChange,
   saving,
 }: {
-  status: AnimalStatus;
-  onChange: (status: AnimalStatus) => void;
+  label: string;
+  enabledLabel: string;
+  disabledLabel: string;
+  tone: "green" | "amber";
+  value: boolean;
+  onChange: (value: boolean) => void;
   saving?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const options = Object.keys(STATUS_STYLE) as AnimalStatus[];
+  const valueLabel = value ? enabledLabel : disabledLabel;
+  const backgroundColor = value ? (tone === "amber" ? "#EFE6D6" : "#E7EFE3") : "#E9E5DC";
+  const foregroundColor = value ? (tone === "amber" ? C.amber : C.green) : C.soil;
 
   return (
     <>
@@ -55,28 +54,41 @@ export function StatusPicker({
         onPress={() => setOpen(true)}
         disabled={saving}
         hitSlop={8}
-        style={({ pressed }) => pressed && styles.pressed}
+        accessibilityRole="button"
+        accessibilityLabel={`Spremeni stanje: ${valueLabel}`}
+        accessibilityHint="Izberi Da ali Ne"
+        style={({ pressed }) => [
+          styles.statePickerButton,
+          { backgroundColor },
+          pressed && styles.pressed,
+        ]}
       >
-        {saving ? <ActivityIndicator size="small" color={C.green} /> : <Badge status={status} />}
+        {saving ? (
+          <ActivityIndicator size="small" color={foregroundColor} />
+        ) : (
+          <>
+            <Text style={[styles.statePickerText, { color: foregroundColor }]}>{valueLabel}</Text>
+            <ChevronDown size={16} color={foregroundColor} />
+          </>
+        )}
       </Pressable>
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setOpen(false)}>
           <Pressable style={styles.modalSheet} onPress={() => {}}>
-            <Text style={styles.modalTitle}>Status</Text>
-            {options.map((opt) => {
-              const active = opt === status;
+            <Text style={styles.modalTitle}>{label}</Text>
+            {[true, false].map((option) => {
+              const active = option === value;
+              const optionLabel = option ? enabledLabel : disabledLabel;
               return (
                 <Pressable
-                  key={opt}
+                  key={String(option)}
                   style={styles.optionRow}
                   onPress={() => {
                     setOpen(false);
-                    if (opt !== status) onChange(opt);
+                    if (option !== value) onChange(option);
                   }}
                 >
-                  <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>
-                    {STATUS_STYLE[opt].label}
-                  </Text>
+                  <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{optionLabel}</Text>
                   {active && <Check size={16} color={C.green} />}
                 </Pressable>
               );
@@ -358,6 +370,29 @@ export function DateField({
   );
 }
 
+export function SecondaryButton({ 
+  label, 
+  onPress, 
+  loading 
+}: { 
+  label: string;
+  onPress: () => void; 
+  loading?: boolean 
+}) {
+  return (
+    <Pressable 
+      onPress={onPress} 
+      style={({ pressed }) => [
+        styles.secondaryButton, 
+        pressed && styles.pressed,
+        ]}
+    >
+      <Text style={styles.secondaryButtonText}>{label}</Text>
+      {loading && <ActivityIndicator size="small" color={C.green} />}
+    </Pressable>
+  );
+}
+
 export function PrimaryButton({
   label,
   onPress,
@@ -421,14 +456,16 @@ const styles = StyleSheet.create({
     color: C.green,
     letterSpacing: 0.5,
   },
-  badge: {
-    borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  badgeText: {
+  statePickerText: {
     fontSize: 11,
     fontFamily: F.sansMedium,
+  },
+  statePickerButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    padding: 5,
+    borderRadius: 999,
   },
   topBar: {
     flexDirection: "row",
@@ -683,6 +720,18 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: C.paper,
+    fontSize: 15,
+    fontFamily: F.sansSemiBold,
+  },
+  secondaryButton: {
+    backgroundColor: C.card,
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
+  },
+  secondaryButtonText: {
     fontSize: 15,
     fontFamily: F.sansSemiBold,
   },

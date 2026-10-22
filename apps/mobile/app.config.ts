@@ -12,9 +12,9 @@ const variants: Record<
   Variant,
   { name: string; bundleId: string; scheme: string }
 > = {
-  development: { name: "Krave (Dev)", bundleId: `${BUNDLE_ID}.dev`, scheme: "kravedev" },
-  preview: { name: "Krave (Preview)", bundleId: `${BUNDLE_ID}.preview`, scheme: "kravepreview" },
-  production: { name: "Krave", bundleId: BUNDLE_ID, scheme: "krave" },
+  development: { name: "eKMG (Dev)", bundleId: `${BUNDLE_ID}.dev`, scheme: "kravedev" },
+  preview: { name: "eKMG (Preview)", bundleId: `${BUNDLE_ID}.preview`, scheme: "kravepreview" },
+  production: { name: "eKMG", bundleId: BUNDLE_ID, scheme: "krave" },
 };
 
 // `config` is the static app.json, which Expo reads first and passes in here.

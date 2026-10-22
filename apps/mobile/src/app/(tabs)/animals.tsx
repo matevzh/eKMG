@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Badge, Card, EarTag, TopBar } from "@/components/ui";
+import { Card, EarTag, TopBar } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
@@ -50,6 +50,21 @@ export default function AnimalsScreen() {
             style={styles.searchInput}
           />
         </View>
+        {filtered.length === 0 && (
+          <View style={{ alignItems: "center"}}>
+            <Text style={styles.noAnimalsText}>
+              Ni najdenih živali. Dodaj prvo
+            </Text>
+            <Pressable
+              onPress={() => router.push("/animal/new")}
+              hitSlop={8}
+              style={({ pressed }) => [styles.addButton, { marginTop: 12 }, pressed && styles.addButtonPressed]}
+            >
+              <Plus size={18} color={C.paper} />
+            </Pressable>
+          </View>
+        )}
+        <View style={{ height: 8 }} />
         <FlatList
           data={filtered}
           keyExtractor={(z) => String(z.id)}
@@ -68,7 +83,8 @@ export default function AnimalsScreen() {
                   </View>
                 </View>
                 <View style={styles.itemRight}>
-                  <Badge status={z.status} />
+                  <Text style={styles.stateLabel}>{z.isLactating ? "Molzena" : "Presušena"}</Text>
+                  <Text style={styles.stateLabel}>{z.isPregnant ? "Breja" : "Ni breja"}</Text>
                   <Text style={styles.breed}>{z.pasma}</Text>
                 </View>
               </View>
@@ -153,9 +169,21 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     gap: 4,
   },
+  stateLabel: {
+    color: C.soil,
+    fontSize: 11,
+    fontFamily: F.sansMedium,
+  },
   breed: {
     color: C.faint,
     fontSize: 11,
     fontFamily: F.sans,
+  },
+  noAnimalsText: {
+    color: C.faint,
+    fontFamily: F.sans,
+    fontSize: 13,
+    textAlign: "center",
+    marginTop: 24,
   },
 });

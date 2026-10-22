@@ -1,4 +1,3 @@
-import { C } from "./theme";
 export interface Farm {
   ime: string;
   lastnik: string;
@@ -8,14 +7,13 @@ export interface Farm {
   posta: string;
 }
 
-export type AnimalStatus = "aktivna" | "brejost" | "presušena" | "zdravljenje";
-
 export interface Zival {
   id: number;
   si_id: string;
   ime: string;
   pasma: string;
-  status: AnimalStatus;
+  isLactating: boolean;
+  isPregnant: boolean;
   datum_rojstva: string;
   laktacija: number;
 }
@@ -130,10 +128,3 @@ export const GENDERS: { value: string; label: string }[] = [
   { value: "Ženska", label: "Ženska" },
   { value: "Moški", label: "Moški" },
 ];
-
-export const STATUS_STYLE: Record<AnimalStatus, { bg: string; fg: string; label: string }> = {
-  aktivna: { bg: "#E7EFE3", fg: C.green, label: "Aktivna" },
-  brejost: { bg: "#EFE6D6", fg: C.amber, label: "Brejost" },
-  presušena: { bg: "#E9E5DC", fg: C.soil, label: "Presušena" },
-  zdravljenje: { bg: "#F3E1DC", fg: C.red, label: "Zdravljenje" },
-};

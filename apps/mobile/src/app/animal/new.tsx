@@ -4,18 +4,17 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } fr
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DateField, PillTabs, PrimaryButton, SelectField, TextField, TopBar } from "@/components/ui";
-import { BREEDS, GENDERS, STATUS_STYLE, type AnimalStatus } from "@/constants/data";
+import { BREEDS, GENDERS } from "@/constants/data";
 import { C, F } from "@/constants/theme";
 import { addAnimal } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
 
-const STATUS_TABS = (Object.keys(STATUS_STYLE) as AnimalStatus[]).map((key) => ({
-  key,
-  label: STATUS_STYLE[key].label,
-}));
-
 const GENDER_TABS = GENDERS.map((g) => ({ key: g.value, label: g.label }));
 const BREED_OPTIONS = BREEDS.map((b) => ({ value: b.code, label: b.label }));
+const YES_NO_TABS = [
+  { key: "true", label: "Da" },
+  { key: "false", label: "Ne" },
+];
 
 export default function NewAnimalScreen() {
   const router = useRouter();
@@ -29,7 +28,8 @@ export default function NewAnimalScreen() {
   const [datumPridobitve, setDatumPridobitve] = useState("");
   const [datumOznacitve, setDatumOznacitve] = useState("");
   const [laktacija, setLaktacija] = useState("");
-  const [status, setStatus] = useState<AnimalStatus>("aktivna");
+  const [isLactating, setIsLactating] = useState(false);
+  const [isPregnant, setIsPregnant] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -49,7 +49,8 @@ export default function NewAnimalScreen() {
         si_id: `SI ${siSuffix.trim()}`,
         breed,
         spol,
-        status,
+        isLactating,
+        isPregnant,
         datum_rojstva: datumRojstva.trim(),
         datum_pridobitve: datumPridobitve.trim(),
         datum_oznacitve: datumOznacitve.trim(),
@@ -94,15 +95,27 @@ export default function NewAnimalScreen() {
             <DateField label="Datum pridobitve" value={datumPridobitve} onChange={setDatumPridobitve} />
             <DateField label="Datum označitve" value={datumOznacitve} onChange={setDatumOznacitve} />
             <TextField
-              label="Laktacija"
+              label="Zaporedna laktacija"
               value={laktacija}
               onChangeText={setLaktacija}
               placeholder="0"
               keyboardType="number-pad"
             />
             <View style={styles.fieldWrap}>
-              <Text style={styles.fieldLabel}>Status</Text>
-              <PillTabs tabs={STATUS_TABS} active={status} onChange={setStatus} />
+              <Text style={styles.fieldLabel}>Trenutno molzna</Text>
+              <PillTabs
+                tabs={YES_NO_TABS}
+                active={String(isLactating)}
+                onChange={(value) => setIsLactating(value === "true")}
+              />
+            </View>
+            <View style={styles.fieldWrap}>
+              <Text style={styles.fieldLabel}>Breja</Text>
+              <PillTabs
+                tabs={YES_NO_TABS}
+                active={String(isPregnant)}
+                onChange={(value) => setIsPregnant(value === "true")}
+              />
             </View>
             {error && <Text style={styles.error}>{error}</Text>}
             <PrimaryButton label="Dodaj žival" onPress={onSubmit} disabled={!canSubmit} loading={submitting} />

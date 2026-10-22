@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, Text, View } from "react-native";
 
 import { Screen } from "@/components/screen";
-import { Card, PrimaryButton, Row, SectionLabel } from "@/components/ui";
+import { Card, PrimaryButton, Row, SecondaryButton, SectionLabel } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import * as api from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
+import { router } from "expo-router";
 
 const DASH = "—";
 
@@ -31,10 +32,6 @@ export default function ProfileScreen() {
       active = false;
     };
   }, [token]);
-
-  async function handleEditProfile() {
-    
-  }
 
   async function handleExport() {
     if (!token || exporting) return;
@@ -82,6 +79,7 @@ export default function ProfileScreen() {
   const email = profile?.email ?? user?.email ?? DASH;
   const farm = profile?.farm;
   const kmgMid = farm?.kmg_mid ?? user?.farm?.kmg_mid ?? DASH;
+  const farmId = farm?.id ?? user?.farm?.id;
 
   return (
     <Screen title="Profil">
@@ -93,24 +91,35 @@ export default function ProfileScreen() {
           <Text style={styles.name}>{firstName} {lastName}</Text>
           <Text style={styles.role}>{email}</Text>
         </View>
+        
+        <Pressable
+          //onPress={handleEditProfile}
+          style={({ pressed }) => [styles.editUserButton, pressed && styles.pressed]}
+        >
+          <Pencil size={16} color={C.paper}
+          />
+        </Pressable>
       </View>
 
       <SectionLabel>Kmetija</SectionLabel>
       <Card>
-        <Pressable
-          onPress={handleEditProfile}
-          style={({ pressed }) => [styles.privacyRow, pressed && styles.pressed]}
-        >
-          <Pencil 
-            style={styles.editUserButton}
-          />
-        </Pressable>
         <Row label="Ime" value={farm?.name || DASH} compact />
         <Row label="Uporabnik" value={firstName} compact />
         <Row label="KMG-MID" value={kmgMid} compact />
         <Row label="Lokacija" value={farm?.location || DASH} compact />
         <Row label="Občina" value={farm?.province || DASH} compact />
         <Row label="Pošta" value={farm?.postOffice || DASH} compact />
+        <View style={styles.divider} />
+        <SecondaryButton 
+          label="Uredi podatke" 
+          onPress={() => {
+            if (farmId === undefined) {
+              Alert.alert("Napaka", "Podatki o kmetiji niso na voljo. Poskusi znova.");
+              return;
+            }
+            router.push({ pathname: "/farm/[id]", params: { id: farmId } });
+          }}
+        />
       </Card>
 
       <SectionLabel>Zasebnost</SectionLabel>

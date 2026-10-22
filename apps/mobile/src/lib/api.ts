@@ -13,7 +13,7 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   email: string;
-  farm: AuthFarm | null;
+  farm: AuthFarm;
 }
 
 export interface AuthResult {
@@ -37,7 +37,7 @@ export interface Profile {
   firstName: string;
   lastName: string;
   email: string;
-  farm: ProfileFarm | null;
+  farm: ProfileFarm;
 }
 
 export interface LoginPayload {
@@ -185,7 +185,8 @@ export interface ApiAnimal {
   si_id: string;
   name: string;
   breed: string | null;
-  status: string | null;
+  isLactating: boolean;
+  isPregnant: boolean;
   dateOfBirth: string | null;
   lactation: number | null;
 }
@@ -195,7 +196,8 @@ export interface CreateAnimalPayload {
   si_id: string;
   breed?: string;
   gender?: string;
-  status?: string;
+  isLactating?: boolean;
+  isPregnant?: boolean;
   dateOfBirth?: string;
   acquisitionDate?: string;
   dateOfTagging?: string;
@@ -210,9 +212,7 @@ export function createAnimal(token: string, payload: CreateAnimalPayload): Promi
   return postAuth<ApiAnimal>("/animals", payload, token);
 }
 
-export interface UpdateAnimalPayload {
-  status?: string;
-}
+export type UpdateAnimalPayload = Partial<Pick<ApiAnimal, "isLactating" | "isPregnant">>;
 
 export function updateAnimal(token: string, id: number, payload: UpdateAnimalPayload): Promise<ApiAnimal> {
   return patch<ApiAnimal>(`/animals/${id}`, payload, token);
