@@ -1,8 +1,9 @@
-import { IsDateString, IsIn, IsInt, IsOptional, IsString } from "class-validator";
-import { EVENT_TITLES } from "./event-title";
+import { IsDateString, IsInt, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 export class CreateEventDto {
-    @IsIn(EVENT_TITLES)
+    @IsString()
+    @MinLength(1)
+    @MaxLength(80)
     title!: string;
 
     @IsOptional()

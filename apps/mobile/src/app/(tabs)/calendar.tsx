@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Screen } from "@/components/screen";
-import { Card, Empty, SectionLabel, SelectField } from "@/components/ui";
+import { Card, Empty, SectionLabel, SelectField, TextField } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
@@ -26,8 +26,11 @@ const MESECI = [
 ];
 const DNEVI = ["pon", "tor", "sre", "čet", "pet", "sob", "ned"];
 
-// Fixed set of event titles the user can pick from when adding an opravilo.
-const EVENT_TITLES = ["Predvidena telitev", "Veterinarski pregled", "Semenitev", "Premik"];
+// Preset event titles in the add-opravilo dropdown. "Drugo" is UI-only: the
+// user then types a custom title, which is what gets saved.
+const EVENT_TITLES = ["Predvidena telitev", "Veterinarski pregled", "Semenitev", "Premik", "Drugo"];
+const CUSTOM_TITLE = "Drugo";
+const EVENT_TITLE_OPTIONS = EVENT_TITLES.map((t) => ({ value: t, label: t }));
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const toKey = (year: number, month: number, day: number) => `${year}-${pad(month + 1)}-${pad(day)}`;
@@ -61,6 +64,7 @@ export default function CalendarScreen() {
   const [opravila, setOpravila] = useState<Opravilo[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [naslov, setNaslov] = useState("");
+  const [customNaslov, setCustomNaslov] = useState("");
   const [opomba, setOpomba] = useState("");
   const [zivalId, setZivalId] = useState("");
 
@@ -103,8 +107,17 @@ export default function CalendarScreen() {
     });
   };
 
+  const resolvedTitle = naslov === CUSTOM_TITLE ? customNaslov.trim() : naslov.trim();
+
+  const resetForm = () => {
+    setNaslov("");
+    setCustomNaslov("");
+    setOpomba("");
+    setZivalId("");
+  };
+
   const addOpravilo = async () => {
-    const title = naslov.trim();
+    const title = resolvedTitle;
     if (!title) return;
     if (!token) {
       Alert.alert("Seja je potekla", "Prijavi se znova.");
@@ -123,9 +136,7 @@ export default function CalendarScreen() {
         zivalId: zival?.id ?? null,
       });
       setOpravila((prev) => [...prev, created]);
-      setNaslov("");
-      setOpomba("");
-      setZivalId("");
+      resetForm();
       setModalOpen(false);
     } catch (err) {
       Alert.alert("Napaka", err instanceof Error ? err.message : "Opravila ni bilo mogoče shraniti.");
@@ -263,26 +274,42 @@ export default function CalendarScreen() {
         ))}
       </View>
 
-      <Modal visible={modalOpen} transparent animationType="fade" onRequestClose={() => setModalOpen(false)}>
+      <Modal
+        visible={modalOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          resetForm();
+          setModalOpen(false);
+        }}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Novo opravilo</Text>
             <Text style={styles.modalDate}>{fmtKey(selected)}</Text>
-            <Text style={styles.fieldLabel}>Naslov</Text>
-            <View style={styles.titleOptions}>
-              {EVENT_TITLES.map((t) => {
-                const active = naslov === t;
-                return (
-                  <Pressable
-                    key={t}
-                    onPress={() => setNaslov(t)}
-                    style={[styles.titleChip, active && styles.titleChipActive]}
-                  >
-                    <Text style={[styles.titleChipText, active && styles.titleChipTextActive]}>{t}</Text>
-                  </Pressable>
-                );
-              })}
+            <View style={styles.zivalField}>
+              <SelectField
+                label="Vrsta opravila"
+                value={naslov}
+                options={EVENT_TITLE_OPTIONS}
+                onChange={(value) => {
+                  setNaslov(value);
+                  if (value !== CUSTOM_TITLE) setCustomNaslov("");
+                }}
+                placeholder="Izberi opravilo"
+              />
             </View>
+            {naslov === CUSTOM_TITLE && (
+              <View style={styles.zivalField}>
+                <TextField
+                  label="Druga vrsta"
+                  value={customNaslov}
+                  onChangeText={setCustomNaslov}
+                  placeholder="Vnesi vrsto opravila"
+                  autoCapitalize="sentences"
+                />
+              </View>
+            )}
             <View style={styles.zivalField}>
               <SelectField
                 label="Žival"
@@ -303,18 +330,21 @@ export default function CalendarScreen() {
             <Text style={styles.modalHint}>Opomnik boš prejel teden dni pred opravilom ob 8.00.</Text>
             <View style={styles.modalActions}>
               <Pressable
-                onPress={() => setModalOpen(false)}
+                onPress={() => {
+                  resetForm();
+                  setModalOpen(false);
+                }}
                 style={({ pressed }) => [styles.modalButton, styles.modalCancel, pressed && styles.pressed]}
               >
                 <Text style={styles.modalCancelText}>Prekliči</Text>
               </Pressable>
               <Pressable
                 onPress={addOpravilo}
-                disabled={!naslov.trim()}
+                disabled={!resolvedTitle}
                 style={({ pressed }) => [
                   styles.modalButton,
                   styles.modalSave,
-                  !naslov.trim() && styles.modalSaveDisabled,
+                  !resolvedTitle && styles.modalSaveDisabled,
                   pressed && styles.pressed,
                 ]}
               >
@@ -475,38 +505,6 @@ const styles = StyleSheet.create({
     fontFamily: F.sans,
     color: C.ink,
     marginBottom: 8,
-  },
-  fieldLabel: {
-    color: C.soil,
-    fontSize: 12,
-    fontFamily: F.sansMedium,
-    marginBottom: 6,
-  },
-  titleOptions: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 8,
-  },
-  titleChip: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: C.line,
-    backgroundColor: C.bg,
-  },
-  titleChipActive: {
-    backgroundColor: C.green,
-    borderColor: C.green,
-  },
-  titleChipText: {
-    fontSize: 12.5,
-    fontFamily: F.sansMedium,
-    color: C.ink,
-  },
-  titleChipTextActive: {
-    color: C.paper,
   },
   zivalField: {
     marginBottom: 8,
