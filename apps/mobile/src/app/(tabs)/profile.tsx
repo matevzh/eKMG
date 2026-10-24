@@ -1,5 +1,5 @@
 import { Pencil, User } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, Text, View } from "react-native";
 
 import { Screen } from "@/components/screen";
@@ -7,7 +7,7 @@ import { Card, PrimaryButton, Row, SecondaryButton, SectionLabel } from "@/compo
 import { C, F } from "@/constants/theme";
 import * as api from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 const DASH = "—";
 
@@ -17,7 +17,7 @@ export default function ProfileScreen() {
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!token) return;
     let active = true;
     api
@@ -31,7 +31,7 @@ export default function ProfileScreen() {
     return () => {
       active = false;
     };
-  }, [token]);
+  }, [token]));
 
   async function handleExport() {
     if (!token || exporting) return;
