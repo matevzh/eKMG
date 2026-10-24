@@ -1,6 +1,6 @@
-# eKMG
+# Krave
 
-eKMG is a farm-management app for keeping track of farms, animals, milk production, events, and finances. It includes a React web client, an Expo mobile app, and a NestJS API backed by PostgreSQL.
+Krave is a farm-management app for keeping track of farms, animals, milk production, events, and finances. It includes a React web client, an Expo mobile app, and a NestJS API backed by PostgreSQL.
 
 ## Apps
 
