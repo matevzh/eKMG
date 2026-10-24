@@ -187,7 +187,7 @@ export default function AnimalDetailScreen() {
             <Card>
               <Row label="Pasma" value={z.pasma} />
               <Row label="Datum rojstva" value={z.datum_rojstva} />
-              <Row label="Laktacija" value={`#${z.laktacija}`} />
+              {/*<Row label="Laktacija" value={`#${z.laktacija}`} />*/}
             </Card>
             <SectionLabel>Opravila</SectionLabel>
             {animalTasks.length === 0 ? (

@@ -94,13 +94,13 @@ export default function NewAnimalScreen() {
             <DateField label="Datum rojstva" value={datumRojstva} onChange={setDatumRojstva} />
             <DateField label="Datum pridobitve" value={datumPridobitve} onChange={setDatumPridobitve} />
             <DateField label="Datum označitve" value={datumOznacitve} onChange={setDatumOznacitve} />
-            <TextField
+            {/*<TextField
               label="Zaporedna laktacija"
               value={laktacija}
               onChangeText={setLaktacija}
               placeholder="0"
               keyboardType="number-pad"
-            />
+            />*/}
             <View style={styles.fieldWrap}>
               <Text style={styles.fieldLabel}>Trenutno molzna</Text>
               <PillTabs
