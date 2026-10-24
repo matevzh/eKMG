@@ -93,7 +93,7 @@ export default function ProfileScreen() {
         </View>
         
         <Pressable
-          //onPress={handleEditProfile}
+          onPress={() => router.push("/profile/edit")}
           style={({ pressed }) => [styles.editUserButton, pressed && styles.pressed]}
         >
           <Pencil size={16} color={C.paper}

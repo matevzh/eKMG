@@ -40,6 +40,12 @@ export interface Profile {
   farm: ProfileFarm;
 }
 
+export interface UpdateProfilePayload {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
+
 export interface LoginPayload {
   email: string;
   password: string;
@@ -143,6 +149,10 @@ async function del(path: string, token: string): Promise<void> {
 
 export function login(payload: LoginPayload): Promise<AuthResult> {
   return post<AuthResult>("/auth/login", payload);
+}
+
+export function updateProfile(token: string, payload: UpdateProfilePayload): Promise<Profile> {
+  return patch<Profile>("/users/me", payload, token);
 }
 
 export function getProfile(token: string): Promise<Profile> {
