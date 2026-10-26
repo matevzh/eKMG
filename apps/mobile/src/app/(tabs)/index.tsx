@@ -17,11 +17,13 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Screen } from "@/components/screen";
 import { Card, Empty, SectionLabel } from "@/components/ui";
 import { C, F } from "@/constants/theme";
+import { SyncBanner } from "@/components/sync-banner";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import * as api from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { addEventPushListener } from "@/lib/notifications";
-import { loadOpravila, type Opravilo } from "@/lib/tasks";
+import { syncNow } from "@/lib/sync/engine";
+import { loadOpravila, useOpravila } from "@/lib/tasks";
 
 const DNEVI = ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"];
 const MESECI = ["januar", "februar", "marec", "april", "maj", "junij", "julij", "avgust", "september", "oktober", "november", "december"];
@@ -64,8 +66,8 @@ export default function HomeScreen() {
   const router = useRouter();
   const { user, token } = useAuth();
   const animals = useAnimals();
+  const opravila = useOpravila();
   const [profile, setProfile] = useState<api.Profile | null>(null);
-  const [opravila, setOpravila] = useState<Opravilo[]>([]);
 
   useEffect(() => {
     if (!token) return;
@@ -74,11 +76,7 @@ export default function HomeScreen() {
     loadAnimals(token).catch(() => {
       // Keep the current count if the backend is unreachable.
     });
-    loadOpravila(token)
-      .then((list) => {
-        if (active) setOpravila(list);
-      })
-      .catch(() => {});
+    loadOpravila(token).catch(() => {});
     api
       .getProfile(token)
       .then((p) => {
@@ -97,7 +95,7 @@ export default function HomeScreen() {
   useEffect(() => {
     if (!token) return;
     return addEventPushListener(() => {
-      loadOpravila(token).then(setOpravila).catch(() => {});
+      void syncNow();
     });
   }, [token]);
 
@@ -111,7 +109,10 @@ export default function HomeScreen() {
   const alerts = upcoming.slice(0, 4);
 
   const farm = profile?.farm;
-  const farmName = farm?.name || profile?.name || user?.name || "Moja kmetija";
+  const farmName =
+    farm?.name ||
+    [profile?.firstName ?? user?.firstName, profile?.lastName ?? user?.lastName].filter(Boolean).join(" ") ||
+    "Moja kmetija";
   const kmgMid = farm?.kmg_mid ?? user?.farm?.kmg_mid;
   const metaParts = [farm?.location || undefined, kmgMid ? `KMG-MID ${kmgMid}` : undefined].filter(Boolean);
 
@@ -123,6 +124,7 @@ export default function HomeScreen() {
 
   return (
     <Screen title="Domov">
+      {/* <SyncBanner /> */}
       <View style={styles.header}>
         <Text style={styles.date}>{slovenianDate(new Date())}</Text>
         <Text style={styles.farmName}>{farmName}</Text>

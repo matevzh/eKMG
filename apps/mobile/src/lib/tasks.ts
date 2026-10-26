@@ -1,6 +1,19 @@
-import * as api from "./api";
+import { useSyncExternalStore } from "react";
 
-// UI shape for a calendar event (opravilo), mapped from the backend event.
+import { getAnimalById } from "@/lib/db/animals";
+import {
+  deleteEventLocal,
+  getEventById,
+  insertPendingEvent,
+  listEventRows,
+  type EventRow,
+} from "@/lib/db/events";
+import { deleteOutboxMatching, enqueueOutbox } from "@/lib/db/outbox";
+import { onEventsDataChanged } from "@/lib/sync/bus";
+import { syncNow } from "@/lib/sync/engine";
+import { refreshSyncStatusFromDb } from "@/lib/sync/status";
+
+// UI shape for a calendar event (opravilo), mapped from the local SQLite row.
 export interface Opravilo {
   id: number;
   naslov: string;
@@ -21,36 +34,93 @@ export interface NewOpravilo {
   zivalId?: number | null;
 }
 
-function toOpravilo(e: api.ApiEvent): Opravilo {
+function rowToOpravilo(row: EventRow): Opravilo {
   return {
-    id: e.id,
-    naslov: e.title,
-    opomba: e.note ?? undefined,
-    datum: e.date,
-    notificationId: e.notificationId,
-    reminderSent: e.reminderSent,
-    zivalId: e.animalId,
-    zivalIme: e.animalName,
-    zivalSiId: e.animalSiId,
+    id: row.id,
+    naslov: row.title,
+    opomba: row.note ?? undefined,
+    datum: row.date,
+    notificationId: row.notification_id,
+    reminderSent: !!row.reminder_sent,
+    zivalId: row.animal_id,
+    zivalIme: row.animal_name,
+    zivalSiId: row.animal_si_id,
   };
 }
 
-export async function loadOpravila(token: string): Promise<Opravilo[]> {
-  const events = await api.getEvents(token);
-  return events.map(toOpravilo);
+let opravila: Opravilo[] = [];
+const listeners = new Set<() => void>();
+
+function emit() {
+  for (const listener of listeners) listener();
 }
 
-export async function createOpravilo(token: string, input: NewOpravilo): Promise<Opravilo> {
-  const created = await api.createEvent(token, {
+function reloadFromDb() {
+  opravila = listEventRows().map(rowToOpravilo);
+  emit();
+}
+
+onEventsDataChanged(reloadFromDb);
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot() {
+  return opravila;
+}
+
+export async function loadOpravila(_token?: string): Promise<Opravilo[]> {
+  reloadFromDb();
+  if (_token) void syncNow();
+  return opravila;
+}
+
+export function useOpravila(): Opravilo[] {
+  return useSyncExternalStore(subscribe, getSnapshot);
+}
+
+export async function createOpravilo(_token: string, input: NewOpravilo): Promise<Opravilo> {
+  const animal = input.zivalId != null ? getAnimalById(input.zivalId) : null;
+  const { row, clientId } = insertPendingEvent({
     title: input.naslov,
     note: input.opomba,
     date: input.datum,
     notificationId: input.notificationId,
     animalId: input.zivalId ?? null,
   });
-  return toOpravilo(created);
+
+  enqueueOutbox("event.create", {
+    clientId,
+    animalClientId: animal?.client_id ?? null,
+  });
+
+  reloadFromDb();
+  refreshSyncStatusFromDb();
+  void syncNow();
+  return rowToOpravilo(row);
 }
 
-export async function deleteOpravilo(token: string, id: number): Promise<void> {
-  await api.deleteEvent(token, id);
+export async function deleteOpravilo(_token: string, id: number): Promise<void> {
+  const row = getEventById(id);
+  if (!row) return;
+
+  // Never-synced: drop local row + matching create outbox.
+  if (row.server_id == null && id < 0) {
+    deleteOutboxMatching("event.create", (p) => p.clientId === row.client_id);
+    deleteEventLocal(id);
+    reloadFromDb();
+    refreshSyncStatusFromDb();
+    return;
+  }
+
+  const serverId = row.server_id ?? id;
+  deleteEventLocal(id);
+  enqueueOutbox("event.delete", { serverId, clientId: row.client_id });
+  reloadFromDb();
+  refreshSyncStatusFromDb();
+  void syncNow();
 }

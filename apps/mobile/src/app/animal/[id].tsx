@@ -10,7 +10,8 @@ import { C, F } from "@/constants/theme";
 import { removeAnimal, updateAnimalState, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
 import { addEventPushListener } from "@/lib/notifications";
-import { loadOpravila, type Opravilo } from "@/lib/tasks";
+import { syncNow } from "@/lib/sync/engine";
+import { loadOpravila, useOpravila } from "@/lib/tasks";
 
 const MESECI = [
   "jan", "feb", "mar", "apr", "maj", "jun",
@@ -32,8 +33,8 @@ export default function AnimalDetailScreen() {
   const [tab, setTab] = useState<DetailTab>("pregled");
   const [deleting, setDeleting] = useState(false);
   const [savingState, setSavingState] = useState(false);
-  const [opravila, setOpravila] = useState<Opravilo[]>([]);
   const animals = useAnimals();
+  const allOpravila = useOpravila();
 
   const z = animals.find((a) => a.id === Number(id));
   const d = EMPTY_DETAIL;
@@ -41,30 +42,24 @@ export default function AnimalDetailScreen() {
   const animalId = z?.id;
   const todayKey = new Date().toISOString().slice(0, 10);
 
-  // Load calendar events and keep only the ones tied to this animal, upcoming first.
   useEffect(() => {
-    if (!token || animalId == null) return;
-    const refresh = () => {
-      loadOpravila(token)
-        .then((all) => setOpravila(all.filter((o) => o.zivalId === animalId)))
-        .catch(() => {});
-    };
-    refresh();
-    // Refresh when another farm device pushes an event change (live sync).
-    return addEventPushListener(refresh);
-  }, [token, animalId]);
+    if (!token) return;
+    loadOpravila(token).catch(() => {});
+    return addEventPushListener(() => {
+      void syncNow();
+    });
+  }, [token]);
 
-  const animalTasks = useMemo(
-    () =>
-      [...opravila].sort((a, b) => {
-        const aUpcoming = a.datum >= todayKey;
-        const bUpcoming = b.datum >= todayKey;
-        if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
-        // Upcoming: soonest first. Past: most recent first.
-        return aUpcoming ? a.datum.localeCompare(b.datum) : b.datum.localeCompare(a.datum);
-      }),
-    [opravila, todayKey],
-  );
+  const animalTasks = useMemo(() => {
+    const linked = allOpravila.filter((o) => o.zivalId === animalId);
+    return [...linked].sort((a, b) => {
+      const aUpcoming = a.datum >= todayKey;
+      const bUpcoming = b.datum >= todayKey;
+      if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
+      // Upcoming: soonest first. Past: most recent first.
+      return aUpcoming ? a.datum.localeCompare(b.datum) : b.datum.localeCompare(a.datum);
+    });
+  }, [allOpravila, animalId, todayKey]);
 
   function confirmDelete() {
     if (!z) return;

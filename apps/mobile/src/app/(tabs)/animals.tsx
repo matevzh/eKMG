@@ -4,16 +4,19 @@ import { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { SyncBanner } from "@/components/sync-banner";
 import { Card, EarTag, TopBar } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
+import { useSyncStatus } from "@/lib/sync/status";
 
 export default function AnimalsScreen() {
   const router = useRouter();
   const { token } = useAuth();
   const [q, setQ] = useState("");
   const animals = useAnimals();
+  const sync = useSyncStatus();
 
   useEffect(() => {
     if (token) {
@@ -24,6 +27,7 @@ export default function AnimalsScreen() {
   }, [token]);
 
   const filtered = animals.filter((z) => (z.ime + z.si_id).toLowerCase().includes(q.toLowerCase()));
+  const neverSyncedOffline = !sync.online && !sync.lastSyncAt && animals.length === 0;
 
   return (
     <SafeAreaView edges={["top"]} style={styles.root}>
@@ -53,8 +57,13 @@ export default function AnimalsScreen() {
         {filtered.length === 0 && (
           <View style={{ alignItems: "center"}}>
             <Text style={styles.noAnimalsText}>
-              Ni najdenih živali. Dodaj prvo
+              {neverSyncedOffline
+                ? "Ni podatkov — poveži se enkrat."
+                : q
+                  ? "Ni najdenih živali."
+                  : "Ni najdenih živali. Dodaj prvo"}
             </Text>
+            {!neverSyncedOffline && !q && (
             <Pressable
               onPress={() => router.push("/animal/new")}
               hitSlop={8}
@@ -62,6 +71,7 @@ export default function AnimalsScreen() {
             >
               <Plus size={18} color={C.paper} />
             </Pressable>
+            )}
           </View>
         )}
         <View style={{ height: 8 }} />

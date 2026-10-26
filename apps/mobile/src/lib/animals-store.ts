@@ -1,10 +1,22 @@
 import { useSyncExternalStore } from "react";
 
-import { breedLabel, type Zival } from "@/constants/data";
-import * as api from "@/lib/api";
+import type { Zival } from "@/constants/data";
+import {
+  deleteAnimalLocal,
+  getAnimalById,
+  insertPendingAnimal,
+  listAnimalsLocal,
+  updateAnimalLocal,
+} from "@/lib/db/animals";
+import { getDb } from "@/lib/db/client";
+import { deleteOutboxMatching, enqueueOutbox } from "@/lib/db/outbox";
+import { emitEventsDataChanged } from "@/lib/sync/bus";
+import { onAnimalsDataChanged } from "@/lib/sync/bus";
+import { syncNow } from "@/lib/sync/engine";
+import { refreshSyncStatusFromDb } from "@/lib/sync/status";
 
-// Live animal list backed by the API. Screens read it with `useAnimals()`;
-// `loadAnimals` refreshes from the backend and `addAnimal` persists a new one.
+// Live animal list backed by SQLite. Screens read it with `useAnimals()`;
+// mutations write locally + outbox, then kick the sync engine.
 let animals: Zival[] = [];
 const listeners = new Set<() => void>();
 
@@ -23,22 +35,16 @@ function getSnapshot() {
   return animals;
 }
 
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-
-function toZival(a: api.ApiAnimal): Zival {
-  return {
-    id: a.id,
-    si_id: a.si_id,
-    ime: a.name,
-    pasma: a.breed ? breedLabel(a.breed) : "—",
-    isLactating: a.isLactating,
-    isPregnant: a.isPregnant,
-    datum_rojstva: a.dateOfBirth ?? "—",
-    laktacija: a.lactation ?? 0,
-  };
+function reloadFromDb() {
+  animals = listAnimalsLocal();
+  emit();
 }
 
-// Data collected by the add-animal form before it is sent to the backend.
+onAnimalsDataChanged(reloadFromDb);
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// Data collected by the add-animal form before it is persisted locally.
 export interface NewAnimalInput {
   ime: string;
   si_id: string;
@@ -52,13 +58,17 @@ export interface NewAnimalInput {
   laktacija: number;
 }
 
-// The backend validates dates as ISO strings; only send a well-formed one.
 function isoOrUndefined(value: string): string | undefined {
   return DATE_RE.test(value) ? value : undefined;
 }
 
-function toPayload(input: NewAnimalInput): api.CreateAnimalPayload {
-  return {
+export async function loadAnimals(_token?: string): Promise<void> {
+  reloadFromDb();
+  if (_token) void syncNow();
+}
+
+export async function addAnimal(_token: string, input: NewAnimalInput): Promise<Zival> {
+  const { zival, clientId } = insertPendingAnimal({
     name: input.ime,
     si_id: input.si_id,
     breed: input.breed || undefined,
@@ -69,36 +79,73 @@ function toPayload(input: NewAnimalInput): api.CreateAnimalPayload {
     acquisitionDate: isoOrUndefined(input.datum_pridobitve),
     dateOfTagging: isoOrUndefined(input.datum_oznacitve),
     lactation: input.laktacija,
-  };
-}
+  });
 
-export async function loadAnimals(token: string): Promise<void> {
-  const fetched = await api.getAnimals(token);
-  animals = fetched.map(toZival);
-  emit();
-}
-
-export async function addAnimal(token: string, input: NewAnimalInput): Promise<Zival> {
-  const created = toZival(await api.createAnimal(token, toPayload(input)));
-  animals = [created, ...animals];
-  emit();
-  return created;
+  enqueueOutbox("animal.create", { clientId });
+  reloadFromDb();
+  refreshSyncStatusFromDb();
+  void syncNow();
+  return zival;
 }
 
 export async function updateAnimalState(
-  token: string,
+  _token: string,
   id: number,
   state: Partial<Pick<Zival, "isLactating" | "isPregnant">>,
 ): Promise<void> {
-  const updated = toZival(await api.updateAnimal(token, id, state));
-  animals = animals.map((a) => (a.id === id ? updated : a));
-  emit();
+  const row = getAnimalById(id);
+  if (!row) return;
+
+  updateAnimalLocal(id, state);
+
+  // Never-synced animal: create outbox will read current row at flush time.
+  if (row.server_id == null && id < 0) {
+    reloadFromDb();
+    void syncNow();
+    return;
+  }
+
+  const serverId = row.server_id ?? (id > 0 ? id : null);
+  if (serverId != null) {
+    enqueueOutbox("animal.patch", {
+      serverId,
+      clientId: row.client_id,
+      isLactating: state.isLactating,
+      isPregnant: state.isPregnant,
+    });
+  }
+
+  reloadFromDb();
+  refreshSyncStatusFromDb();
+  void syncNow();
 }
 
-export async function removeAnimal(token: string, id: number): Promise<void> {
-  await api.deleteAnimal(token, id);
-  animals = animals.filter((a) => a.id !== id);
-  emit();
+export async function removeAnimal(_token: string, id: number): Promise<void> {
+  const row = getAnimalById(id);
+  if (!row) return;
+
+  // Never-synced: drop local row + matching create outbox; never hit the API.
+  if (row.server_id == null && id < 0) {
+    deleteOutboxMatching("animal.create", (p) => p.clientId === row.client_id);
+    deleteOutboxMatching("event.create", (p) => p.animalClientId === row.client_id);
+    // Drop local events that pointed at this pending animal.
+    getDb().runSync("DELETE FROM events WHERE animal_client_id = ? OR animal_id = ?", [
+      row.client_id,
+      id,
+    ]);
+    deleteAnimalLocal(id);
+    emitEventsDataChanged();
+    reloadFromDb();
+    refreshSyncStatusFromDb();
+    return;
+  }
+
+  const serverId = row.server_id ?? id;
+  deleteAnimalLocal(id);
+  enqueueOutbox("animal.delete", { serverId, clientId: row.client_id });
+  reloadFromDb();
+  refreshSyncStatusFromDb();
+  void syncNow();
 }
 
 export function useAnimals(): Zival[] {

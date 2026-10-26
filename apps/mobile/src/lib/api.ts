@@ -212,6 +212,8 @@ export interface CreateAnimalPayload {
   acquisitionDate?: string;
   dateOfTagging?: string;
   lactation?: number;
+  /** Offline idempotency key — retries with the same UUID return the same row. */
+  clientId?: string;
 }
 
 export function getAnimals(token: string): Promise<ApiAnimal[]> {
@@ -251,6 +253,8 @@ export interface CreateEventPayload {
   date: string;
   notificationId?: string | null;
   animalId?: number | null;
+  /** Offline idempotency key — retries with the same UUID return the same row. */
+  clientId?: string;
 }
 
 export function getEvents(token: string): Promise<ApiEvent[]> {

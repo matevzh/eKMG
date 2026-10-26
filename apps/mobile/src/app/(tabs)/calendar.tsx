@@ -3,12 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Screen } from "@/components/screen";
+import { SyncBanner } from "@/components/sync-banner";
 import { Card, Empty, SectionLabel, SelectField, TextField } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
 import { addEventPushListener } from "@/lib/notifications";
-import { createOpravilo, deleteOpravilo, loadOpravila, type Opravilo } from "@/lib/tasks";
+import { syncNow } from "@/lib/sync/engine";
+import { createOpravilo, deleteOpravilo, loadOpravila, useOpravila, type Opravilo } from "@/lib/tasks";
 
 const MESECI = [
   "januar",
@@ -61,7 +63,6 @@ export default function CalendarScreen() {
 
   const [cursor, setCursor] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [selected, setSelected] = useState(todayKey);
-  const [opravila, setOpravila] = useState<Opravilo[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [naslov, setNaslov] = useState("");
   const [customNaslov, setCustomNaslov] = useState("");
@@ -70,10 +71,11 @@ export default function CalendarScreen() {
 
   const { token } = useAuth();
   const animals = useAnimals();
+  const opravila = useOpravila();
 
   useEffect(() => {
     if (!token) return;
-    loadOpravila(token).then(setOpravila).catch(() => {});
+    loadOpravila(token).catch(() => {});
     loadAnimals(token).catch(() => {});
   }, [token]);
 
@@ -81,7 +83,7 @@ export default function CalendarScreen() {
   useEffect(() => {
     if (!token) return;
     return addEventPushListener(() => {
-      loadOpravila(token).then(setOpravila).catch(() => {});
+      void syncNow();
     });
   }, [token]);
 
@@ -128,14 +130,13 @@ export default function CalendarScreen() {
     // registered farm device — no local scheduling needed here.
     const zival = animals.find((a) => String(a.id) === zivalId);
     try {
-      const created = await createOpravilo(token, {
+      await createOpravilo(token, {
         naslov: title,
         opomba: opomba.trim() || undefined,
         datum: selected,
         notificationId: null,
         zivalId: zival?.id ?? null,
       });
-      setOpravila((prev) => [...prev, created]);
       resetForm();
       setModalOpen(false);
     } catch (err) {
@@ -147,7 +148,6 @@ export default function CalendarScreen() {
     if (!token) return;
     try {
       await deleteOpravilo(token, opravilo.id);
-      setOpravila((prev) => prev.filter((o) => o.id !== opravilo.id));
     } catch (err) {
       Alert.alert("Napaka", err instanceof Error ? err.message : "Opravila ni bilo mogoče izbrisati.");
     }
@@ -215,6 +215,7 @@ export default function CalendarScreen() {
         </Pressable>
       }
     >
+      {/* <SyncBanner /> */}
       <Card style={styles.calendarCard}>
         <View style={styles.monthHeader}>
           <Pressable onPress={() => shiftMonth(-1)} hitSlop={8} style={({ pressed }) => pressed && styles.pressed}>

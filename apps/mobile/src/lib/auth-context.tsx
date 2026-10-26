@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 import * as api from "@/lib/api";
 import type { AuthUser, LoginPayload, RegisterPayload } from "@/lib/api";
+import { clearLocalOnSignOut, configureSync } from "@/lib/sync/engine";
 
 const STORAGE_KEY = "krave-auth";
 
@@ -56,21 +57,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const result = await api.login(payload);
         setNeedsFarmSetup(false);
         await persist({ token: result.access_token, user: result.user });
+        configureSync(result.access_token, result.user.farm.id);
       },
       signUp: async (payload) => {
         const result = await api.register(payload);
         // Farm setup only when the server created a new farm — never when joining an existing one, so shared farm details can't be overwritten.
         setNeedsFarmSetup(result.needsFarmSetup ?? false);
         await persist({ token: result.access_token, user: result.user });
+        configureSync(result.access_token, result.user.farm.id);
       },
       completeFarmSetup: () => setNeedsFarmSetup(false),
       signOut: async () => {
         setNeedsFarmSetup(false);
+        clearLocalOnSignOut();
         await persist(null);
       },
     }),
     [auth, isLoading, needsFarmSetup],
   );
+
+  // Restore sync config when auth hydrates from SecureStore.
+  useEffect(() => {
+    if (isLoading) return;
+    if (auth) {
+      configureSync(auth.token, auth.user.farm.id);
+    }
+  }, [isLoading, auth?.token, auth?.user.farm.id]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

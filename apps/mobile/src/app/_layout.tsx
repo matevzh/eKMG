@@ -14,7 +14,11 @@ import { Platform } from "react-native";
 import { C } from "@/constants/theme";
 import * as api from "@/lib/api";
 import { AuthProvider, useAuth } from "@/lib/auth-context";
+// Side-effect: register SQLite store listeners for sync bus emissions.
+import "@/lib/animals-store";
+import "@/lib/tasks";
 import { registerForPushNotificationsAsync, setupNotifications } from "@/lib/notifications";
+import { startSyncListeners } from "@/lib/sync/engine";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,6 +34,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     setupNotifications();
+    startSyncListeners();
   }, []);
 
   return (
