@@ -1,10 +1,8 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../users/entity/user.entity";
 import { Repository } from "typeorm";
 import { CreateFarmDto } from "./entities/create-farm.dto";
 import { Farm } from "./entities/farm.entity";
-import { UsersService } from "../users/user.service";
 import { UpdateFarmDto } from "./entities/update-farm.dto";
 
 @Injectable()
@@ -14,7 +12,6 @@ export class FarmService {
     constructor(
         @InjectRepository(Farm)
         private readonly farmRepository: Repository<Farm>,
-        private readonly usersService: UsersService
     ) {}
 
     async findById(id: number): Promise<Farm> {
@@ -59,22 +56,15 @@ export class FarmService {
     //     return users;
     // }
 
-    async create(createFarmDto: CreateFarmDto, userId: number): Promise<Farm> {
-        const user = await this.usersService.findById(userId);
-        const farmData: any = {
+    async create(createFarmDto: CreateFarmDto): Promise<Farm> {
+        const newFarm = this.farmRepository.create({
             name: createFarmDto.name,
             location: createFarmDto.location,
             kmg_mid: createFarmDto.kmg_mid,
             province: createFarmDto.province,
             postOffice: createFarmDto.postOffice,
-        }
-
-        const newFarm = this.farmRepository.create(farmData);
-        const savedFarm = await this.farmRepository.save(newFarm);
-        if(Array.isArray(savedFarm)) {
-            return savedFarm[0];
-        }
-        return savedFarm;
+        });
+        return this.farmRepository.save(newFarm);
     }
 
     async update(id: number, updateFarmDto: UpdateFarmDto): Promise<Farm> {
