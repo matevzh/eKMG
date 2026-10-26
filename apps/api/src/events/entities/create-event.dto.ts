@@ -1,4 +1,4 @@
-import { IsDateString, IsInt, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsDateString, IsInt, IsOptional, IsString, IsUUID, MaxLength, MinLength } from "class-validator";
 
 export class CreateEventDto {
     @IsString()
@@ -20,4 +20,9 @@ export class CreateEventDto {
     @IsOptional()
     @IsInt()
     animalId?: number | null;
+
+    // Offline client UUID — when set, create is idempotent per farm.
+    @IsOptional()
+    @IsUUID()
+    clientId?: string;
 }

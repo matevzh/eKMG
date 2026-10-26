@@ -11,6 +11,11 @@ export class CalendarEvent {
     @Column()
     title!: string;
 
+    // Optional client-generated UUID for offline-sync idempotency. Unique per farm
+    // so a retried POST returns the existing row instead of creating a duplicate.
+    @Column({ type: 'varchar', nullable: true })
+    clientId?: string | null;
+
     @Column({ nullable: true })
     note?: string;
 

@@ -1,23 +1,19 @@
-import { Body, Controller, NotFoundException, Patch, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Patch, Request } from "@nestjs/common";
 import { FarmService } from "./farm.service";
-import { UsersService } from "../users/user.service";
 import { UpdateFarmDto } from "./entities/update-farm.dto";
-import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { FarmScoped } from "../auth/farm-scoped.decorator";
+import { AuthUserPayload } from "../auth/auth-user.payload";
 
 @Controller('farms')
 export class FarmsController {
-    constructor(
-        private readonly farmService: FarmService,
-        private readonly usersService: UsersService,
-    ) {}
+    constructor(private readonly farmService: FarmService) {}
 
-    @UseGuards(JwtAuthGuard)
+    @FarmScoped()
     @Patch('mine')
-    async updateMine(@Request() req, @Body() updateFarmDto: UpdateFarmDto) {
-        const user = await this.usersService.findById(req.user.userId);
-        if (!user.farm) {
-            throw new NotFoundException('User is not linked to a farm');
-        }
-        return this.farmService.update(user.farm.id, updateFarmDto);
+    async updateMine(
+        @Request() req: { user: AuthUserPayload },
+        @Body() updateFarmDto: UpdateFarmDto,
+    ) {
+        return this.farmService.update(req.user.farmId!, updateFarmDto);
     }
 }

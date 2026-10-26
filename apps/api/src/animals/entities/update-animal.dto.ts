@@ -53,8 +53,5 @@ export class UpdateAnimalDto {
     @IsNumber()
     motherId?: number | null;
 
-    @IsOptional()
-    @IsNumber()
-    birthFarmId?: number;
-
+    // birthFarmId is intentionally omitted — farm ownership comes from the JWT only.
 }

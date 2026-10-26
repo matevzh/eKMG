@@ -1,32 +1,31 @@
-import { Body, Controller, HttpCode, NotFoundException, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, Post, Request, UseGuards } from "@nestjs/common";
 import { PushService } from "./push.service";
 import { RegisterPushTokenDto } from "./entities/register-push-token.dto";
+import { FarmScoped } from "../auth/farm-scoped.decorator";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { UsersService } from "../users/user.service";
+import { AuthUserPayload } from "../auth/auth-user.payload";
 
-@UseGuards(JwtAuthGuard)
 @Controller('push')
 export class PushController {
-    constructor(
-        private readonly pushService: PushService,
-        private readonly usersService: UsersService,
-    ) {}
+    constructor(private readonly pushService: PushService) {}
 
-    private async resolveFarmId(req): Promise<number> {
-        const user = await this.usersService.findById(req.user.userId);
-        if (!user.farm) {
-            throw new NotFoundException('User is not linked to a farm');
-        }
-        return user.farm.id;
-    }
-
+    @FarmScoped()
     @Post('register')
     @HttpCode(204)
-    async register(@Body() dto: RegisterPushTokenDto, @Request() req): Promise<void> {
-        const farmId = await this.resolveFarmId(req);
-        await this.pushService.registerToken(req.user.userId, farmId, dto.token, dto.platform);
+    async register(
+        @Body() dto: RegisterPushTokenDto,
+        @Request() req: { user: AuthUserPayload },
+    ): Promise<void> {
+        await this.pushService.registerToken(
+            req.user.userId,
+            req.user.farmId!,
+            dto.token,
+            dto.platform,
+        );
     }
 
+    // Unregister only needs a valid session; token string identifies the row.
+    @UseGuards(JwtAuthGuard)
     @Post('unregister')
     @HttpCode(204)
     async unregister(@Body() dto: RegisterPushTokenDto): Promise<void> {

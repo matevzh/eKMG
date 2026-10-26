@@ -40,9 +40,12 @@ export class AuthService {
             const isNewFarm = !existingFarm;
             const user = await this.userService.create(userRegisterDto, farm);
 
+            // farmId is required by FarmScopeGuard on herd/calendar routes.
+            // Tokens minted before this claim existed must re-login once.
             const payload = {
                 email: user.email,
                 sub: user.id,
+                farmId: farm.id,
             };
 
             const token = this.jwtService.sign(payload);
@@ -100,9 +103,14 @@ export class AuthService {
             const user = await this.validateUser(userLoginDto);
             this.debug('User validated successfully', user.id);
 
+            if (!user.farm) {
+                throw new UnauthorizedException('Uporabnik ni povezan s kmetijo.');
+            }
+
             const payload = {
                 email: user.email,
-                sub: user.id
+                sub: user.id,
+                farmId: user.farm.id,
             };
 
             let token: string;

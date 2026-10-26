@@ -40,8 +40,17 @@ export class AnimalsService {
         if(!birthfarm)
             throw new NotFoundException('Farm not found');
 
+        // Idempotent create: same clientId on this farm returns the existing row.
+        if (animal.clientId) {
+            const byClient = await this.animalRepository.findOne({
+                where: { birthFarmId: birthfarm.id, clientId: animal.clientId },
+            });
+            if (byClient) return byClient;
+        }
+
         const newAnimal = this.animalRepository.create({
             si_id: animal.si_id,
+            clientId: animal.clientId ?? null,
             name: animal.name,
             breed: animal.breed,
             gender: animal.gender,
@@ -60,8 +69,16 @@ export class AnimalsService {
         try {
             return await this.animalRepository.save(newAnimal);
         } catch (error) {
-            // Unique violation on si_id (Postgres error code 23505).
+            // Unique violation on si_id or (farm, clientId) (Postgres error code 23505).
             if (error instanceof QueryFailedError && (error as any).code === '23505') {
+                if (animal.clientId) {
+                    const byClient = await this.animalRepository.findOne({
+                        where: { birthFarmId: birthfarm.id, clientId: animal.clientId },
+                    });
+                    if (byClient) return byClient;
+                }
+                const bySi = await this.animalRepository.findOne({ where: { si_id: animal.si_id } });
+                if (bySi && bySi.birthFarmId === birthfarm.id) return bySi;
                 throw new ConflictException(`Žival z ušesno znamko ${animal.si_id} že obstaja.`);
             }
             throw error;
@@ -74,6 +91,8 @@ export class AnimalsService {
         if(!animal || animal.birthFarmId !== farmId)
             throw new NotFoundException('Animal not found');
 
+        // birthFarmId is not on UpdateAnimalDto (and ValidationPipe whitelist
+        // strips unknown keys), so farm ownership stays session-scoped.
         await this.animalRepository.update(id, updateAnimalDto);
         const updatedAnimal = await this.animalRepository.findOne({
             where: { id: id }

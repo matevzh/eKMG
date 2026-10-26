@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, IsInt, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDateString, IsInt, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateAnimalDto {
     @IsString()
@@ -6,6 +6,11 @@ export class CreateAnimalDto {
 
     @IsString()
     si_id!: string;
+
+    // Offline client UUID — when set, create is idempotent per farm.
+    @IsOptional()
+    @IsUUID()
+    clientId?: string;
 
     @IsString()
     breed?: string;

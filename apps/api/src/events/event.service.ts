@@ -53,6 +53,15 @@ export class EventsService {
     }
 
     async create(dto: CreateEventDto, farmId: number, userId: number): Promise<EventResponse> {
+        // Idempotent create: if this device already POSTed the same clientId, return it.
+        if (dto.clientId) {
+            const existing = await this.eventRepository.findOne({
+                where: { farmId, clientId: dto.clientId },
+                relations: ['animal'],
+            });
+            if (existing) return this.toResponse(existing);
+        }
+
         let animalId: number | null = null;
         if (dto.animalId != null) {
             const animal = await this.animalsService.findById(dto.animalId);
@@ -66,6 +75,7 @@ export class EventsService {
             note: dto.note,
             date: dto.date,
             notificationId: dto.notificationId ?? null,
+            clientId: dto.clientId ?? null,
             animalId,
             farmId,
         });

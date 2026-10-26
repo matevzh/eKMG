@@ -10,6 +10,10 @@ export class Animal {
     @Column({ unique: true })
     si_id!: string;
 
+    // Optional client-generated UUID for offline-sync idempotency (unique per farm).
+    @Column({ type: 'varchar', nullable: true })
+    clientId?: string | null;
+
     @Column()
     name!: string;
 
