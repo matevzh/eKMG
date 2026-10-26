@@ -1,22 +1,22 @@
 # Graph Report - eKMG  (2026-10-26)
 
 ## Corpus Check
-- 212 files · ~117,977 words
+- 215 files · ~119,477 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 12 file(s) not represented in the graph (top: (none) 8, .css 4)
+- Unclassified: 12 file(s) not represented in the graph (top: (none) 7, .css 4, .example 1)
 
 ## Summary
-- 1586 nodes · 3182 edges · 91 communities (72 shown, 19 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 72 edges (avg confidence: 0.85)
+- 1580 nodes · 3235 edges · 87 communities (70 shown, 17 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 72 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a98b55f0`
+- Built from commit: `b238e863`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- routes.tsx
+- lucide-react
 - cn
 - sidebar.tsx
 - auth-context.tsx
@@ -24,8 +24,8 @@
 - api/package.json
 - Animal
 - engine.ts
-- utils.ts
-- app.module.ts
+- ref_react
+- @nestjs/common
 - ui.tsx
 - dependencies
 - expo
@@ -40,50 +40,49 @@
 - pdfExports.ts
 - command.tsx
 - compilerOptions
-- FarmService
+- auth.service.ts
 - form.tsx
 - compilerOptions
 - legal-screen.tsx
 - scripts
 - compilerOptions
-- index.tsx
+- (tabs)/calendar.tsx
 - toggle-group.tsx
 - dependencies
 - context-menu.tsx
-- main.ts
-- @nestjs/common
+- Farm
+- AuthUserPayload
 - carousel.tsx
 - PushToken
+- CreateEventDto
 - CalendarEvent
-- .register
 - dependencies
 - UsersController
 - devDependencies
-- AppService
+- app.ts
 - chart.tsx
 - drawer.tsx
 - select.tsx
-- navigation-menu.tsx
-- api/README.md
+- dropdown-menu.tsx
+- create-test-db.js
 - app/_layout.tsx
 - jest
 - deploy
 - notifications.ts
 - graphify reference: extra exports and benchmark
 - web/eslint.config.js
-- Farm
+- User
 - mobile/tsconfig.json
-- ref_react
+- theme.ts
 - engines
 - scripts
 - Welcome to your Expo app 👋
 - nest-cli.json
-- (tabs)/calendar.tsx
+- index.tsx
+- InitialSchema1793000000000
 - graphify reference: query, path, explain
 - devDependencies
 - scripts
-- theme.ts
-- RequireFarmForUsers1792422000000
 - tsconfig.build.json
 - app.config.ts
 - React + TypeScript + Vite
@@ -100,21 +99,18 @@
 - event-title.ts
 - Krave
 - animals.tsx
-- animal.service.ts
-- InitialSchema1790869824212
-- AddClientIdForOfflineSync1792500000000
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 223 edges
-2. `lucide-react` - 35 edges
-3. `getDb()` - 33 edges
-4. `@nestjs/common` - 30 edges
+2. `@nestjs/common` - 39 edges
+3. `lucide-react` - 35 edges
+4. `getDb()` - 33 edges
 5. `Farm` - 28 edges
-6. `Animal` - 25 edges
+6. `Animal` - 26 edges
 7. `useAuth()` - 25 edges
-8. `typeorm` - 22 edges
-9. `User` - 21 edges
-10. `react-native` - 21 edges
+8. `react-native` - 21 edges
+9. `AnimalDetailScreen()` - 21 edges
+10. `User` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Small API change (needed so retries do not duplicate events)` --references--> `CreateEventDto`  [INFERRED]
@@ -131,15 +127,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (91 total, 19 thin omitted)
+## Communities (87 total, 17 thin omitted)
 
-### Community 0 - "routes.tsx"
+### Community 0 - "lucide-react"
 Cohesion: 0.07
-Nodes (37): App(), AnimalDetail(), AnimalForm(), AnimalList(), Animal, AnimalWithRelations, FamilyTree(), FamilyTreeProps (+29 more)
+Nodes (44): App(), AnimalDetail(), AnimalForm(), AnimalList(), Animal, AnimalWithRelations, FamilyTree(), FamilyTreeProps (+36 more)
 
 ### Community 1 - "cn"
 Cohesion: 0.06
-Nodes (38): Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage() (+30 more)
+Nodes (43): AccordionContent(), AccordionItem(), AccordionTrigger(), Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem() (+35 more)
 
 ### Community 2 - "sidebar.tsx"
 Cohesion: 0.06
@@ -154,24 +150,24 @@ Cohesion: 0.06
 Nodes (43): API_URL, ApiAnimal, ApiEvent, AuthFarm, AuthResult, AuthUser, createAnimal(), CreateAnimalPayload (+35 more)
 
 ### Community 5 - "api/package.json"
-Cohesion: 0.05
-Nodes (36): author, description, eslint, @eslint/js, globals, @types/node, typescript, typescript-eslint (+28 more)
+Cohesion: 0.06
+Nodes (35): author, description, eslint, @eslint/js, globals, @types/node, typescript, typescript-eslint (+27 more)
 
 ### Community 6 - "Animal"
-Cohesion: 0.09
-Nodes (3): AnimalsController, AnimalsService, Animal
+Cohesion: 0.06
+Nodes (6): AnimalsController, AnimalsService, Animal, CreateAnimalDto, UpdateAnimalDto, class-validator
 
 ### Community 7 - "engine.ts"
 Cohesion: 0.06
 Nodes (91): onChangeState(), onSubmit(), breedLabel(), Zival, addAnimal(), animals, emit(), getSnapshot() (+83 more)
 
-### Community 8 - "utils.ts"
-Cohesion: 0.07
-Nodes (8): HoverCardContent(), PopoverContent(), Progress(), ScrollArea(), ScrollBar(), Slider(), Switch(), Textarea()
+### Community 8 - "ref_react"
+Cohesion: 0.05
+Nodes (14): Checkbox(), HoverCardContent(), InputOTP(), InputOTPGroup(), InputOTPSlot(), PopoverContent(), Progress(), ResizableHandle() (+6 more)
 
-### Community 9 - "app.module.ts"
-Cohesion: 0.16
-Nodes (10): AnimalsModule, AuthModule, EventsModule, REMINDER_OFFSETS, FarmsModule, NotificationsModule, PushMessage, UsersModule (+2 more)
+### Community 9 - "@nestjs/common"
+Cohesion: 0.15
+Nodes (14): AnimalsModule, AuthModule, dataSource, dataSourceOptions, EventsModule, REMINDER_OFFSETS, FarmsModule, NotificationsModule (+6 more)
 
 ### Community 10 - "ui.tsx"
 Cohesion: 0.20
@@ -210,16 +206,16 @@ Cohesion: 0.07
 Nodes (26): eslint, react, react-dom, @types/react, typescript, main, name, private (+18 more)
 
 ### Community 19 - "web/package.json"
-Cohesion: 0.09
-Nodes (21): eslint, @eslint/js, globals, react, react-dom, @types/node, @types/react, typescript (+13 more)
+Cohesion: 0.10
+Nodes (19): eslint, @eslint/js, globals, react, react-dom, @types/node, @types/react, typescript (+11 more)
 
 ### Community 20 - "new.tsx"
 Cohesion: 0.10
 Nodes (21): BREED_OPTIONS, GENDER_TABS, styles, YES_NO_TABS, MilkTab, styles, BreedOption, BREEDS (+13 more)
 
 ### Community 21 - "pdfExports.ts"
-Cohesion: 0.26
-Nodes (20): Reports(), addHeaderFooter(), downloadCSV(), downloadFile(), exportAnimalListCSV(), exportARSKTRPSubsidyJSON(), exportCRGMovementXML(), exportHealthRecordsCSV() (+12 more)
+Cohesion: 0.22
+Nodes (22): Reports(), addHeaderFooter(), downloadCSV(), downloadFile(), exportAnimalListCSV(), exportARSKTRPSubsidyJSON(), exportCRGMovementXML(), exportHealthRecordsCSV() (+14 more)
 
 ### Community 22 - "command.tsx"
 Cohesion: 0.14
@@ -229,9 +225,9 @@ Nodes (16): Command(), CommandDialog(), CommandGroup(), CommandInput(), CommandI
 Cohesion: 0.09
 Nodes (21): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection, moduleResolution (+13 more)
 
-### Community 24 - "FarmService"
-Cohesion: 0.08
-Nodes (7): AuthController, AuthService, UserLoginDto, UserRegisterDto, FarmService, UsersService, @nestjs/jwt
+### Community 24 - "auth.service.ts"
+Cohesion: 0.10
+Nodes (6): AuthController, AuthService, UserLoginDto, UserRegisterDto, bcrypt, @nestjs/jwt
 
 ### Community 25 - "form.tsx"
 Cohesion: 0.18
@@ -247,15 +243,15 @@ Nodes (9): PrivacyScreen(), TermsScreen(), LegalScreen(), styles, LegalDocument,
 
 ### Community 28 - "scripts"
 Cohesion: 0.11
-Nodes (18): scripts, build, format, lint, migration:create, migration:generate, migration:revert, migration:run (+10 more)
+Nodes (19): scripts, build, format, lint, migration:create, migration:generate, migration:revert, migration:run (+11 more)
 
 ### Community 29 - "compilerOptions"
 Cohesion: 0.11
 Nodes (17): compilerOptions, allowSyntheticDefaultImports, declaration, emitDecoratorMetadata, experimentalDecorators, forceConsistentCasingInFileNames, incremental, module (+9 more)
 
-### Community 30 - "index.tsx"
-Cohesion: 0.24
-Nodes (13): daysUntil(), DNEVI, eventIcon(), HomeScreen(), MESECI, pad(), parseKey(), slovenianDate() (+5 more)
+### Community 30 - "(tabs)/calendar.tsx"
+Cohesion: 0.23
+Nodes (13): CalendarScreen(), DNEVI, EVENT_TITLE_OPTIONS, EVENT_TITLES, fmtKey(), MESECI, monthMatrix(), pad() (+5 more)
 
 ### Community 31 - "toggle-group.tsx"
 Cohesion: 0.15
@@ -269,25 +265,25 @@ Nodes (17): dependencies, bcrypt, class-transformer, class-validator, @nestjs/co
 Cohesion: 0.12
 Nodes (9): ContextMenuCheckboxItem(), ContextMenuContent(), ContextMenuItem(), ContextMenuLabel(), ContextMenuRadioItem(), ContextMenuSeparator(), ContextMenuShortcut(), ContextMenuSubContent() (+1 more)
 
-### Community 34 - "main.ts"
-Cohesion: 0.25
-Nodes (4): AppModule, @nestjs/core, @nestjs/testing, supertest
+### Community 34 - "Farm"
+Cohesion: 0.08
+Nodes (5): CreateFarmDto, Farm, UpdateFarmDto, FarmsController, FarmService
 
-### Community 35 - "@nestjs/common"
-Cohesion: 0.11
-Nodes (9): AuthUserPayload, FarmScopeGuard, FarmScoped(), JwtAuthGuard, JwtStrategy, UpdateFarmDto, FarmsController, @nestjs/common (+1 more)
+### Community 35 - "AuthUserPayload"
+Cohesion: 0.12
+Nodes (6): AuthUserPayload, FarmScopeGuard, JwtAuthGuard, JwtStrategy, RegisterPushTokenDto, @nestjs/passport
 
 ### Community 36 - "carousel.tsx"
 Cohesion: 0.17
 Nodes (14): Button(), Carousel(), CarouselApi, CarouselContent(), CarouselContext, CarouselContextProps, CarouselItem(), CarouselNext() (+6 more)
 
-### Community 37 - "PushToken"
-Cohesion: 0.11
-Nodes (3): ReminderService, PushToken, PushService
+### Community 38 - "CreateEventDto"
+Cohesion: 0.09
+Nodes (5): FarmScoped(), CreateEventDto, EventsController, EventResponse, EventsService
 
-### Community 38 - "CalendarEvent"
-Cohesion: 0.07
-Nodes (5): CreateEventDto, CalendarEvent, EventsController, EventResponse, EventsService
+### Community 39 - "CalendarEvent"
+Cohesion: 0.09
+Nodes (3): CalendarEvent, PushController, PushService
 
 ### Community 40 - "dependencies"
 Cohesion: 0.14
@@ -296,6 +292,10 @@ Nodes (14): dependencies, date-fns, i18next, jspdf, jspdf-autotable, lucide-reac
 ### Community 42 - "devDependencies"
 Cohesion: 0.15
 Nodes (13): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, @types/node, @types/react (+5 more)
+
+### Community 43 - "app.ts"
+Cohesion: 0.07
+Nodes (20): API (`apps/api`), E2E (`npm run test:e2e`), Tests, Unit (`npm test`), AppController, AppModule, AppService, ReminderService (+12 more)
 
 ### Community 44 - "chart.tsx"
 Cohesion: 0.24
@@ -309,13 +309,13 @@ Nodes (7): DrawerContent(), DrawerDescription(), DrawerFooter(), DrawerHeader(),
 Cohesion: 0.20
 Nodes (7): SelectContent(), SelectItem(), SelectLabel(), SelectScrollDownButton(), SelectScrollUpButton(), SelectSeparator(), SelectTrigger()
 
-### Community 47 - "navigation-menu.tsx"
-Cohesion: 0.22
-Nodes (9): NavigationMenu(), NavigationMenuContent(), NavigationMenuIndicator(), NavigationMenuItem(), NavigationMenuLink(), NavigationMenuList(), NavigationMenuTrigger(), navigationMenuTriggerStyle (+1 more)
+### Community 47 - "dropdown-menu.tsx"
+Cohesion: 0.12
+Nodes (9): DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator(), DropdownMenuShortcut(), DropdownMenuSubContent() (+1 more)
 
-### Community 48 - "api/README.md"
+### Community 48 - "create-test-db.js"
 Cohesion: 0.20
-Nodes (9): Compile and run the project, Deployment, Description, License, Project setup, Resources, Run tests, Stay in touch (+1 more)
+Nodes (6): { Client }, fs, loadEnv(), main(), path, pg
 
 ### Community 49 - "app/_layout.tsx"
 Cohesion: 0.24
@@ -341,17 +341,13 @@ Nodes (8): graphify reference: extra exports and benchmark, Step 6b - Wiki (only
 Cohesion: 0.32
 Nodes (3): eslint-plugin-prettier, eslint-plugin-react-hooks, eslint-plugin-react-refresh
 
-### Community 55 - "Farm"
-Cohesion: 0.05
-Nodes (13): dataSource, dataSourceOptions, CreateFarmDto, Farm, AddDayReminder1790870000000, PushTokenFarmFk1790870100000, AddUserConsent1790870200000, DropUserRole1790870300000 (+5 more)
-
 ### Community 56 - "mobile/tsconfig.json"
 Cohesion: 0.25
 Nodes (7): compilerOptions, paths, strict, extends, include, @/assets/*, expo/tsconfig.base
 
-### Community 57 - "ref_react"
-Cohesion: 0.08
-Nodes (18): LanguageSwitcher(), Layout(), getInitialTheme(), Theme, ThemeSwitcher(), AccordionContent(), AccordionItem(), AccordionTrigger() (+10 more)
+### Community 57 - "theme.ts"
+Cohesion: 0.21
+Nodes (11): FinanceScreen(), styles, ProfileScreen(), styles, Screen(), styles, SecondaryButton(), SectionLabel() (+3 more)
 
 ### Community 59 - "scripts"
 Cohesion: 0.29
@@ -365,9 +361,9 @@ Nodes (6): Get a fresh project, Get started, Join the community, Learn more, Oth
 Cohesion: 0.33
 Nodes (5): collection, compilerOptions, deleteOutDir, $schema, sourceRoot
 
-### Community 62 - "(tabs)/calendar.tsx"
-Cohesion: 0.23
-Nodes (13): CalendarScreen(), DNEVI, EVENT_TITLE_OPTIONS, EVENT_TITLES, fmtKey(), MESECI, monthMatrix(), pad() (+5 more)
+### Community 62 - "index.tsx"
+Cohesion: 0.24
+Nodes (13): daysUntil(), DNEVI, eventIcon(), HomeScreen(), MESECI, pad(), parseKey(), slovenianDate() (+5 more)
 
 ### Community 64 - "graphify reference: query, path, explain"
 Cohesion: 0.33
@@ -380,10 +376,6 @@ Nodes (5): devDependencies, eslint, eslint-config-expo, @types/react, typescript
 ### Community 68 - "scripts"
 Cohesion: 0.40
 Nodes (5): scripts, build, dev, lint, preview
-
-### Community 70 - "theme.ts"
-Cohesion: 0.21
-Nodes (11): FinanceScreen(), styles, ProfileScreen(), styles, Screen(), styles, SecondaryButton(), SectionLabel() (+3 more)
 
 ### Community 72 - "tsconfig.build.json"
 Cohesion: 0.50
@@ -410,36 +402,32 @@ Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
 ### Community 93 - "Krave"
-Cohesion: 0.50
-Nodes (3): Apps, Krave, Local development
+Cohesion: 0.40
+Nodes (4): API tests, Apps, Krave, Local development
 
 ### Community 94 - "animals.tsx"
 Cohesion: 0.33
 Nodes (9): AnimalsScreen(), styles, formatLastSync(), styles, SyncBanner(), EarTag(), loadAnimals(), useAnimals() (+1 more)
 
-### Community 95 - "animal.service.ts"
-Cohesion: 0.12
-Nodes (3): CreateAnimalDto, UpdateAnimalDto, class-validator
-
 ## Knowledge Gaps
-- **466 isolated node(s):** `$schema`, `collection`, `sourceRoot`, `deleteOutDir`, `name` (+461 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 733 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **464 isolated node(s):** `$schema`, `collection`, `sourceRoot`, `deleteOutDir`, `name` (+459 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 717 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `CreateEventDto` connect `CalendarEvent` to `@nestjs/common`, `api.ts`?**
-  _High betweenness centrality (0.262) - this node is a cross-community bridge._
+- **Why does `CreateEventDto` connect `CreateEventDto` to `@nestjs/common`, `api.ts`?**
+  _High betweenness centrality (0.228) - this node is a cross-community bridge._
 - **Why does `SQLite offline sync (animals + calendar)` connect `api.ts` to `engine.ts`?**
-  _High betweenness centrality (0.262) - this node is a cross-community bridge._
-- **Why does `Small API change (needed so retries do not duplicate events)` connect `api.ts` to `CalendarEvent`?**
-  _High betweenness centrality (0.260) - this node is a cross-community bridge._
+  _High betweenness centrality (0.227) - this node is a cross-community bridge._
+- **Why does `Small API change (needed so retries do not duplicate events)` connect `api.ts` to `CreateEventDto`?**
+  _High betweenness centrality (0.226) - this node is a cross-community bridge._
 - **What connects `$schema`, `collection`, `sourceRoot` to the rest of the system?**
-  _466 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `routes.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07207792207792207 - nodes in this community are weakly interconnected._
+  _464 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `lucide-react` be split into smaller, more focused modules?**
+  _Cohesion score 0.06862745098039216 - nodes in this community are weakly interconnected._
 - **Should `cn` be split into smaller, more focused modules?**
-  _Cohesion score 0.06289308176100629 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.060496067755595885 - nodes in this community are weakly interconnected._
 - **Should `sidebar.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06079664570230608 - nodes in this community are weakly interconnected._

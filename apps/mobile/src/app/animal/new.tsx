@@ -1,12 +1,12 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DateField, PillTabs, PrimaryButton, SelectField, TextField, TopBar } from "@/components/ui";
 import { BREEDS, GENDERS } from "@/constants/data";
 import { C, F } from "@/constants/theme";
-import { addAnimal } from "@/lib/animals-store";
+import { addAnimal, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
 
 const GENDER_TABS = GENDERS.map((g) => ({ key: g.value, label: g.label }));
@@ -15,10 +15,16 @@ const YES_NO_TABS = [
   { key: "true", label: "Da" },
   { key: "false", label: "Ne" },
 ];
+const NONE = "";
+
+function parentLabel(ime: string, si_id: string) {
+  return `${ime} · ${si_id}`;
+}
 
 export default function NewAnimalScreen() {
   const router = useRouter();
   const { token } = useAuth();
+  const herd = useAnimals();
   const [ime, setIme] = useState("");
   // Ear tag is always prefixed with the SI country code; the user edits only the rest.
   const [siSuffix, setSiSuffix] = useState("");
@@ -30,8 +36,29 @@ export default function NewAnimalScreen() {
   const [laktacija, setLaktacija] = useState("");
   const [isLactating, setIsLactating] = useState(false);
   const [isPregnant, setIsPregnant] = useState(false);
+  const [motherId, setMotherId] = useState(NONE);
+  const [fatherId, setFatherId] = useState(NONE);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const motherOptions = useMemo(
+    () => [
+      { value: NONE, label: "Brez" },
+      ...herd
+        .filter((a) => a.gender !== "Moški")
+        .map((a) => ({ value: String(a.id), label: parentLabel(a.ime, a.si_id) })),
+    ],
+    [herd],
+  );
+  const fatherOptions = useMemo(
+    () => [
+      { value: NONE, label: "Brez" },
+      ...herd
+        .filter((a) => a.gender !== "Ženska")
+        .map((a) => ({ value: String(a.id), label: parentLabel(a.ime, a.si_id) })),
+    ],
+    [herd],
+  );
 
   const canSubmit = ime.trim().length > 0 && siSuffix.trim().length > 0;
 
@@ -55,6 +82,8 @@ export default function NewAnimalScreen() {
         datum_pridobitve: datumPridobitve.trim(),
         datum_oznacitve: datumOznacitve.trim(),
         laktacija: Number.parseInt(laktacija, 10) || 0,
+        motherId: motherId ? Number(motherId) : null,
+        fatherId: fatherId ? Number(fatherId) : null,
       });
       router.back();
     } catch (err) {
@@ -117,6 +146,20 @@ export default function NewAnimalScreen() {
                 onChange={(value) => setIsPregnant(value === "true")}
               />
             </View>
+            <SelectField
+              label="Mati (neobvezno)"
+              value={motherId}
+              options={motherOptions}
+              onChange={setMotherId}
+              placeholder="Izberi mater…"
+            />
+            <SelectField
+              label="Oče (neobvezno)"
+              value={fatherId}
+              options={fatherOptions}
+              onChange={setFatherId}
+              placeholder="Izberi očeta…"
+            />
             {error && <Text style={styles.error}>{error}</Text>}
             <PrimaryButton label="Dodaj žival" onPress={onSubmit} disabled={!canSubmit} loading={submitting} />
           </View>

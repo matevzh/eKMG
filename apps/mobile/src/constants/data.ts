@@ -12,10 +12,13 @@ export interface Zival {
   si_id: string;
   ime: string;
   pasma: string;
+  gender?: string;
   isLactating: boolean;
   isPregnant: boolean;
   datum_rojstva: string;
   laktacija: number;
+  fatherId?: number | null;
+  motherId?: number | null;
 }
 
 export interface ZivalDetail {

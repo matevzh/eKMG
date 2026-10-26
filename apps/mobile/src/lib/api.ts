@@ -195,10 +195,13 @@ export interface ApiAnimal {
   si_id: string;
   name: string;
   breed: string | null;
+  gender: string | null;
   isLactating: boolean;
   isPregnant: boolean;
   dateOfBirth: string | null;
   lactation: number | null;
+  fatherId: number | null;
+  motherId: number | null;
 }
 
 export interface CreateAnimalPayload {
@@ -212,6 +215,8 @@ export interface CreateAnimalPayload {
   acquisitionDate?: string;
   dateOfTagging?: string;
   lactation?: number;
+  fatherId?: number | null;
+  motherId?: number | null;
   /** Offline idempotency key — retries with the same UUID return the same row. */
   clientId?: string;
 }

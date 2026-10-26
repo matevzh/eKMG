@@ -182,6 +182,22 @@ export default function AnimalDetailScreen() {
             <Card>
               <Row label="Pasma" value={z.pasma} />
               <Row label="Datum rojstva" value={z.datum_rojstva} />
+              <Row
+                label="Mati"
+                value={
+                  z.motherId != null
+                    ? animals.find((a) => a.id === z.motherId)?.ime ?? `#${z.motherId}`
+                    : "—"
+                }
+              />
+              <Row
+                label="Oče"
+                value={
+                  z.fatherId != null
+                    ? animals.find((a) => a.id === z.fatherId)?.ime ?? `#${z.fatherId}`
+                    : "—"
+                }
+              />
               {/*<Row label="Laktacija" value={`#${z.laktacija}`} />*/}
             </Card>
             <SectionLabel>Opravila</SectionLabel>

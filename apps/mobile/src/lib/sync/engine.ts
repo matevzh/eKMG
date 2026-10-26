@@ -5,7 +5,9 @@ import * as api from "@/lib/api";
 import {
   bindAnimalServerId,
   getAnimalByClientId,
+  getAnimalById,
   replaceAnimalsFromServer,
+  resolveServerAnimalId,
 } from "@/lib/db/animals";
 import { getDb, wipeLocalData } from "@/lib/db/client";
 import {
@@ -152,6 +154,15 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
       const local = getAnimalByClientId(clientId);
       if (!local) return;
 
+      // If a chosen parent exists locally but is not on the server yet, wait —
+      // the parent's animal.create should drain first (FIFO outbox).
+      for (const parentLocalId of [local.father_id, local.mother_id]) {
+        if (parentLocalId == null) continue;
+        if (getAnimalById(parentLocalId) && resolveServerAnimalId(parentLocalId) == null) {
+          throw new Error("Parent animal is not synced yet");
+        }
+      }
+
       const created = await api.createAnimal(token, {
         name: local.name,
         si_id: local.si_id,
@@ -163,6 +174,8 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
         acquisitionDate: local.acquisition_date ?? undefined,
         dateOfTagging: local.date_of_tagging ?? undefined,
         lactation: local.lactation ?? undefined,
+        fatherId: resolveServerAnimalId(local.father_id) ?? null,
+        motherId: resolveServerAnimalId(local.mother_id) ?? null,
         clientId,
       });
       bindAnimalServerId(clientId, created.id);

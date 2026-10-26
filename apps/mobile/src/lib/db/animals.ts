@@ -19,6 +19,8 @@ export interface AnimalRow {
   acquisition_date: string | null;
   date_of_tagging: string | null;
   lactation: number | null;
+  father_id: number | null;
+  mother_id: number | null;
 }
 
 export interface LocalAnimalCreate {
@@ -32,6 +34,8 @@ export interface LocalAnimalCreate {
   acquisitionDate?: string;
   dateOfTagging?: string;
   lactation?: number;
+  fatherId?: number | null;
+  motherId?: number | null;
 }
 
 function rowToZival(row: AnimalRow): Zival {
@@ -40,10 +44,13 @@ function rowToZival(row: AnimalRow): Zival {
     si_id: row.si_id,
     ime: row.name,
     pasma: row.breed ? breedLabel(row.breed) : "—",
+    gender: row.gender ?? undefined,
     isLactating: !!row.is_lactating,
     isPregnant: !!row.is_pregnant,
     datum_rojstva: row.date_of_birth ?? "—",
     laktacija: row.lactation ?? 0,
+    fatherId: row.father_id,
+    motherId: row.mother_id,
   };
 }
 
@@ -60,14 +67,24 @@ export function getAnimalByClientId(clientId: string): AnimalRow | null {
   return getDb().getFirstSync<AnimalRow>("SELECT * FROM animals WHERE client_id = ?", [clientId]) ?? null;
 }
 
+/** Prefer server id once the row is synced; otherwise undefined (parent still pending). */
+export function resolveServerAnimalId(localId: number | null | undefined): number | undefined {
+  if (localId == null) return undefined;
+  const row = getAnimalById(localId);
+  if (!row) return undefined;
+  if (row.server_id != null) return row.server_id;
+  return row.id > 0 ? row.id : undefined;
+}
+
 export function insertPendingAnimal(input: LocalAnimalCreate): { zival: Zival; clientId: string; localId: number } {
   const localId = nextLocalId();
   const clientId = newClientId();
   getDb().runSync(
     `INSERT INTO animals (
       id, client_id, server_id, si_id, name, breed, gender,
-      is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation
-    ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation,
+      father_id, mother_id
+    ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       localId,
       clientId,
@@ -81,6 +98,8 @@ export function insertPendingAnimal(input: LocalAnimalCreate): { zival: Zival; c
       input.acquisitionDate ?? null,
       input.dateOfTagging ?? null,
       input.lactation ?? null,
+      input.fatherId ?? null,
+      input.motherId ?? null,
     ],
   );
   return { zival: rowToZival(getAnimalById(localId)!), clientId, localId };
@@ -106,7 +125,7 @@ export function deleteAnimalLocal(id: number): void {
   getDb().runSync("DELETE FROM animals WHERE id = ?", [id]);
 }
 
-/** After a successful create, bind the local row to the server id and rewrite event FKs. */
+/** After a successful create, bind the local row to the server id and rewrite FKs. */
 export function bindAnimalServerId(clientId: string, serverId: number): void {
   const row = getAnimalByClientId(clientId);
   if (!row) return;
@@ -117,13 +136,16 @@ export function bindAnimalServerId(clientId: string, serverId: number): void {
   db.execSync("BEGIN");
   try {
     db.runSync("UPDATE events SET animal_id = ? WHERE animal_id = ?", [serverId, oldId]);
+    db.runSync("UPDATE animals SET father_id = ? WHERE father_id = ?", [serverId, oldId]);
+    db.runSync("UPDATE animals SET mother_id = ? WHERE mother_id = ?", [serverId, oldId]);
     // Rewrite PK via delete+insert (SQLite is awkward about in-place PK updates).
     db.runSync("DELETE FROM animals WHERE client_id = ?", [clientId]);
     db.runSync(
       `INSERT INTO animals (
         id, client_id, server_id, si_id, name, breed, gender,
-        is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation,
+        father_id, mother_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         serverId,
         clientId,
@@ -138,6 +160,8 @@ export function bindAnimalServerId(clientId: string, serverId: number): void {
         row.acquisition_date,
         row.date_of_tagging,
         row.lactation,
+        row.father_id,
+        row.mother_id,
       ],
     );
     db.execSync("COMMIT");
@@ -157,8 +181,9 @@ export function replaceAnimalsFromServer(animals: ApiAnimal[]): void {
       db.runSync(
         `INSERT INTO animals (
           id, client_id, server_id, si_id, name, breed, gender,
-          is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation
-        ) VALUES (?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, NULL, NULL, ?)`,
+          is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation,
+          father_id, mother_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?, ?)`,
         [
           a.id,
           `server:${a.id}`,
@@ -166,10 +191,13 @@ export function replaceAnimalsFromServer(animals: ApiAnimal[]): void {
           a.si_id,
           a.name,
           a.breed,
+          a.gender,
           a.isLactating ? 1 : 0,
           a.isPregnant ? 1 : 0,
           a.dateOfBirth,
           a.lactation,
+          a.fatherId ?? null,
+          a.motherId ?? null,
         ],
       );
     }

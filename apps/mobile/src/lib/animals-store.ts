@@ -56,6 +56,9 @@ export interface NewAnimalInput {
   datum_pridobitve: string;
   datum_oznacitve: string;
   laktacija: number;
+  /** Local animal ids; optional. */
+  fatherId?: number | null;
+  motherId?: number | null;
 }
 
 function isoOrUndefined(value: string): string | undefined {
@@ -79,6 +82,8 @@ export async function addAnimal(_token: string, input: NewAnimalInput): Promise<
     acquisitionDate: isoOrUndefined(input.datum_pridobitve),
     dateOfTagging: isoOrUndefined(input.datum_oznacitve),
     lactation: input.laktacija,
+    fatherId: input.fatherId ?? null,
+    motherId: input.motherId ?? null,
   });
 
   enqueueOutbox("animal.create", { clientId });
