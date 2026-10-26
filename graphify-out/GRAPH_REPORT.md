@@ -1,17 +1,17 @@
-# Graph Report - Krave  (2026-10-06)
+# Graph Report - eKMG  (2026-10-26)
 
 ## Corpus Check
-- 188 files · ~111,422 words
+- 223 files · ~120,165 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 12 file(s) not represented in the graph (top: (none) 8, .css 4)
+- Unclassified: 13 file(s) not represented in the graph (top: (none) 8, .css 4, .example 1)
 
 ## Summary
-- 1447 nodes · 2758 edges · 86 communities (69 shown, 17 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 52 edges (avg confidence: 0.82)
+- 1612 nodes · 3267 edges · 94 communities (69 shown, 25 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 72 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `add131b4`
+- Built from commit: `e5bf59c4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,72 +19,74 @@
 - lucide-react
 - cn
 - sidebar.tsx
-- auth-context.tsx
+- ui.tsx
 - api.ts
 - api/package.json
 - Animal
-- new.tsx
+- engine.ts
 - ref_react
 - @nestjs/common
-- Farm
+- animal/[id].tsx
 - dependencies
 - expo
 - alert-dialog.tsx
 - devDependencies
 - menubar.tsx
-- UsersService
+- mobile/eslint.config.js
 - What You Must Do When Invoked
 - mobile/package.json
 - web/package.json
-- [id].tsx
+- data.ts
 - pdfExports.ts
 - command.tsx
 - compilerOptions
 - auth.service.ts
-- theme.ts
+- form.tsx
 - compilerOptions
-- legal-screen.tsx
+- legal.ts
 - scripts
 - compilerOptions
 - (tabs)/calendar.tsx
 - toggle-group.tsx
 - dependencies
 - context-menu.tsx
-- ui.tsx
-- CalendarEvent
+- Farm
+- AuthUserPayload
 - carousel.tsx
-- form.tsx
-- event.service.ts
-- .register
+- PushToken
+- CreateEventDto
+- CalendarEvent
 - dependencies
 - UsersController
 - devDependencies
-- AppService
+- app.ts
 - chart.tsx
 - drawer.tsx
 - select.tsx
-- navigation-menu.tsx
-- api/README.md
+- dropdown-menu.tsx
+- create-test-db.js
 - app/_layout.tsx
 - jest
 - deploy
 - notifications.ts
 - graphify reference: extra exports and benchmark
 - web/eslint.config.js
-- accordion.tsx
+- User
 - mobile/tsconfig.json
-- vite.config.ts
-- PushTokenFarmFk1790870100000
+- new.tsx
+- engines
 - scripts
 - Welcome to your Expo app 👋
 - nest-cli.json
-- AddUserConsent1790870200000
+- AddDayReminder1790870000000
+- PushTokenFarmFk1790870100000
 - graphify reference: query, path, explain
-- mobile/eslint.config.js
+- AddUserConsent1790870200000
+- DropUserRole1790870300000
 - devDependencies
 - scripts
-- InitialSchema1790869824212
-- AddDayReminder1790870000000
+- AddFirstAndLastName1791642155733
+- RequireFarmForUsers1792422000000
 - tsconfig.build.json
 - app.config.ts
 - React + TypeScript + Vite
@@ -98,35 +100,41 @@
 - CLAUDE.md
 - .claude/CLAUDE.md
 - extraction-spec.md
+- ReplaceAnimalStatusWithStates1792422100000
+- event-title.ts
+- Krave
+- useAuth
+- InitialSchema1790869824212
+- AddClientIdForOfflineSync1792500000000
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 223 edges
-2. `lucide-react` - 35 edges
-3. `Farm` - 28 edges
-4. `@nestjs/common` - 27 edges
-5. `Animal` - 25 edges
-6. `UsersService` - 23 edges
-7. `useAuth()` - 21 edges
-8. `User` - 20 edges
-9. `compilerOptions` - 20 edges
-10. `AnimalDetailScreen()` - 19 edges
+2. `@nestjs/common` - 39 edges
+3. `lucide-react` - 35 edges
+4. `getDb()` - 33 edges
+5. `Farm` - 28 edges
+6. `Animal` - 26 edges
+7. `useAuth()` - 25 edges
+8. `typeorm` - 24 edges
+9. `react-native` - 21 edges
+10. `AnimalDetailScreen()` - 21 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `AccordionItem()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/app/components/ui/accordion.tsx → apps/web/src/app/components/ui/utils.ts
-- `AccordionTrigger()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/app/components/ui/accordion.tsx → apps/web/src/app/components/ui/utils.ts
-- `AccordionContent()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/app/components/ui/accordion.tsx → apps/web/src/app/components/ui/utils.ts
-- `AlertDialogHeader()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/app/components/ui/alert-dialog.tsx → apps/web/src/app/components/ui/utils.ts
-- `AlertDialogFooter()` --calls--> `cn()`  [EXTRACTED]
-  apps/web/src/app/components/ui/alert-dialog.tsx → apps/web/src/app/components/ui/utils.ts
+- `Small API change (needed so retries do not duplicate events)` --references--> `CreateEventDto`  [INFERRED]
+  offlineSync.md → apps/api/src/events/entities/create-event.dto.ts
+- `Write path (optimistic, always)` --references--> `loadAnimals()`  [INFERRED]
+  offlineSync.md → apps/mobile/src/lib/animals-store.ts
+- `Write path (optimistic, always)` --references--> `syncNow()`  [INFERRED]
+  offlineSync.md → apps/mobile/src/lib/sync/engine.ts
+- `Write path (optimistic, always)` --references--> `loadOpravila()`  [INFERRED]
+  offlineSync.md → apps/mobile/src/lib/tasks.ts
+- `Local model` --references--> `Zival`  [INFERRED]
+  offlineSync.md → apps/mobile/src/constants/data.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (86 total, 17 thin omitted)
+## Communities (94 total, 25 thin omitted)
 
 ### Community 0 - "lucide-react"
 Cohesion: 0.07
@@ -134,54 +142,54 @@ Nodes (44): App(), AnimalDetail(), AnimalForm(), AnimalList(), Animal, AnimalWit
 
 ### Community 1 - "cn"
 Cohesion: 0.06
-Nodes (38): Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage() (+30 more)
+Nodes (43): AccordionContent(), AccordionItem(), AccordionTrigger(), Avatar(), AvatarFallback(), AvatarImage(), BreadcrumbEllipsis(), BreadcrumbItem() (+35 more)
 
 ### Community 2 - "sidebar.tsx"
 Cohesion: 0.06
 Nodes (43): Input(), Separator(), Sheet(), SheetContent(), SheetDescription(), SheetFooter(), SheetHeader(), SheetOverlay() (+35 more)
 
-### Community 3 - "auth-context.tsx"
-Cohesion: 0.17
-Nodes (15): FarmSetupScreen(), styles, LoginScreen(), styles, RegisterScreen(), ROLE_TABS, styles, Checkbox() (+7 more)
+### Community 3 - "ui.tsx"
+Cohesion: 0.14
+Nodes (22): styles, FarmSetupScreen(), styles, LoginScreen(), styles, styles, RegisterScreen(), styles (+14 more)
 
 ### Community 4 - "api.ts"
-Cohesion: 0.08
-Nodes (36): API_URL, ApiAnimal, ApiEvent, AuthFarm, AuthResult, AuthUser, createAnimal(), CreateAnimalPayload (+28 more)
+Cohesion: 0.07
+Nodes (39): API_URL, ApiAnimal, ApiEvent, AuthFarm, AuthResult, AuthUser, createAnimal(), CreateAnimalPayload (+31 more)
 
 ### Community 5 - "api/package.json"
-Cohesion: 0.05
-Nodes (38): author, description, eslint, @eslint/js, globals, @types/node, typescript, typescript-eslint (+30 more)
+Cohesion: 0.06
+Nodes (35): author, description, eslint, @eslint/js, globals, @types/node, typescript, typescript-eslint (+27 more)
 
 ### Community 6 - "Animal"
 Cohesion: 0.06
-Nodes (5): AnimalsController, AnimalsService, Animal, CreateAnimalDto, UpdateAnimalDto
+Nodes (6): AnimalsController, AnimalsService, Animal, CreateAnimalDto, UpdateAnimalDto, class-validator
 
-### Community 7 - "new.tsx"
-Cohesion: 0.09
-Nodes (31): BREED_OPTIONS, GENDER_TABS, NewAnimalScreen(), onSubmit(), STATUS_TABS, styles, SelectField(), AnimalStatus (+23 more)
+### Community 7 - "engine.ts"
+Cohesion: 0.05
+Nodes (94): onChangeState(), onSubmit(), breedLabel(), Zival, addAnimal(), animals, emit(), getSnapshot() (+86 more)
 
 ### Community 8 - "ref_react"
 Cohesion: 0.05
-Nodes (16): Checkbox(), HoverCardContent(), InputOTP(), InputOTPGroup(), InputOTPSlot(), PopoverContent(), Progress(), RadioGroup() (+8 more)
+Nodes (14): Checkbox(), HoverCardContent(), InputOTP(), InputOTPGroup(), InputOTPSlot(), PopoverContent(), Progress(), ResizableHandle() (+6 more)
 
 ### Community 9 - "@nestjs/common"
-Cohesion: 0.14
-Nodes (12): AnimalsModule, AppModule, AuthModule, JwtStrategy, EventsModule, FarmsModule, NotificationsModule, UsersModule (+4 more)
+Cohesion: 0.15
+Nodes (14): AnimalsModule, AuthModule, dataSource, dataSourceOptions, EventsModule, REMINDER_OFFSETS, FarmsModule, NotificationsModule (+6 more)
 
-### Community 10 - "Farm"
-Cohesion: 0.09
-Nodes (8): dataSource, dataSourceOptions, REMINDER_OFFSETS, Farm, PushToken, PushMessage, User, typeorm
+### Community 10 - "animal/[id].tsx"
+Cohesion: 0.23
+Nodes (13): AnimalDetailScreen(), confirmDelete(), onDelete(), DetailTab, fmtDate(), MESECI, styles, MilkScreen() (+5 more)
 
 ### Community 11 - "dependencies"
 Cohesion: 0.06
-Nodes (32): dependencies, expo, expo-constants, expo-device, expo-font, expo-glass-effect, @expo-google-fonts/jetbrains-mono, @expo-google-fonts/libre-franklin (+24 more)
+Nodes (34): dependencies, expo, expo-constants, expo-device, expo-font, expo-glass-effect, @expo-google-fonts/jetbrains-mono, @expo-google-fonts/libre-franklin (+26 more)
 
 ### Community 12 - "expo"
 Cohesion: 0.07
 Nodes (28): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, projectId, reactCompiler (+20 more)
 
 ### Community 13 - "alert-dialog.tsx"
-Cohesion: 0.11
+Cohesion: 0.10
 Nodes (18): AlertDialogAction(), AlertDialogCancel(), AlertDialogContent(), AlertDialogDescription(), AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay(), AlertDialogPortal() (+10 more)
 
 ### Community 14 - "devDependencies"
@@ -192,29 +200,29 @@ Nodes (27): devDependencies, eslint, eslint-config-prettier, @eslint/eslintrc, @
 Cohesion: 0.12
 Nodes (12): Menubar(), MenubarCheckboxItem(), MenubarContent(), MenubarItem(), MenubarLabel(), MenubarPortal(), MenubarRadioItem(), MenubarSeparator() (+4 more)
 
-### Community 16 - "UsersService"
-Cohesion: 0.10
-Nodes (5): CreateFarmDto, UpdateFarmDto, FarmsController, FarmService, UsersService
+### Community 16 - "mobile/eslint.config.js"
+Cohesion: 0.40
+Nodes (3): { defineConfig }, expoConfig, eslint-config-expo
 
 ### Community 17 - "What You Must Do When Invoked"
 Cohesion: 0.07
 Nodes (26): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+18 more)
 
 ### Community 18 - "mobile/package.json"
-Cohesion: 0.08
-Nodes (25): eslint, react, react-dom, @types/react, typescript, main, name, private (+17 more)
+Cohesion: 0.07
+Nodes (26): eslint, react, react-dom, @types/react, typescript, main, name, private (+18 more)
 
 ### Community 19 - "web/package.json"
-Cohesion: 0.11
-Nodes (18): eslint, @eslint/js, globals, react, react-dom, @types/node, @types/react, typescript (+10 more)
+Cohesion: 0.10
+Nodes (19): eslint, @eslint/js, globals, react, react-dom, @types/node, @types/react, typescript (+11 more)
 
-### Community 20 - "[id].tsx"
-Cohesion: 0.24
-Nodes (12): AnimalDetailScreen(), confirmDelete(), onChangeStatus(), onDelete(), DetailTab, fmtDate(), MESECI, styles (+4 more)
+### Community 20 - "data.ts"
+Cohesion: 0.13
+Nodes (17): styles, MilkTab, styles, BreedOption, Dostava, DOSTAVE, EMPTY_DETAIL, FARM (+9 more)
 
 ### Community 21 - "pdfExports.ts"
-Cohesion: 0.26
-Nodes (20): Reports(), addHeaderFooter(), downloadCSV(), downloadFile(), exportAnimalListCSV(), exportARSKTRPSubsidyJSON(), exportCRGMovementXML(), exportHealthRecordsCSV() (+12 more)
+Cohesion: 0.22
+Nodes (22): Reports(), addHeaderFooter(), downloadCSV(), downloadFile(), exportAnimalListCSV(), exportARSKTRPSubsidyJSON(), exportCRGMovementXML(), exportHealthRecordsCSV() (+14 more)
 
 ### Community 22 - "command.tsx"
 Cohesion: 0.14
@@ -225,24 +233,24 @@ Cohesion: 0.09
 Nodes (21): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection, moduleResolution (+13 more)
 
 ### Community 24 - "auth.service.ts"
-Cohesion: 0.08
-Nodes (13): ANIMAL_STATUSES, AnimalStatus, Aktivna, Brejost, Presusena, Zdravljenje, AuthController, AuthService (+5 more)
+Cohesion: 0.10
+Nodes (6): AuthController, AuthService, UserLoginDto, UserRegisterDto, bcrypt, @nestjs/jwt
 
-### Community 25 - "theme.ts"
-Cohesion: 0.16
-Nodes (17): FinanceScreen(), styles, MilkScreen(), MilkTab, styles, ProfileScreen(), styles, Screen() (+9 more)
+### Community 25 - "form.tsx"
+Cohesion: 0.18
+Nodes (11): FormControl(), FormDescription(), FormFieldContext, FormFieldContextValue, FormItem(), FormItemContext, FormItemContextValue, FormLabel() (+3 more)
 
 ### Community 26 - "compilerOptions"
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, moduleResolution, noEmit (+11 more)
 
-### Community 27 - "legal-screen.tsx"
+### Community 27 - "legal.ts"
 Cohesion: 0.27
-Nodes (9): PrivacyScreen(), TermsScreen(), LegalScreen(), styles, LegalDocument, LegalSection, POLICY_VERSION, PRIVACY_POLICY (+1 more)
+Nodes (8): PrivacyScreen(), TermsScreen(), LegalScreen(), LegalDocument, LegalSection, POLICY_VERSION, PRIVACY_POLICY, TERMS_OF_SERVICE
 
 ### Community 28 - "scripts"
 Cohesion: 0.11
-Nodes (18): scripts, build, format, lint, migration:create, migration:generate, migration:revert, migration:run (+10 more)
+Nodes (19): scripts, build, format, lint, migration:create, migration:generate, migration:revert, migration:run (+11 more)
 
 ### Community 29 - "compilerOptions"
 Cohesion: 0.11
@@ -250,11 +258,11 @@ Nodes (17): compilerOptions, allowSyntheticDefaultImports, declaration, emitDeco
 
 ### Community 30 - "(tabs)/calendar.tsx"
 Cohesion: 0.12
-Nodes (33): CalendarScreen(), DNEVI, EVENT_TITLES, fmtKey(), MESECI, monthMatrix(), pad(), parseKey() (+25 more)
+Nodes (34): CalendarScreen(), DNEVI, EVENT_TITLE_OPTIONS, EVENT_TITLES, fmtKey(), MESECI, monthMatrix(), pad() (+26 more)
 
 ### Community 31 - "toggle-group.tsx"
-Cohesion: 0.18
-Nodes (9): Alert(), AlertDescription(), AlertTitle(), alertVariants, ToggleGroup(), ToggleGroupContext, ToggleGroupItem(), Toggle() (+1 more)
+Cohesion: 0.15
+Nodes (11): Alert(), AlertDescription(), AlertTitle(), alertVariants, Badge(), badgeVariants, ToggleGroup(), ToggleGroupContext (+3 more)
 
 ### Community 32 - "dependencies"
 Cohesion: 0.12
@@ -264,25 +272,25 @@ Nodes (17): dependencies, bcrypt, class-transformer, class-validator, @nestjs/co
 Cohesion: 0.12
 Nodes (9): ContextMenuCheckboxItem(), ContextMenuContent(), ContextMenuItem(), ContextMenuLabel(), ContextMenuRadioItem(), ContextMenuSeparator(), ContextMenuShortcut(), ContextMenuSubContent() (+1 more)
 
-### Community 34 - "ui.tsx"
-Cohesion: 0.28
-Nodes (11): AnimalsScreen(), styles, Badge(), DateField(), onAndroidChange(), EarTag(), StatusPicker(), styles (+3 more)
-
-### Community 35 - "CalendarEvent"
+### Community 34 - "Farm"
 Cohesion: 0.08
-Nodes (4): CalendarEvent, ReminderService, PushController, PushService
+Nodes (5): CreateFarmDto, Farm, UpdateFarmDto, FarmsController, FarmService
+
+### Community 35 - "AuthUserPayload"
+Cohesion: 0.12
+Nodes (6): AuthUserPayload, FarmScopeGuard, JwtAuthGuard, JwtStrategy, RegisterPushTokenDto, @nestjs/passport
 
 ### Community 36 - "carousel.tsx"
 Cohesion: 0.17
 Nodes (14): Button(), Carousel(), CarouselApi, CarouselContent(), CarouselContext, CarouselContextProps, CarouselItem(), CarouselNext() (+6 more)
 
-### Community 37 - "form.tsx"
-Cohesion: 0.14
-Nodes (13): Badge(), badgeVariants, FormControl(), FormDescription(), FormFieldContext, FormFieldContextValue, FormItem(), FormItemContext (+5 more)
-
-### Community 38 - "event.service.ts"
+### Community 38 - "CreateEventDto"
 Cohesion: 0.09
-Nodes (6): JwtAuthGuard, CreateEventDto, EVENT_TITLES, EventsController, EventResponse, EventsService
+Nodes (5): FarmScoped(), CreateEventDto, EventsController, EventResponse, EventsService
+
+### Community 39 - "CalendarEvent"
+Cohesion: 0.09
+Nodes (3): CalendarEvent, PushController, PushService
 
 ### Community 40 - "dependencies"
 Cohesion: 0.14
@@ -292,9 +300,9 @@ Nodes (14): dependencies, date-fns, i18next, jspdf, jspdf-autotable, lucide-reac
 Cohesion: 0.15
 Nodes (13): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, @types/node, @types/react (+5 more)
 
-### Community 43 - "AppService"
-Cohesion: 0.26
-Nodes (3): AppController, AppService, @nestjs/testing
+### Community 43 - "app.ts"
+Cohesion: 0.07
+Nodes (20): API (`apps/api`), E2E (`npm run test:e2e`), Tests, Unit (`npm test`), AppController, AppModule, AppService, ReminderService (+12 more)
 
 ### Community 44 - "chart.tsx"
 Cohesion: 0.24
@@ -308,17 +316,17 @@ Nodes (7): DrawerContent(), DrawerDescription(), DrawerFooter(), DrawerHeader(),
 Cohesion: 0.20
 Nodes (7): SelectContent(), SelectItem(), SelectLabel(), SelectScrollDownButton(), SelectScrollUpButton(), SelectSeparator(), SelectTrigger()
 
-### Community 47 - "navigation-menu.tsx"
-Cohesion: 0.22
-Nodes (9): NavigationMenu(), NavigationMenuContent(), NavigationMenuIndicator(), NavigationMenuItem(), NavigationMenuLink(), NavigationMenuList(), NavigationMenuTrigger(), navigationMenuTriggerStyle (+1 more)
+### Community 47 - "dropdown-menu.tsx"
+Cohesion: 0.12
+Nodes (9): DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator(), DropdownMenuShortcut(), DropdownMenuSubContent() (+1 more)
 
-### Community 48 - "api/README.md"
+### Community 48 - "create-test-db.js"
 Cohesion: 0.20
-Nodes (9): Compile and run the project, Deployment, Description, License, Project setup, Resources, Run tests, Stay in touch (+1 more)
+Nodes (6): { Client }, fs, loadEnv(), main(), path, pg
 
 ### Community 49 - "app/_layout.tsx"
-Cohesion: 0.24
-Nodes (8): AppShell(), RootLayout(), AuthProvider(), expo-font, @expo-google-fonts/jetbrains-mono, @expo-google-fonts/libre-franklin, expo-splash-screen, expo-status-bar
+Cohesion: 0.28
+Nodes (8): AppShell(), RootLayout(), startSyncListeners(), expo-font, @expo-google-fonts/jetbrains-mono, @expo-google-fonts/libre-franklin, expo-splash-screen, expo-status-bar
 
 ### Community 50 - "jest"
 Cohesion: 0.22
@@ -340,17 +348,13 @@ Nodes (8): graphify reference: extra exports and benchmark, Step 6b - Wiki (only
 Cohesion: 0.32
 Nodes (3): eslint-plugin-prettier, eslint-plugin-react-hooks, eslint-plugin-react-refresh
 
-### Community 55 - "accordion.tsx"
-Cohesion: 0.33
-Nodes (3): AccordionContent(), AccordionItem(), AccordionTrigger()
-
 ### Community 56 - "mobile/tsconfig.json"
 Cohesion: 0.25
 Nodes (7): compilerOptions, paths, strict, extends, include, @/assets/*, expo/tsconfig.base
 
-### Community 57 - "vite.config.ts"
-Cohesion: 0.40
-Nodes (3): @tailwindcss/vite, vite, @vitejs/plugin-react
+### Community 57 - "new.tsx"
+Cohesion: 0.22
+Nodes (9): BREED_OPTIONS, GENDER_TABS, styles, YES_NO_TABS, DateField(), onAndroidChange(), toISODate(), BREEDS (+1 more)
 
 ### Community 59 - "scripts"
 Cohesion: 0.29
@@ -367,10 +371,6 @@ Nodes (5): collection, compilerOptions, deleteOutDir, $schema, sourceRoot
 ### Community 64 - "graphify reference: query, path, explain"
 Cohesion: 0.33
 Nodes (5): For /graphify explain, For /graphify path, graphify reference: query, path, explain, Step 0 — Constrained query expansion (REQUIRED before traversal), Step 1 — Traversal
-
-### Community 66 - "mobile/eslint.config.js"
-Cohesion: 0.40
-Nodes (3): { defineConfig }, expoConfig, eslint-config-expo
 
 ### Community 67 - "devDependencies"
 Cohesion: 0.40
@@ -404,25 +404,33 @@ Nodes (3): For git commit hook, For native CLAUDE.md integration, graphify refer
 Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
+### Community 93 - "Krave"
+Cohesion: 0.40
+Nodes (4): API tests, Apps, Krave, Local development
+
+### Community 94 - "useAuth"
+Cohesion: 0.23
+Nodes (11): NewAnimalScreen(), EditFarmScreen(), EditProfileScreen(), AnimalsScreen(), styles, formatLastSync(), styles, SyncBanner() (+3 more)
+
 ## Knowledge Gaps
-- **445 isolated node(s):** `$schema`, `collection`, `sourceRoot`, `deleteOutDir`, `name` (+440 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 688 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **464 isolated node(s):** `$schema`, `collection`, `sourceRoot`, `deleteOutDir`, `name` (+459 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 733 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **25 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `eslint-plugin-prettier` connect `web/eslint.config.js` to `api/package.json`?**
-  _High betweenness centrality (0.319) - this node is a cross-community bridge._
-- **Why does `lucide-react` connect `lucide-react` to `cn`, `context-menu.tsx`, `sidebar.tsx`, `carousel.tsx`, `ref_react`, `alert-dialog.tsx`, `select.tsx`, `menubar.tsx`, `navigation-menu.tsx`, `web/package.json`, `pdfExports.ts`, `command.tsx`, `accordion.tsx`?**
-  _High betweenness centrality (0.215) - this node is a cross-community bridge._
-- **Why does `eslint-plugin-react-hooks` connect `web/eslint.config.js` to `web/package.json`?**
-  _High betweenness centrality (0.132) - this node is a cross-community bridge._
+- **Why does `CreateEventDto` connect `CreateEventDto` to `@nestjs/common`, `engine.ts`?**
+  _High betweenness centrality (0.245) - this node is a cross-community bridge._
+- **Why does `SQLite offline sync (animals + calendar)` connect `engine.ts` to `api.ts`?**
+  _High betweenness centrality (0.244) - this node is a cross-community bridge._
+- **Why does `Small API change (needed so retries do not duplicate events)` connect `engine.ts` to `CreateEventDto`?**
+  _High betweenness centrality (0.243) - this node is a cross-community bridge._
 - **What connects `$schema`, `collection`, `sourceRoot` to the rest of the system?**
-  _445 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _464 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `lucide-react` be split into smaller, more focused modules?**
   _Cohesion score 0.06862745098039216 - nodes in this community are weakly interconnected._
 - **Should `cn` be split into smaller, more focused modules?**
-  _Cohesion score 0.06289308176100629 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.060496067755595885 - nodes in this community are weakly interconnected._
 - **Should `sidebar.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06079664570230608 - nodes in this community are weakly interconnected._

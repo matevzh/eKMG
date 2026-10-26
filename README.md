@@ -26,6 +26,34 @@ npm ci
 npm run start:dev
 ```
 
+### API tests
+
+Unit tests mock repositories and need no database:
+
+```sh
+cd apps/api
+npm test
+```
+
+E2E tests hit a real Nest app against a separate Postgres database (`ekmg_test`) so they never wipe your dev data:
+
+```sh
+# once: copy env and create the DB
+cp .env.development .env.test
+# edit .env.test → NODE_ENV=test and DB_NAME=ekmg_test
+# (see .env.test.example)
+npm run test:db
+
+npm run test:e2e
+```
+
+Windows PowerShell equivalent for the env copy:
+
+```powershell
+Copy-Item .env.development .env.test
+# then set NODE_ENV and DB_NAME in .env.test
+```
+
 In separate terminals, start either client:
 
 ```sh

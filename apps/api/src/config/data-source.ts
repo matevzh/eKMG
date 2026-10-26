@@ -14,6 +14,7 @@ import { PushToken } from '../notifications/entities/push-token.entity';
 loadEnv({ path: `.env.${process.env.NODE_ENV || 'development'}` });
 
 const isDevelopment = process.env.NODE_ENV === 'development';
+const isTest = process.env.NODE_ENV === 'test';
 
 // Managed Postgres providers require TLS. Set DB_SSL=true in prod. Most managed
 // providers use certs that don't chain to a public root, hence rejectUnauthorized:false.
@@ -30,8 +31,8 @@ export const dataSourceOptions: DataSourceOptions = {
   entities: [User, Farm, Animal, CalendarEvent, PushToken],
   // Compiled to dist/migrations/*.js in prod; loaded as *.ts under ts-node CLI.
   migrations: [__dirname + '/../migrations/*.{ts,js}'],
-  // Auto-schema-sync ONLY in dev. Prod schema changes go through migrations.
-  synchronize: isDevelopment,
+  // Auto-schema-sync in local/dev and e2e. Prod schema changes go through migrations.
+  synchronize: isDevelopment || isTest,
   dropSchema: false,
   // Run pending migrations on boot when DB_MIGRATIONS_RUN=true (set in prod).
   migrationsRun: process.env.DB_MIGRATIONS_RUN === 'true',

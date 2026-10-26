@@ -71,14 +71,13 @@ export class AnimalsService {
         } catch (error) {
             // Unique violation on si_id or (farm, clientId) (Postgres error code 23505).
             if (error instanceof QueryFailedError && (error as any).code === '23505') {
+                // Race on idempotent clientId: another request won the insert.
                 if (animal.clientId) {
                     const byClient = await this.animalRepository.findOne({
                         where: { birthFarmId: birthfarm.id, clientId: animal.clientId },
                     });
                     if (byClient) return byClient;
                 }
-                const bySi = await this.animalRepository.findOne({ where: { si_id: animal.si_id } });
-                if (bySi && bySi.birthFarmId === birthfarm.id) return bySi;
                 throw new ConflictException(`Žival z ušesno znamko ${animal.si_id} že obstaja.`);
             }
             throw error;

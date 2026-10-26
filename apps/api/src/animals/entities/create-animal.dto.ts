@@ -12,15 +12,19 @@ export class CreateAnimalDto {
     @IsUUID()
     clientId?: string;
 
+    @IsOptional()
     @IsString()
     breed?: string;
 
+    @IsOptional()
     @IsString()
     gender?: string;
 
+    @IsOptional()
     @IsBoolean()
     isLactating?: boolean;
 
+    @IsOptional()
     @IsBoolean()
     isPregnant?: boolean;
 
@@ -28,15 +32,19 @@ export class CreateAnimalDto {
     @IsString()
     birthCountry?: string;
 
+    @IsOptional()
     @IsInt()
     lactation?: number;
 
+    @IsOptional()
     @IsDateString()
     dateOfBirth?: string;
 
+    @IsOptional()
     @IsDateString()
     acquisitionDate?: string;
 
+    @IsOptional()
     @IsDateString()
     dateOfTagging?: string;
 
