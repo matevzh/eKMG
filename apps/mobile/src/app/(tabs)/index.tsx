@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import {
   Baby,
   CalendarClock,
+  CalendarPlus,
   HeartPulse,
   Milk,
   Plus,
@@ -116,11 +117,18 @@ export default function HomeScreen() {
   const kmgMid = farm?.kmg_mid ?? user?.farm?.kmg_mid;
   const metaParts = [farm?.location || undefined, kmgMid ? `KMG-MID ${kmgMid}` : undefined].filter(Boolean);
 
-  const actions: { label: string; icon: LucideIcon; onPress: () => void }[] = [
-    { label: "Molža", icon: Milk, onPress: () => router.navigate("/milk") },
-    { label: "Žival", icon: Plus, onPress: () => router.navigate("/animals") },
-    { label: "Strošek", icon: Wallet, onPress: () => router.navigate("/finance") },
-  ];
+  // Milk/Finance are mock-only; preview/production use real features instead.
+  const showMockActions = process.env.EXPO_PUBLIC_ENV === "development";
+  const actions: { label: string; icon: LucideIcon; onPress: () => void }[] = showMockActions
+    ? [
+        { label: "Molža", icon: Milk, onPress: () => router.navigate("/milk") },
+        { label: "Žival", icon: Plus, onPress: () => router.navigate("/animals") },
+        { label: "Strošek", icon: Wallet, onPress: () => router.navigate("/finance") },
+      ]
+    : [
+        { label: "Žival", icon: Plus, onPress: () => router.navigate("/animals") },
+        { label: "Opravilo", icon: CalendarPlus, onPress: () => router.navigate("/calendar") },
+      ];
 
   return (
     <Screen title="Domov">
