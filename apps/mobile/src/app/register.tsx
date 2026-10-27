@@ -1,8 +1,9 @@
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { BackHandler, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { KeyboardForm } from "@/components/keyboard-form";
 import { Checkbox, PrimaryButton, TextField } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import { POLICY_VERSION } from "@/constants/legal";
@@ -70,102 +71,100 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.stepLabel}>Korak {step} od 2</Text>
-          {step === 1 ? (
-            <>
-              <Text style={styles.title}>Ustvari račun</Text>
-              <Text style={styles.subtitle}>Najprej nekaj o tebi</Text>
+      <KeyboardForm contentStyle={styles.content}>
+        <Text style={styles.stepLabel}>Korak {step} od 2</Text>
+        {step === 1 ? (
+          <>
+            <Text style={styles.title}>Ustvari račun</Text>
+            <Text style={styles.subtitle}>Najprej nekaj o tebi</Text>
 
-              <View style={styles.form}>
-                <TextField
-                  label="Ime"
-                  value={firstName}
-                  onChangeText={setFirstName}
-                  placeholder="Janez"
-                  autoCapitalize="words"
-                />
-                <TextField
-                  label="Priimek"
-                  value={lastName}
-                  onChangeText={setLastName}
-                  placeholder="Novak"
-                  autoCapitalize="words"
-                />
-                <TextField
-                  label="E-pošta"
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="ime@primer.si"
-                  keyboardType="email-address"
-                />
-                <TextField
-                  label="Geslo"
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="Najmanj 8 znakov"
-                  secureTextEntry
-                />
-                {error && <Text style={styles.error}>{error}</Text>}
-                <PrimaryButton label="Naprej" onPress={goNext} disabled={!step1FormValid} />
-              </View>
+            <View style={styles.form}>
+              <TextField
+                label="Ime"
+                value={firstName}
+                onChangeText={setFirstName}
+                placeholder="Janez"
+                autoCapitalize="words"
+              />
+              <TextField
+                label="Priimek"
+                value={lastName}
+                onChangeText={setLastName}
+                placeholder="Novak"
+                autoCapitalize="words"
+              />
+              <TextField
+                label="E-pošta"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="ime@primer.si"
+                keyboardType="email-address"
+              />
+              <TextField
+                label="Geslo"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Najmanj 8 znakov"
+                secureTextEntry
+              />
+              {error && <Text style={styles.error}>{error}</Text>}
+              <PrimaryButton label="Naprej" onPress={goNext} disabled={!step1FormValid} />
+            </View>
 
-              <View style={styles.footer}>
-                <Text style={styles.footerText}>Že imaš račun?</Text>
-                <Link href="/login" style={styles.footerLink}>
-                  Prijavi se
-                </Link>
-              </View>
-            </>
-          ) : (
-            <>
-              <Text style={styles.title}>Tvoja kmetija</Text>
-              <Text style={styles.subtitle}>Vnesi KMG-MID, da te povežemo s pravo kmetijo</Text>
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>Že imaš račun?</Text>
+              <Link href="/login" style={styles.footerLink}>
+                Prijavi se
+              </Link>
+            </View>
+          </>
+        ) : (
+          <>
+            <Text style={styles.title}>Tvoja kmetija</Text>
+            <Text style={styles.subtitle}>Vnesi KMG-MID, da te povežemo s pravo kmetijo</Text>
 
-              <View style={styles.form}>
-                <TextField
-                  label="KMG-MID"
-                  value={kmgMid}
-                  onChangeText={setKmgMid}
-                  placeholder="100482-031"
-                  autoCapitalize="characters"
-                />
-                <Text style={styles.hint}>
-                  Če KMG-MID že obstaja, se pridružiš tisti kmetiji. Če je nov, ustvarimo novo kmetijo.
-                </Text>
-                <Checkbox checked={acceptedTerms} onToggle={() => setAcceptedTerms((v) => !v)}>
-                  <Text style={styles.consentText}>
-                    Strinjam se s{" "}
-                    <Text style={styles.consentLink} onPress={() => router.push("/terms")}>
-                      Pogoji uporabe
-                    </Text>{" "}
-                    in{" "}
-                    <Text style={styles.consentLink} onPress={() => router.push("/privacy")}>
-                      Politiko zasebnosti
-                    </Text>
-                    .
+            <View style={styles.form}>
+              <TextField
+                label="KMG-MID"
+                value={kmgMid}
+                onChangeText={setKmgMid}
+                placeholder="100482-031"
+                autoCapitalize="characters"
+              />
+              <Text style={styles.hint}>
+                Če KMG-MID že obstaja, se pridružiš tisti kmetiji. Če je nov, ustvarimo novo kmetijo.
+              </Text>
+              <Checkbox checked={acceptedTerms} onToggle={() => setAcceptedTerms((v) => !v)}>
+                <Text style={styles.consentText}>
+                  Strinjam se s{" "}
+                  <Text style={styles.consentLink} onPress={() => router.push("/terms")}>
+                    Pogoji uporabe
+                  </Text>{" "}
+                  in{" "}
+                  <Text style={styles.consentLink} onPress={() => router.push("/privacy")}>
+                    Politiko zasebnosti
                   </Text>
-                </Checkbox>
-                {error && <Text style={styles.error}>{error}</Text>}
-                <PrimaryButton
-                  label="Registriraj se"
-                  onPress={onSubmit}
-                  loading={submitting}
-                  disabled={!step2Valid}
-                />
-                <Pressable
-                  onPress={goBack}
-                  disabled={submitting}
-                  style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-                >
-                  <Text style={styles.backButtonText}>Nazaj</Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
+                  .
+                </Text>
+              </Checkbox>
+              {error && <Text style={styles.error}>{error}</Text>}
+              <PrimaryButton
+                label="Registriraj se"
+                onPress={onSubmit}
+                loading={submitting}
+                disabled={!step2Valid}
+              />
+              <Pressable
+                onPress={goBack}
+                disabled={submitting}
+                style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
+              >
+                <Text style={styles.backButtonText}>Nazaj</Text>
+              </Pressable>
+            </View>
+          </>
+        )}
+      </KeyboardForm>
     </SafeAreaView>
   );
 }
@@ -174,9 +173,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: C.bg,
-  },
-  flex: {
-    flex: 1,
   },
   content: {
     flexGrow: 1,

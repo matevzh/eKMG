@@ -1,17 +1,9 @@
-
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { KeyboardForm } from "@/components/keyboard-form";
 import { PrimaryButton, TextField, TopBar } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import * as api from "@/lib/api";
@@ -88,52 +80,47 @@ export default function EditProfileScreen() {
     return (
         <SafeAreaView edges={["top"]} style={styles.root}>
             <TopBar title="Uredi profil" onBack={() => router.back()} />
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : undefined}
-                style={styles.flex}
-            >
-                <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-                    {!token ? (
-                        <Text style={styles.error}>Seja je potekla. Prijavi se znova.</Text>
-                    ) : loading ? (
-                        <ActivityIndicator color={C.green} />
-                    ) : (
-                        <View style={styles.form}>
-                            <TextField
-                                label="Ime"
-                                value={firstName}
-                                onChangeText={setFirstName}
-                                placeholder="Janez"
-                                autoCapitalize="words"
-                            />
-                            <TextField
-                                label="Priimek"
-                                value={lastName}
-                                onChangeText={setLastName}
-                                placeholder="Novak"
-                                autoCapitalize="words"
-                            />
-                            <TextField
-                                label="E-pošta"
-                                value={email}
-                                onChangeText={setEmail}
-                                placeholder="janez@example.com"
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
+            <KeyboardForm contentStyle={styles.content}>
+                {!token ? (
+                    <Text style={styles.error}>Seja je potekla. Prijavi se znova.</Text>
+                ) : loading ? (
+                    <ActivityIndicator color={C.green} />
+                ) : (
+                    <View style={styles.form}>
+                        <TextField
+                            label="Ime"
+                            value={firstName}
+                            onChangeText={setFirstName}
+                            placeholder="Janez"
+                            autoCapitalize="words"
+                        />
+                        <TextField
+                            label="Priimek"
+                            value={lastName}
+                            onChangeText={setLastName}
+                            placeholder="Novak"
+                            autoCapitalize="words"
+                        />
+                        <TextField
+                            label="E-pošta"
+                            value={email}
+                            onChangeText={setEmail}
+                            placeholder="janez@example.com"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
 
-                            {error && <Text style={styles.error}>{error}</Text>}
+                        {error && <Text style={styles.error}>{error}</Text>}
 
-                            <PrimaryButton
-                                label="Shrani spremembe"
-                                onPress={onSubmit}
-                                loading={submitting}
-                                disabled={!token || loading}
-                            />
-                        </View>
-                    )}
-                </ScrollView>
-            </KeyboardAvoidingView>
+                        <PrimaryButton
+                            label="Shrani spremembe"
+                            onPress={onSubmit}
+                            loading={submitting}
+                            disabled={!token || loading}
+                        />
+                    </View>
+                )}
+            </KeyboardForm>
         </SafeAreaView>
     );
 }
@@ -143,14 +130,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: C.bg,
     },
-    flex: {
-        flex: 1,
-    },
     content: {
-        flexGrow: 1,
-        paddingHorizontal: 16,
         paddingTop: 16,
-        paddingBottom: 24,
     },
     form: {
         gap: 14,

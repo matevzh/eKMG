@@ -1,8 +1,9 @@
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { KeyboardForm } from "@/components/keyboard-form";
 import { DateField, PillTabs, PrimaryButton, SelectField, TextField, TopBar } from "@/components/ui";
 import { BREEDS, GENDERS } from "@/constants/data";
 import { C, F } from "@/constants/theme";
@@ -96,75 +97,73 @@ export default function NewAnimalScreen() {
   return (
     <SafeAreaView edges={["top"]} style={styles.root}>
       <TopBar title="Nova žival" onBack={() => router.back()} />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.form}>
-            <TextField label="Ime" value={ime} onChangeText={setIme} placeholder="Lenka" autoCapitalize="words" />
-            <TextField
-              label="Ušesna znamka"
-              value={siSuffix}
-              onChangeText={setSiSuffix}
-              placeholder="4471 0231"
-              autoCapitalize="characters"
-              keyboardType="numbers-and-punctuation"
-              prefix="SI"
-            />
-            <SelectField
-              label="Pasma"
-              value={breed}
-              options={BREED_OPTIONS}
-              onChange={setBreed}
-              placeholder="Izberi pasmo…"
-            />
-            <View style={styles.fieldWrap}>
-              <Text style={styles.fieldLabel}>Spol</Text>
-              <PillTabs tabs={GENDER_TABS} active={spol} onChange={setSpol} />
-            </View>
-            <DateField label="Datum rojstva" value={datumRojstva} onChange={setDatumRojstva} />
-            <DateField label="Datum pridobitve" value={datumPridobitve} onChange={setDatumPridobitve} />
-            <DateField label="Datum označitve" value={datumOznacitve} onChange={setDatumOznacitve} />
-            {/*<TextField
-              label="Zaporedna laktacija"
-              value={laktacija}
-              onChangeText={setLaktacija}
-              placeholder="0"
-              keyboardType="number-pad"
-            />*/}
-            <View style={styles.fieldWrap}>
-              <Text style={styles.fieldLabel}>Trenutno molzna</Text>
-              <PillTabs
-                tabs={YES_NO_TABS}
-                active={String(isLactating)}
-                onChange={(value) => setIsLactating(value === "true")}
-              />
-            </View>
-            <View style={styles.fieldWrap}>
-              <Text style={styles.fieldLabel}>Breja</Text>
-              <PillTabs
-                tabs={YES_NO_TABS}
-                active={String(isPregnant)}
-                onChange={(value) => setIsPregnant(value === "true")}
-              />
-            </View>
-            <SelectField
-              label="Mati (neobvezno)"
-              value={motherId}
-              options={motherOptions}
-              onChange={setMotherId}
-              placeholder="Izberi mater…"
-            />
-            <SelectField
-              label="Oče (neobvezno)"
-              value={fatherId}
-              options={fatherOptions}
-              onChange={setFatherId}
-              placeholder="Izberi očeta…"
-            />
-            {error && <Text style={styles.error}>{error}</Text>}
-            <PrimaryButton label="Dodaj žival" onPress={onSubmit} disabled={!canSubmit} loading={submitting} />
+      <KeyboardForm>
+        <View style={styles.form}>
+          <TextField label="Ime" value={ime} onChangeText={setIme} placeholder="Lenka" autoCapitalize="words" />
+          <TextField
+            label="Ušesna znamka"
+            value={siSuffix}
+            onChangeText={setSiSuffix}
+            placeholder="4471 0231"
+            autoCapitalize="characters"
+            keyboardType="numbers-and-punctuation"
+            prefix="SI"
+          />
+          <SelectField
+            label="Pasma"
+            value={breed}
+            options={BREED_OPTIONS}
+            onChange={setBreed}
+            placeholder="Izberi pasmo…"
+          />
+          <View style={styles.fieldWrap}>
+            <Text style={styles.fieldLabel}>Spol</Text>
+            <PillTabs tabs={GENDER_TABS} active={spol} onChange={setSpol} />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <DateField label="Datum rojstva" value={datumRojstva} onChange={setDatumRojstva} />
+          <DateField label="Datum pridobitve" value={datumPridobitve} onChange={setDatumPridobitve} />
+          <DateField label="Datum označitve" value={datumOznacitve} onChange={setDatumOznacitve} />
+          {/*<TextField
+            label="Zaporedna laktacija"
+            value={laktacija}
+            onChangeText={setLaktacija}
+            placeholder="0"
+            keyboardType="number-pad"
+          />*/}
+          <View style={styles.fieldWrap}>
+            <Text style={styles.fieldLabel}>Trenutno molzna</Text>
+            <PillTabs
+              tabs={YES_NO_TABS}
+              active={String(isLactating)}
+              onChange={(value) => setIsLactating(value === "true")}
+            />
+          </View>
+          <View style={styles.fieldWrap}>
+            <Text style={styles.fieldLabel}>Breja</Text>
+            <PillTabs
+              tabs={YES_NO_TABS}
+              active={String(isPregnant)}
+              onChange={(value) => setIsPregnant(value === "true")}
+            />
+          </View>
+          <SelectField
+            label="Mati (neobvezno)"
+            value={motherId}
+            options={motherOptions}
+            onChange={setMotherId}
+            placeholder="Izberi mater…"
+          />
+          <SelectField
+            label="Oče (neobvezno)"
+            value={fatherId}
+            options={fatherOptions}
+            onChange={setFatherId}
+            placeholder="Izberi očeta…"
+          />
+          {error && <Text style={styles.error}>{error}</Text>}
+          <PrimaryButton label="Dodaj žival" onPress={onSubmit} disabled={!canSubmit} loading={submitting} />
+        </View>
+      </KeyboardForm>
     </SafeAreaView>
   );
 }
@@ -173,14 +172,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: C.bg,
-  },
-  flex: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 32,
   },
   form: {
     gap: 14,

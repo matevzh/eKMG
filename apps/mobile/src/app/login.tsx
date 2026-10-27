@@ -1,8 +1,9 @@
 import { Link } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { KeyboardForm } from "@/components/keyboard-form";
 import { PrimaryButton, TextField } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import { useAuth } from "@/lib/auth-context";
@@ -28,37 +29,35 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>E-KmG</Text>
-          <Text style={styles.subtitle}>Prijavi se v svoj račun</Text>
+      <KeyboardForm contentStyle={styles.content}>
+        <Text style={styles.title}>E-KmG</Text>
+        <Text style={styles.subtitle}>Prijavi se v svoj račun</Text>
 
-          <View style={styles.form}>
-            <TextField
-              label="E-pošta"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="ime@primer.si"
-              keyboardType="email-address"
-            />
-            <TextField label="Geslo" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry />
-            {error && <Text style={styles.error}>{error}</Text>}
-            <PrimaryButton
-              label="Prijavi se"
-              onPress={onSubmit}
-              loading={submitting}
-              disabled={!email.trim() || !password}
-            />
-          </View>
+        <View style={styles.form}>
+          <TextField
+            label="E-pošta"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="ime@primer.si"
+            keyboardType="email-address"
+          />
+          <TextField label="Geslo" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry />
+          {error && <Text style={styles.error}>{error}</Text>}
+          <PrimaryButton
+            label="Prijavi se"
+            onPress={onSubmit}
+            loading={submitting}
+            disabled={!email.trim() || !password}
+          />
+        </View>
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Še nimaš računa?</Text>
-            <Link href="/register" style={styles.footerLink}>
-              Registriraj se
-            </Link>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Še nimaš računa?</Text>
+          <Link href="/register" style={styles.footerLink}>
+            Registriraj se
+          </Link>
+        </View>
+      </KeyboardForm>
     </SafeAreaView>
   );
 }
@@ -67,9 +66,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: C.bg,
-  },
-  flex: {
-    flex: 1,
   },
   content: {
     flexGrow: 1,

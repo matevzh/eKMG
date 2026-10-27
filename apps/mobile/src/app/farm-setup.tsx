@@ -1,8 +1,9 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { KeyboardForm } from "@/components/keyboard-form";
 import { PrimaryButton, TextField } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import * as api from "@/lib/api";
@@ -40,26 +41,24 @@ export default function FarmSetupScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Podatki o kmetiji</Text>
-          <Text style={styles.subtitle}>Vnesi osnovne podatke o svoji kmetiji</Text>
+      <KeyboardForm contentStyle={styles.content}>
+        <Text style={styles.title}>Podatki o kmetiji</Text>
+        <Text style={styles.subtitle}>Vnesi osnovne podatke o svoji kmetiji</Text>
 
-          <View style={styles.form}>
-            <TextField label="Ime kmetije" value={name} onChangeText={setName} placeholder="Kmetija Novak" autoCapitalize="words" />
-            <TextField label="Lokacija" value={location} onChangeText={setLocation} placeholder="Trbovlje" autoCapitalize="words" />
-            <TextField label="Občina" value={province} onChangeText={setProvince} placeholder="Trbovlje" autoCapitalize="words" />
-            <TextField label="Pošta" value={postOffice} onChangeText={setPostOffice} placeholder="1420 " autoCapitalize="words" />
-            {error && <Text style={styles.error}>{error}</Text>}
-            <PrimaryButton
-              label="Shrani kmetijo"
-              onPress={onSubmit}
-              loading={submitting}
-              disabled={!name.trim() || !location.trim()}
-            />
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        <View style={styles.form}>
+          <TextField label="Ime kmetije" value={name} onChangeText={setName} placeholder="Kmetija Novak" autoCapitalize="words" />
+          <TextField label="Lokacija" value={location} onChangeText={setLocation} placeholder="Trbovlje" autoCapitalize="words" />
+          <TextField label="Občina" value={province} onChangeText={setProvince} placeholder="Trbovlje" autoCapitalize="words" />
+          <TextField label="Pošta" value={postOffice} onChangeText={setPostOffice} placeholder="1420 " autoCapitalize="words" />
+          {error && <Text style={styles.error}>{error}</Text>}
+          <PrimaryButton
+            label="Shrani kmetijo"
+            onPress={onSubmit}
+            loading={submitting}
+            disabled={!name.trim() || !location.trim()}
+          />
+        </View>
+      </KeyboardForm>
     </SafeAreaView>
   );
 }
@@ -68,9 +67,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: C.bg,
-  },
-  flex: {
-    flex: 1,
   },
   content: {
     flexGrow: 1,

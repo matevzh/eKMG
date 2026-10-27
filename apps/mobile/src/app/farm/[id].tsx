@@ -1,16 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { KeyboardForm } from "@/components/keyboard-form";
 import { PrimaryButton, TextField, TopBar } from "@/components/ui";
 import { C, F } from "@/constants/theme";
 import * as api from "@/lib/api";
@@ -81,57 +74,52 @@ export default function EditFarmScreen() {
     return (
         <SafeAreaView edges={["top"]} style={styles.root}>
             <TopBar title="Uredi kmetijo" onBack={() => router.back()} />
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : undefined}
-                style={styles.flex}
-            >
-                <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-                    {!token ? (
-                        <Text style={styles.error}>Seja je potekla. Prijavi se znova.</Text>
-                    ) : loading ? (
-                        <ActivityIndicator color={C.green} />
-                    ) : (
-                        <View style={styles.form}>
-                            <TextField
-                                label="Ime kmetije"
-                                value={name}
-                                onChangeText={setName}
-                                placeholder="Kmetija Novak"
-                                autoCapitalize="words"
-                            />
-                            <TextField
-                                label="Lokacija"
-                                value={location}
-                                onChangeText={setLocation}
-                                placeholder="Trbovlje"
-                                autoCapitalize="words"
-                            />
-                            <TextField
-                                label="Občina"
-                                value={province}
-                                onChangeText={setProvince}
-                                placeholder="Trbovlje"
-                                autoCapitalize="words"
-                            />
-                            <TextField
-                                label="Pošta"
-                                value={postOffice}
-                                onChangeText={setPostOffice}
-                                placeholder="1420 Trbovlje"
-                                autoCapitalize="words"
-                            />
-                            {error && <Text style={styles.error}>{error}</Text>}
-                            <PrimaryButton
-                                label="Shrani spremembe"
-                                onPress={onSubmit}
-                                loading={submitting}
-                                disabled={!token || !name.trim() || !location.trim() || loading}
-                            />
-                        </View>
-                    )}
-                    {error && loading && <Text style={styles.error}>{error}</Text>}
-                </ScrollView>
-            </KeyboardAvoidingView>
+            <KeyboardForm contentStyle={styles.content}>
+                {!token ? (
+                    <Text style={styles.error}>Seja je potekla. Prijavi se znova.</Text>
+                ) : loading ? (
+                    <ActivityIndicator color={C.green} />
+                ) : (
+                    <View style={styles.form}>
+                        <TextField
+                            label="Ime kmetije"
+                            value={name}
+                            onChangeText={setName}
+                            placeholder="Kmetija Novak"
+                            autoCapitalize="words"
+                        />
+                        <TextField
+                            label="Lokacija"
+                            value={location}
+                            onChangeText={setLocation}
+                            placeholder="Trbovlje"
+                            autoCapitalize="words"
+                        />
+                        <TextField
+                            label="Občina"
+                            value={province}
+                            onChangeText={setProvince}
+                            placeholder="Trbovlje"
+                            autoCapitalize="words"
+                        />
+                        <TextField
+                            label="Pošta"
+                            value={postOffice}
+                            onChangeText={setPostOffice}
+                            placeholder="1420 Trbovlje"
+                            autoCapitalize="words"
+                        />
+                        {error && <Text style={styles.error}>{error}</Text>}
+                        <PrimaryButton
+                            label="Shrani spremembe"
+                            onPress={onSubmit}
+                            loading={submitting}
+                            disabled={!token || !name.trim() || !location.trim() || loading}
+                        />
+                    </View>
+                )}
+                {error && loading && <Text style={styles.error}>{error}</Text>}
+            </KeyboardForm>
         </SafeAreaView>
     );
 }
@@ -141,14 +129,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: C.bg,
     },
-    flex: {
-        flex: 1,
-    },
     content: {
-        flexGrow: 1,
-        paddingHorizontal: 16,
         paddingTop: 16,
-        paddingBottom: 24,
     },
     form: {
         gap: 14,
