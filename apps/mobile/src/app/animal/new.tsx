@@ -103,10 +103,9 @@ export default function NewAnimalScreen() {
           <TextField
             label="Ušesna znamka"
             value={siSuffix}
-            onChangeText={setSiSuffix}
-            placeholder="4471 0231"
-            autoCapitalize="characters"
-            keyboardType="numbers-and-punctuation"
+            onChangeText={(text) => setSiSuffix(text.replace(/\D/g, ""))}
+            placeholder="44710231"
+            keyboardType="number-pad"
             prefix="SI"
           />
           <SelectField

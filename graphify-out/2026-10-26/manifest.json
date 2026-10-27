@@ -402,15 +402,15 @@
     "semantic_hash": ""
   },
   "apps/mobile/src/app/animal/[id].tsx": {
-    "mtime": 1792935618.9076674,
-    "seen": 1792935733.0951693,
-    "ast_hash": "5a99f99580dd8adc6f90b294925a3549",
+    "mtime": 1793017895.345246,
+    "seen": 1793017921.255153,
+    "ast_hash": "c1f7877d196aad91ec4be460071be808",
     "semantic_hash": ""
   },
   "apps/mobile/src/app/animal/new.tsx": {
-    "mtime": 1792841361.2713454,
-    "seen": 1792935733.09517,
-    "ast_hash": "6eef447e00589a45a8984a69ee46bdbd",
+    "mtime": 1793017893.1521149,
+    "seen": 1793017921.2551541,
+    "ast_hash": "b436f01810e4408bb279558206fac938",
     "semantic_hash": ""
   },
   "apps/mobile/src/app/farm-setup.tsx": {
@@ -444,9 +444,9 @@
     "semantic_hash": ""
   },
   "apps/mobile/src/constants/data.ts": {
-    "mtime": 1792483938.399745,
-    "seen": 1792498435.028551,
-    "ast_hash": "0eb9581f305ef693a8032c7e5cf99280",
+    "mtime": 1793017832.935529,
+    "seen": 1793017921.2551649,
+    "ast_hash": "558e2b364b109a7364ea64bb12d5306d",
     "semantic_hash": ""
   },
   "apps/mobile/src/constants/theme.ts": {
@@ -456,15 +456,15 @@
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/animals-store.ts": {
-    "mtime": 1792935672.929034,
-    "seen": 1792935733.0951836,
-    "ast_hash": "77dc482c29a5e465935d225ed4c7f842",
+    "mtime": 1793017866.8771892,
+    "seen": 1793017921.2551672,
+    "ast_hash": "0b39c3fea3125886b339acab0b6de2bb",
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/api.ts": {
-    "mtime": 1792935443.6723976,
-    "seen": 1792935733.0951843,
-    "ast_hash": "5371d27d517cc7e921f2847d021cafce",
+    "mtime": 1793017860.857107,
+    "seen": 1793017921.255168,
+    "ast_hash": "74bb67ad68c9e76d7b2845a25aa465bd",
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/auth-context.tsx": {
@@ -1308,9 +1308,9 @@
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/db/animals.ts": {
-    "mtime": 1792935659.0218742,
-    "seen": 1792935733.095186,
-    "ast_hash": "51066ee8589a0dbdd7eb4c21d9a908f7",
+    "mtime": 1793017847.2836256,
+    "seen": 1793017921.2551699,
+    "ast_hash": "333d18c7762b0caaf00dc59e2efa04f0",
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/db/client.ts": {
@@ -1338,9 +1338,9 @@
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/db/migrations.ts": {
-    "mtime": 1792935372.071864,
-    "seen": 1792935733.0951896,
-    "ast_hash": "17ef8e61a11d6d152bc2006a2e158917",
+    "mtime": 1793017857.0609052,
+    "seen": 1793017921.255174,
+    "ast_hash": "f6459a1e11a2e13fc8ee04dda35b9e10",
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/db/outbox.ts": {
@@ -1356,9 +1356,9 @@
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/sync/engine.ts": {
-    "mtime": 1792935554.8982291,
-    "seen": 1792935733.0951924,
-    "ast_hash": "aacb1692e1daedea313c2f5936a3c146",
+    "mtime": 1793017915.7099469,
+    "seen": 1793017921.255177,
+    "ast_hash": "d043071920ffcb4153a8587888a0ddb9",
     "semantic_hash": ""
   },
   "apps/mobile/src/lib/sync/status.ts": {
