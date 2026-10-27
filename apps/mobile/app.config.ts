@@ -33,6 +33,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     android: {
       ...config.android,
       package: v.bundleId,
+      // Shrink the window above the IME so ScrollViews can reach covered fields.
+      softwareKeyboardLayoutMode: "resize",
     },
   };
 };

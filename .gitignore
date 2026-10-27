@@ -18,4 +18,6 @@
 .env.test.local
 .env.production.local
 .env.local
-graphify-out/
+
+# Generated knowledge-graph artifacts (local / agent tooling)
+**/graphify-out/
