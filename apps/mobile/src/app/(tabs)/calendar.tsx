@@ -4,7 +4,7 @@ import { Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from "reac
 
 import { Screen } from "@/components/screen";
 import { SyncBanner } from "@/components/sync-banner";
-import { Card, Empty, SectionLabel, SelectField, TextField } from "@/components/ui";
+import { Card, DateField, Empty, SectionLabel, SelectField, TextField } from "@/components/ui";
 import { CUSTOM_EVENT_TITLE, EVENT_TITLE_OPTIONS } from "@/constants/data";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
@@ -63,6 +63,7 @@ export default function CalendarScreen() {
   const [customNaslov, setCustomNaslov] = useState("");
   const [opomba, setOpomba] = useState("");
   const [zivalId, setZivalId] = useState("");
+  const [reminderDate, setReminderDate] = useState(todayKey);
 
   const { token } = useAuth();
   const animals = useAnimals();
@@ -111,6 +112,12 @@ export default function CalendarScreen() {
     setCustomNaslov("");
     setOpomba("");
     setZivalId("");
+    setReminderDate(selected);
+  };
+
+  const openModal = () => {
+    setReminderDate(selected);
+    setModalOpen(true);
   };
 
   const addOpravilo = async () => {
@@ -120,15 +127,23 @@ export default function CalendarScreen() {
       Alert.alert("Seja je potekla", "Prijavi se znova.");
       return;
     }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(reminderDate)) {
+      Alert.alert("Opomnik", "Izberi datum opomnika.");
+      return;
+    }
+    if (reminderDate > selected) {
+      Alert.alert("Opomnik", "Datum opomnika mora biti na dan opravila ali prej.");
+      return;
+    }
 
-    // Reminders are sent by the server (a week before, at 08:00) to every
-    // registered farm device — no local scheduling needed here.
+    // Reminder push is sent by the server at 08:00 on reminderDate.
     const zival = animals.find((a) => String(a.id) === zivalId);
     try {
       await createOpravilo(token, {
         naslov: title,
         opomba: opomba.trim() || undefined,
         datum: selected,
+        reminderDate,
         notificationId: null,
         zivalId: zival?.id ?? null,
       });
@@ -148,33 +163,21 @@ export default function CalendarScreen() {
     }
   };
 
-  // Lead times (days before the event, at 08:00) the server sends reminders at.
-  // Keep in sync with REMINDER_OFFSETS in the API's reminder.service.ts.
-  const REMINDER_LEADS = [7, 1];
-
-  // The next reminder still due to fire for an event, or null if its last
-  // reminder moment has already passed.
-  const nextReminderMoment = (o: Opravilo): Date | null => {
-    const now = Date.now();
-    // Largest lead first → earliest moment first, so we surface the next to fire.
-    for (const lead of [...REMINDER_LEADS].sort((a, b) => b - a)) {
-      const r = parseKey(o.datum);
-      r.setDate(r.getDate() - lead);
-      r.setHours(8, 0, 0, 0);
-      if (r.getTime() > now) return r;
-    }
-    return null;
+  const reminderActive = (o: Opravilo) => {
+    if (o.reminderSent) return true;
+    if (!o.reminderDate) return false;
+    const r = parseKey(o.reminderDate);
+    r.setHours(8, 0, 0, 0);
+    return r.getTime() > Date.now();
   };
-
-  // A reminder is expected if the server already sent the final one, or a
-  // reminder moment is still in the future.
-  const reminderActive = (o: Opravilo) => o.reminderSent || nextReminderMoment(o) != null;
 
   const reminderLabel = (o: Opravilo) => {
     if (o.reminderSent) return "Opomnik poslan";
-    const next = nextReminderMoment(o);
-    if (!next) return "Brez opomnika";
-    return `Opomnik ${next.getDate()}. ${next.getMonth() + 1}. ob 8.00`;
+    if (!o.reminderDate) return "Brez opomnika";
+    const r = parseKey(o.reminderDate);
+    r.setHours(8, 0, 0, 0);
+    if (r.getTime() <= Date.now()) return "Brez opomnika";
+    return `Opomnik ${fmtKey(o.reminderDate)} ob 8.00`;
   };
 
   const TaskCard = ({ o, showDate }: { o: Opravilo; showDate?: boolean }) => (
@@ -205,7 +208,7 @@ export default function CalendarScreen() {
     <Screen
       title="Koledar"
       right={
-        <Pressable onPress={() => setModalOpen(true)} style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}>
+        <Pressable onPress={openModal} style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}>
           <Plus size={18} color={C.paper} />
         </Pressable>
       }
@@ -315,6 +318,14 @@ export default function CalendarScreen() {
                 placeholder="Brez živali"
               />
             </View>
+            <View style={styles.zivalField}>
+              <DateField
+                label="Datum opomnika"
+                value={reminderDate}
+                onChange={setReminderDate}
+                allowFuture
+              />
+            </View>
             <TextInput
               value={opomba}
               onChangeText={setOpomba}
@@ -323,7 +334,7 @@ export default function CalendarScreen() {
               style={[styles.input, styles.inputMultiline]}
               multiline
             />
-            <Text style={styles.modalHint}>Opomnik boš prejel teden dni pred opravilom ob 8.00.</Text>
+            <Text style={styles.modalHint}>Opomnik boš prejel ob 8.00 na izbrani dan.</Text>
             <View style={styles.modalActions}>
               <Pressable
                 onPress={() => {

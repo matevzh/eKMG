@@ -27,11 +27,17 @@ describe("Events (e2e)", () => {
     const created = await request(app.getHttpServer())
       .post("/events")
       .set("Authorization", `Bearer ${token}`)
-      .send({ title: "Veterinarski pregled", date: "2026-12-15", note: "ok" })
+      .send({
+        title: "Veterinarski pregled",
+        date: "2026-12-15",
+        reminderDate: "2026-12-08",
+        note: "ok",
+      })
       .expect(201);
 
     expect(created.body.title).toBe("Veterinarski pregled");
     expect(created.body.date).toBe("2026-12-15");
+    expect(created.body.reminderDate).toBe("2026-12-08");
 
     const list = await request(app.getHttpServer())
       .get("/events")
@@ -64,6 +70,7 @@ describe("Events (e2e)", () => {
       .send({
         title: "Semenitev",
         date: "2026-12-20",
+        reminderDate: "2026-12-19",
         animalId: animal.body.id,
       })
       .expect(201);
@@ -78,13 +85,13 @@ describe("Events (e2e)", () => {
     const first = await request(app.getHttpServer())
       .post("/events")
       .set("Authorization", `Bearer ${token}`)
-      .send({ title: "Premik", date: "2026-12-01", clientId })
+      .send({ title: "Premik", date: "2026-12-01", reminderDate: "2026-11-24", clientId })
       .expect(201);
 
     const second = await request(app.getHttpServer())
       .post("/events")
       .set("Authorization", `Bearer ${token}`)
-      .send({ title: "Premik", date: "2026-12-01", clientId })
+      .send({ title: "Premik", date: "2026-12-01", reminderDate: "2026-11-24", clientId })
       .expect(201);
 
     expect(second.body.id).toBe(first.body.id);
@@ -100,7 +107,7 @@ describe("Events (e2e)", () => {
     const created = await request(app.getHttpServer())
       .post("/events")
       .set("Authorization", `Bearer ${token}`)
-      .send({ title: "Cepljenje proti blatu", date: "2026-12-05" })
+      .send({ title: "Cepljenje proti blatu", date: "2026-12-05", reminderDate: "2026-12-05" })
       .expect(201);
 
     expect(created.body.title).toBe("Cepljenje proti blatu");

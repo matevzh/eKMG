@@ -1,4 +1,4 @@
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { EventsService } from "./event.service";
 import { AnimalsService } from "../animals/animal.service";
 import { PushService } from "../notifications/push.service";
@@ -40,7 +40,8 @@ describe("EventsService", () => {
       note: null,
       date: "2026-11-01",
       notificationId: null,
-      reminderDaySentAt: null,
+      reminderDate: "2026-10-25",
+      reminderSentAt: null,
       animalId: null,
       animal: null,
       clientId: "evt-1",
@@ -49,7 +50,7 @@ describe("EventsService", () => {
     eventRepository.findOne.mockResolvedValue(existing);
 
     const result = await service.create(
-      { title: "Semenitev", date: "2026-11-01", clientId: "evt-1" } as any,
+      { title: "Semenitev", date: "2026-11-01", reminderDate: "2026-10-25", clientId: "evt-1" } as any,
       10,
       1,
     );
@@ -65,11 +66,23 @@ describe("EventsService", () => {
 
     await expect(
       service.create(
-        { title: "Premik", date: "2026-11-01", animalId: 2 } as any,
+        { title: "Premik", date: "2026-11-01", reminderDate: "2026-10-30", animalId: 2 } as any,
         10,
         1,
       ),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it("create rejects reminderDate after the event date", async () => {
+    eventRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.create(
+        { title: "Premik", date: "2026-11-01", reminderDate: "2026-11-02" } as any,
+        10,
+        1,
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it("create notifies the farm after saving", async () => {
@@ -80,14 +93,15 @@ describe("EventsService", () => {
         title: "Premik",
         note: null,
         date: "2026-11-01",
+        reminderDate: "2026-10-30",
         notificationId: null,
-        reminderDaySentAt: null,
+        reminderSentAt: null,
         animalId: null,
         animal: null,
         farmId: 10,
       } as unknown as CalendarEvent);
 
-    await service.create({ title: "Premik", date: "2026-11-01" } as any, 10, 1);
+    await service.create({ title: "Premik", date: "2026-11-01", reminderDate: "2026-10-30" } as any, 10, 1);
 
     expect(pushService.sendToFarm).toHaveBeenCalledWith(
       10,

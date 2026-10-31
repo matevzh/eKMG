@@ -244,6 +244,7 @@ export interface ApiEvent {
   title: string;
   note: string | null;
   date: string;
+  reminderDate: string | null;
   notificationId: string | null;
   reminderSent: boolean;
   animalId: number | null;
@@ -255,6 +256,7 @@ export interface CreateEventPayload {
   title: string;
   note?: string;
   date: string;
+  reminderDate: string;
   notificationId?: string | null;
   animalId?: number | null;
   /** Offline idempotency key — retries with the same UUID return the same row. */

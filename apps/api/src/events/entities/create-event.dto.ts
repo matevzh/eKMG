@@ -13,6 +13,10 @@ export class CreateEventDto {
     @IsDateString()
     date!: string;
 
+    /** Calendar day the push reminder should fire (08:00). Must be on or before `date`. */
+    @IsDateString()
+    reminderDate!: string;
+
     @IsOptional()
     @IsString()
     notificationId?: string | null;

@@ -19,6 +19,7 @@ export interface Opravilo {
   naslov: string;
   opomba?: string;
   datum: string; // "YYYY-MM-DD"
+  reminderDate: string | null;
   notificationId: string | null;
   reminderSent: boolean;
   zivalId?: number | null;
@@ -30,6 +31,7 @@ export interface NewOpravilo {
   naslov: string;
   opomba?: string;
   datum: string;
+  reminderDate: string;
   notificationId: string | null;
   zivalId?: number | null;
 }
@@ -40,6 +42,7 @@ function rowToOpravilo(row: EventRow): Opravilo {
     naslov: row.title,
     opomba: row.note ?? undefined,
     datum: row.date,
+    reminderDate: row.reminder_date,
     notificationId: row.notification_id,
     reminderSent: !!row.reminder_sent,
     zivalId: row.animal_id,
@@ -89,6 +92,7 @@ export async function createOpravilo(_token: string, input: NewOpravilo): Promis
     title: input.naslov,
     note: input.opomba,
     date: input.datum,
+    reminderDate: input.reminderDate,
     notificationId: input.notificationId,
     animalId: input.zivalId ?? null,
   });

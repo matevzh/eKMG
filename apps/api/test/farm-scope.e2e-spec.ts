@@ -33,7 +33,7 @@ describe("Farm scope (e2e)", () => {
     const res = await request(app.getHttpServer())
       .post("/events")
       .set("Authorization", `Bearer ${token}`)
-      .send({ title, date: "2026-12-01" })
+      .send({ title, date: "2026-12-01", reminderDate: "2026-11-24" })
       .expect(201);
     return res.body;
   }

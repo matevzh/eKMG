@@ -61,6 +61,13 @@ const MIGRATIONS: { version: number; sql: string }[] = [
       ALTER TABLE animals DROP COLUMN date_of_tagging;
     `,
   },
+  {
+    version: 4,
+    sql: `
+      ALTER TABLE events ADD COLUMN reminder_date TEXT;
+      UPDATE events SET reminder_date = date WHERE reminder_date IS NULL;
+    `,
+  },
 ];
 
 export function runMigrations(db: SQLiteDatabase): void {

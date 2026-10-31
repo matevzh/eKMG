@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CalendarEvent } from "./entities/event.entity";
@@ -12,6 +12,7 @@ export interface EventResponse {
     title: string;
     note: string | null;
     date: string;
+    reminderDate: string | null;
     notificationId: string | null;
     reminderSent: boolean;
     animalId: number | null;
@@ -35,8 +36,9 @@ export class EventsService {
             title: event.title,
             note: event.note ?? null,
             date: event.date,
+            reminderDate: event.reminderDate ?? null,
             notificationId: event.notificationId ?? null,
-            reminderSent: event.reminderDaySentAt != null,
+            reminderSent: event.reminderSentAt != null,
             animalId: event.animalId ?? null,
             animalName: event.animal?.name ?? null,
             animalSiId: event.animal?.si_id ?? null,
@@ -62,6 +64,10 @@ export class EventsService {
             if (existing) return this.toResponse(existing);
         }
 
+        if (dto.reminderDate > dto.date) {
+            throw new BadRequestException('reminderDate must be on or before the event date');
+        }
+
         let animalId: number | null = null;
         if (dto.animalId != null) {
             const animal = await this.animalsService.findById(dto.animalId);
@@ -74,6 +80,7 @@ export class EventsService {
             title: dto.title,
             note: dto.note,
             date: dto.date,
+            reminderDate: dto.reminderDate,
             notificationId: dto.notificationId ?? null,
             clientId: dto.clientId ?? null,
             animalId,

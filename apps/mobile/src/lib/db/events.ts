@@ -12,6 +12,7 @@ export interface EventRow {
   title: string;
   note: string | null;
   date: string;
+  reminder_date: string | null;
   notification_id: string | null;
   reminder_sent: number;
   animal_id: number | null;
@@ -24,6 +25,7 @@ export interface LocalEventCreate {
   title: string;
   note?: string;
   date: string;
+  reminderDate: string;
   notificationId?: string | null;
   animalId?: number | null;
 }
@@ -60,15 +62,16 @@ export function insertPendingEvent(input: LocalEventCreate): { row: EventRow; cl
 
   getDb().runSync(
     `INSERT INTO events (
-      id, client_id, server_id, title, note, date, notification_id, reminder_sent,
+      id, client_id, server_id, title, note, date, reminder_date, notification_id, reminder_sent,
       animal_id, animal_client_id, animal_name, animal_si_id
-    ) VALUES (?, ?, NULL, ?, ?, ?, ?, 0, ?, ?, ?, ?)`,
+    ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?)`,
     [
       localId,
       clientId,
       input.title,
       input.note ?? null,
       input.date,
+      input.reminderDate,
       input.notificationId ?? null,
       animalId,
       animalClientId,
@@ -95,9 +98,9 @@ export function bindEventServerId(clientId: string, serverId: number): void {
     db.runSync("DELETE FROM events WHERE client_id = ?", [clientId]);
     db.runSync(
       `INSERT INTO events (
-        id, client_id, server_id, title, note, date, notification_id, reminder_sent,
+        id, client_id, server_id, title, note, date, reminder_date, notification_id, reminder_sent,
         animal_id, animal_client_id, animal_name, animal_si_id
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         serverId,
         clientId,
@@ -105,6 +108,7 @@ export function bindEventServerId(clientId: string, serverId: number): void {
         row.title,
         row.note,
         row.date,
+        row.reminder_date,
         row.notification_id,
         row.reminder_sent,
         row.animal_id,
@@ -129,9 +133,9 @@ export function replaceEventsFromServer(events: ApiEvent[]): void {
     for (const e of events) {
       db.runSync(
         `INSERT INTO events (
-          id, client_id, server_id, title, note, date, notification_id, reminder_sent,
+          id, client_id, server_id, title, note, date, reminder_date, notification_id, reminder_sent,
           animal_id, animal_client_id, animal_name, animal_si_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)`,
         [
           e.id,
           `server:${e.id}`,
@@ -139,6 +143,7 @@ export function replaceEventsFromServer(events: ApiEvent[]): void {
           e.title,
           e.note,
           e.date,
+          e.reminderDate,
           e.notificationId,
           e.reminderSent ? 1 : 0,
           e.animalId,

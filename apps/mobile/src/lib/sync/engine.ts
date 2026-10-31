@@ -218,10 +218,12 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
         animalId = local.animal_id;
       }
 
+      const reminderDate = local.reminder_date ?? local.date;
       const created = await api.createEvent(token, {
         title: local.title,
         note: local.note ?? undefined,
         date: local.date,
+        reminderDate,
         notificationId: local.notification_id,
         animalId,
         clientId,

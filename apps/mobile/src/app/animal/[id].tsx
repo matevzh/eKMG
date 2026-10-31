@@ -74,6 +74,7 @@ export default function AnimalDetailScreen() {
   const [customNaslov, setCustomNaslov] = useState("");
   const [opomba, setOpomba] = useState("");
   const [datum, setDatum] = useState(todayKey);
+  const [reminderDate, setReminderDate] = useState(todayKey);
   const [savingEvent, setSavingEvent] = useState(false);
   const animals = useAnimals();
   const allOpravila = useOpravila();
@@ -109,10 +110,12 @@ export default function AnimalDetailScreen() {
   const resolvedTitle = naslov === CUSTOM_EVENT_TITLE ? customNaslov.trim() : naslov.trim();
 
   function resetEventForm() {
+    const today = todayKey();
     setNaslov("");
     setCustomNaslov("");
     setOpomba("");
-    setDatum(todayKey());
+    setDatum(today);
+    setReminderDate(today);
   }
 
   function openEventModal() {
@@ -136,12 +139,21 @@ export default function AnimalDetailScreen() {
       Alert.alert("Datum", "Izberi datum opravila.");
       return;
     }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(reminderDate)) {
+      Alert.alert("Opomnik", "Izberi datum opomnika.");
+      return;
+    }
+    if (reminderDate > datum) {
+      Alert.alert("Opomnik", "Datum opomnika mora biti na dan opravila ali prej.");
+      return;
+    }
     setSavingEvent(true);
     try {
       await createOpravilo(token, {
         naslov: title,
         opomba: opomba.trim() || undefined,
         datum,
+        reminderDate,
         notificationId: null,
         zivalId: z.id,
       });
@@ -151,6 +163,11 @@ export default function AnimalDetailScreen() {
     } finally {
       setSavingEvent(false);
     }
+  }
+
+  function onEventDateChange(next: string) {
+    setReminderDate((rem) => (rem === datum || !rem ? next : rem));
+    setDatum(next);
   }
 
   function confirmDelete() {
@@ -397,7 +414,10 @@ export default function AnimalDetailScreen() {
               </View>
             )}
             <View style={styles.field}>
-              <DateField label="Datum" value={datum} onChange={setDatum} allowFuture />
+              <DateField label="Datum" value={datum} onChange={onEventDateChange} allowFuture />
+            </View>
+            <View style={styles.field}>
+              <DateField label="Datum opomnika" value={reminderDate} onChange={setReminderDate} allowFuture />
             </View>
             <TextInput
               value={opomba}
@@ -407,7 +427,7 @@ export default function AnimalDetailScreen() {
               style={[styles.input, styles.inputMultiline]}
               multiline
             />
-            <Text style={styles.modalHint}>Opomnik boš prejel teden dni pred opravilom ob 8.00.</Text>
+            <Text style={styles.modalHint}>Opomnik boš prejel ob 8.00 na izbrani dan.</Text>
             <View style={styles.modalActions}>
               <Pressable
                 onPress={closeEventModal}
