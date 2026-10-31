@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Baby, CalendarClock, Plus, Tag, Trash2, Truck } from "lucide-react-native";
+import { Baby, CalendarClock, Pencil, Plus, Tag, Trash2, Truck } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -40,24 +40,17 @@ import { removeAnimal, updateAnimalState, useAnimals } from "@/lib/animals-store
 import { useAuth } from "@/lib/auth-context";
 import { addEventPushListener } from "@/lib/notifications";
 import { syncNow } from "@/lib/sync/engine";
-import { createOpravilo, loadOpravila, useOpravila } from "@/lib/tasks";
+import { formatEuDate } from "@/lib/dates";
+import { createOpravilo, deleteOpravilo, loadOpravila, useOpravila, type Opravilo } from "@/lib/tasks";
 
-const MESECI = [
-  "jan", "feb", "mar", "apr", "maj", "jun",
-  "jul", "avg", "sep", "okt", "nov", "dec",
-];
+const TITLE_SEMENITEV = "Semenitev";
+const TITLE_PREMIK = "Premik";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
 function todayKey(): string {
   const d = new Date();
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
-// Format a "YYYY-MM-DD" key as e.g. "5. mar 2026".
-function fmtDate(key: string): string {
-  const [y, m, d] = key.split("-").map(Number);
-  return `${d}. ${MESECI[m - 1]} ${y}`;
 }
 
 type DetailTab = "pregled" | "osemenjevanje" | "premiki";
@@ -70,6 +63,7 @@ export default function AnimalDetailScreen() {
   const [deleting, setDeleting] = useState(false);
   const [savingState, setSavingState] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [titleLocked, setTitleLocked] = useState(false);
   const [naslov, setNaslov] = useState("");
   const [customNaslov, setCustomNaslov] = useState("");
   const [opomba, setOpomba] = useState("");
@@ -102,10 +96,18 @@ export default function AnimalDetailScreen() {
       const aUpcoming = a.datum >= dayKey;
       const bUpcoming = b.datum >= dayKey;
       if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
-      // Upcoming: soonest first. Past: most recent first.
       return aUpcoming ? a.datum.localeCompare(b.datum) : b.datum.localeCompare(a.datum);
     });
   }, [allOpravila, animalId, dayKey]);
+
+  const semenitve = useMemo(
+    () => animalTasks.filter((o) => o.naslov === TITLE_SEMENITEV),
+    [animalTasks],
+  );
+  const premiki = useMemo(
+    () => animalTasks.filter((o) => o.naslov === TITLE_PREMIK),
+    [animalTasks],
+  );
 
   const resolvedTitle = naslov === CUSTOM_EVENT_TITLE ? customNaslov.trim() : naslov.trim();
 
@@ -116,10 +118,15 @@ export default function AnimalDetailScreen() {
     setOpomba("");
     setDatum(today);
     setReminderDate(today);
+    setTitleLocked(false);
   }
 
-  function openEventModal() {
+  function openEventModal(fixedTitle?: string) {
     resetEventForm();
+    if (fixedTitle) {
+      setNaslov(fixedTitle);
+      setTitleLocked(true);
+    }
     setModalOpen(true);
   }
 
@@ -168,6 +175,22 @@ export default function AnimalDetailScreen() {
   function onEventDateChange(next: string) {
     setReminderDate((rem) => (rem === datum || !rem ? next : rem));
     setDatum(next);
+  }
+
+  async function onDeleteOpravilo(o: Opravilo) {
+    if (!token) return;
+    try {
+      await deleteOpravilo(token, o.id);
+    } catch (err) {
+      Alert.alert("Napaka", err instanceof Error ? err.message : "Opravila ni bilo mogoče izbrisati.");
+    }
+  }
+
+  function confirmDeleteOpravilo(o: Opravilo) {
+    Alert.alert("Izbriši opravilo", `Izbrisati ${o.naslov}?`, [
+      { text: "Prekliči", style: "cancel" },
+      { text: "Izbriši", style: "destructive", onPress: () => void onDeleteOpravilo(o) },
+    ]);
   }
 
   function confirmDelete() {
@@ -225,20 +248,44 @@ export default function AnimalDetailScreen() {
     );
   }
 
+  const modalTitle =
+    titleLocked && naslov === TITLE_SEMENITEV
+      ? "Nova semenitev"
+      : titleLocked && naslov === TITLE_PREMIK
+        ? "Nov premik"
+        : "Novo opravilo";
+
+  const notePlaceholder =
+    titleLocked && naslov === TITLE_SEMENITEV
+      ? "Bik, rezultat… (neobvezno)"
+      : titleLocked && naslov === TITLE_PREMIK
+        ? "Tip premika, prevoznik… (neobvezno)"
+        : "Opomba (neobvezno)";
+
   return (
     <SafeAreaView edges={["top"]} style={styles.root}>
       <TopBar
         title={z.ime}
         onBack={() => router.back()}
         right={
-          <Pressable
-            onPress={confirmDelete}
-            disabled={deleting}
-            hitSlop={8}
-            style={({ pressed }) => [styles.deleteButton, pressed && styles.deletePressed]}
-          >
-            {deleting ? <ActivityIndicator size="small" color={C.red} /> : <Trash2 size={20} color={C.red} />}
-          </Pressable>
+          <View style={styles.topActions}>
+            <Pressable
+              onPress={() => router.push({ pathname: "/animal/edit", params: { id: String(z.id) } })}
+              hitSlop={8}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.deletePressed]}
+              accessibilityLabel="Uredi žival"
+            >
+              <Pencil size={20} color={C.green} />
+            </Pressable>
+            <Pressable
+              onPress={confirmDelete}
+              disabled={deleting}
+              hitSlop={8}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.deletePressed]}
+            >
+              {deleting ? <ActivityIndicator size="small" color={C.red} /> : <Trash2 size={20} color={C.red} />}
+            </Pressable>
+          </View>
         }
       />
       <View style={styles.header}>
@@ -309,12 +356,11 @@ export default function AnimalDetailScreen() {
                     : "—"
                 }
               />
-              {/*<Row label="Laktacija" value={`#${z.laktacija}`} />*/}
             </Card>
             <View style={styles.sectionHeader}>
               <SectionLabel>Opravila</SectionLabel>
               <Pressable
-                onPress={openEventModal}
+                onPress={() => openEventModal()}
                 hitSlop={8}
                 style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
                 accessibilityLabel="Dodaj opravilo"
@@ -332,7 +378,10 @@ export default function AnimalDetailScreen() {
                     <View style={styles.eventHeader}>
                       <CalendarClock size={14} color={past ? C.faint : C.green} />
                       <Text style={styles.eventType}>{o.naslov}</Text>
-                      <Text style={styles.eventDate}>{fmtDate(o.datum)}</Text>
+                      <Text style={styles.eventDate}>{formatEuDate(o.datum)}</Text>
+                      <Pressable onPress={() => confirmDeleteOpravilo(o)} hitSlop={8} accessibilityLabel="Izbriši">
+                        <Trash2 size={14} color={C.red} />
+                      </Pressable>
                     </View>
                     {!!o.opomba && <Row label="Opomba" value={o.opomba} compact />}
                   </Card>
@@ -354,14 +403,34 @@ export default function AnimalDetailScreen() {
 
         {tab === "osemenjevanje" && (
           <View style={styles.list}>
-            {d.osemenjevanja.length === 0 ? (
+            <View style={styles.sectionHeader}>
+              <SectionLabel>Semenitve</SectionLabel>
+              <Pressable
+                onPress={() => openEventModal(TITLE_SEMENITEV)}
+                hitSlop={8}
+                style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
+                accessibilityLabel="Dodaj semenitev"
+              >
+                <Plus size={16} color={C.paper} />
+              </Pressable>
+            </View>
+            {semenitve.length === 0 ? (
               <Empty text="Ni zabeleženih osemenjevanj." />
             ) : (
-              d.osemenjevanja.map((o, i) => (
-                <Card key={i}>
-                  <Row label="Datum" value={o.datum} compact />
-                  <Row label="Bik" value={o.ime_bika} compact />
-                  <Row label="Rezultat" value={o.rezultat_brejosti} compact />
+              semenitve.map((o) => (
+                <Card key={o.id}>
+                  <View style={styles.eventHeader}>
+                    <CalendarClock size={14} color={C.green} />
+                    <Text style={styles.eventType}>{formatEuDate(o.datum)}</Text>
+                    <Pressable
+                      onPress={() => confirmDeleteOpravilo(o)}
+                      hitSlop={8}
+                      style={styles.trashEnd}
+                    >
+                      <Trash2 size={14} color={C.red} />
+                    </Pressable>
+                  </View>
+                  {!!o.opomba && <Row label="Opomba" value={o.opomba} compact />}
                 </Card>
               ))
             )}
@@ -370,12 +439,34 @@ export default function AnimalDetailScreen() {
 
         {tab === "premiki" && (
           <View style={styles.list}>
-            {d.premiki.length === 0 ? (
+            <View style={styles.sectionHeader}>
+              <SectionLabel>Premiki</SectionLabel>
+              <Pressable
+                onPress={() => openEventModal(TITLE_PREMIK)}
+                hitSlop={8}
+                style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
+                accessibilityLabel="Dodaj premik"
+              >
+                <Plus size={16} color={C.paper} />
+              </Pressable>
+            </View>
+            {premiki.length === 0 ? (
               <Empty text="Ni zabeleženih premikov." />
             ) : (
-              d.premiki.map((p, i) => (
-                <Card key={i}>
-                  <Row icon={Truck} label={p.tip_premika} value={p.datum} compact />
+              premiki.map((o) => (
+                <Card key={o.id}>
+                  <View style={styles.eventHeader}>
+                    <Truck size={14} color={C.green} />
+                    <Text style={styles.eventType}>{formatEuDate(o.datum)}</Text>
+                    <Pressable
+                      onPress={() => confirmDeleteOpravilo(o)}
+                      hitSlop={8}
+                      style={styles.trashEnd}
+                    >
+                      <Trash2 size={14} color={C.red} />
+                    </Pressable>
+                  </View>
+                  {!!o.opomba && <Row label="Opomba" value={o.opomba} compact />}
                 </Card>
               ))
             )}
@@ -386,33 +477,37 @@ export default function AnimalDetailScreen() {
       <Modal visible={modalOpen} transparent animationType="fade" onRequestClose={closeEventModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Novo opravilo</Text>
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
             <Text style={styles.modalAnimal}>
               {z.ime} · {z.si_id}
             </Text>
-            <View style={styles.field}>
-              <SelectField
-                label="Vrsta opravila"
-                value={naslov}
-                options={EVENT_TITLE_OPTIONS}
-                onChange={(value) => {
-                  setNaslov(value);
-                  if (value !== CUSTOM_EVENT_TITLE) setCustomNaslov("");
-                }}
-                placeholder="Izberi opravilo"
-              />
-            </View>
-            {naslov === CUSTOM_EVENT_TITLE && (
-              <View style={styles.field}>
-                <TextField
-                  label="Druga vrsta"
-                  value={customNaslov}
-                  onChangeText={setCustomNaslov}
-                  placeholder="Vnesi vrsto opravila"
-                  autoCapitalize="sentences"
-                />
-              </View>
-            )}
+            {!titleLocked ? (
+              <>
+                <View style={styles.field}>
+                  <SelectField
+                    label="Vrsta opravila"
+                    value={naslov}
+                    options={EVENT_TITLE_OPTIONS}
+                    onChange={(value) => {
+                      setNaslov(value);
+                      if (value !== CUSTOM_EVENT_TITLE) setCustomNaslov("");
+                    }}
+                    placeholder="Izberi opravilo"
+                  />
+                </View>
+                {naslov === CUSTOM_EVENT_TITLE && (
+                  <View style={styles.field}>
+                    <TextField
+                      label="Druga vrsta"
+                      value={customNaslov}
+                      onChangeText={setCustomNaslov}
+                      placeholder="Vnesi vrsto opravila"
+                      autoCapitalize="sentences"
+                    />
+                  </View>
+                )}
+              </>
+            ) : null}
             <View style={styles.field}>
               <DateField label="Datum" value={datum} onChange={onEventDateChange} allowFuture />
             </View>
@@ -422,7 +517,7 @@ export default function AnimalDetailScreen() {
             <TextInput
               value={opomba}
               onChangeText={setOpomba}
-              placeholder="Opomba (neobvezno)"
+              placeholder={notePlaceholder}
               placeholderTextColor={C.faint}
               style={[styles.input, styles.inputMultiline]}
               multiline
@@ -500,7 +595,12 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     gap: 6,
   },
-  deleteButton: {
+  topActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  iconButton: {
     padding: 4,
     borderRadius: 999,
   },
@@ -544,11 +644,15 @@ const styles = StyleSheet.create({
     color: C.ink,
     fontSize: 13,
     fontFamily: F.sansMedium,
+    flexShrink: 1,
   },
   eventDate: {
     color: C.faint,
     fontSize: 11,
     fontFamily: F.sans,
+    marginLeft: "auto",
+  },
+  trashEnd: {
     marginLeft: "auto",
   },
   modalOverlay: {

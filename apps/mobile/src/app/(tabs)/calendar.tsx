@@ -9,6 +9,7 @@ import { CUSTOM_EVENT_TITLE, EVENT_TITLE_OPTIONS } from "@/constants/data";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
+import { formatEuDate } from "@/lib/dates";
 import { addEventPushListener } from "@/lib/notifications";
 import { syncNow } from "@/lib/sync/engine";
 import { createOpravilo, deleteOpravilo, loadOpravila, useOpravila, type Opravilo } from "@/lib/tasks";
@@ -35,10 +36,7 @@ const parseKey = (key: string) => {
   const [y, m, d] = key.split("-").map(Number);
   return new Date(y, m - 1, d);
 };
-const fmtKey = (key: string) => {
-  const d = parseKey(key);
-  return `${d.getDate()}. ${MESECI[d.getMonth()]} ${d.getFullYear()}`;
-};
+const fmtKey = (key: string) => formatEuDate(key);
 
 // Weeks of a month as day numbers, Monday-first, padded with nulls.
 function monthMatrix(year: number, month: number): (number | null)[][] {

@@ -1,5 +1,6 @@
 import { breedLabel, type Zival } from "@/constants/data";
 import type { ApiAnimal } from "@/lib/api";
+import { formatEuDate } from "@/lib/dates";
 
 import { getDb } from "./client";
 import { newClientId } from "./ids";
@@ -36,6 +37,20 @@ export interface LocalAnimalCreate {
   motherId?: number | null;
 }
 
+export type LocalAnimalUpdate = Partial<{
+  name: string;
+  si_id: string;
+  breed: string | null;
+  gender: string | null;
+  isLactating: boolean;
+  isPregnant: boolean;
+  dateOfBirth: string | null;
+  acquisitionDate: string | null;
+  lactation: number | null;
+  fatherId: number | null;
+  motherId: number | null;
+}>;
+
 function rowToZival(row: AnimalRow): Zival {
   return {
     id: row.id,
@@ -45,7 +60,7 @@ function rowToZival(row: AnimalRow): Zival {
     gender: row.gender ?? undefined,
     isLactating: !!row.is_lactating,
     isPregnant: !!row.is_pregnant,
-    datum_rojstva: row.date_of_birth ?? "—",
+    datum_rojstva: row.date_of_birth ? formatEuDate(row.date_of_birth) : "—",
     laktacija: row.lactation ?? 0,
     fatherId: row.father_id,
     motherId: row.mother_id,
@@ -102,19 +117,31 @@ export function insertPendingAnimal(input: LocalAnimalCreate): { zival: Zival; c
   return { zival: rowToZival(getAnimalById(localId)!), clientId, localId };
 }
 
-export function updateAnimalLocal(
-  id: number,
-  state: Partial<{ isLactating: boolean; isPregnant: boolean }>,
-): Zival | null {
+export function updateAnimalLocal(id: number, state: LocalAnimalUpdate): Zival | null {
   const existing = getAnimalById(id);
   if (!existing) return null;
-  const isLactating = state.isLactating ?? !!existing.is_lactating;
-  const isPregnant = state.isPregnant ?? !!existing.is_pregnant;
-  getDb().runSync("UPDATE animals SET is_lactating = ?, is_pregnant = ? WHERE id = ?", [
-    isLactating ? 1 : 0,
-    isPregnant ? 1 : 0,
-    id,
-  ]);
+  getDb().runSync(
+    `UPDATE animals SET
+      si_id = ?, name = ?, breed = ?, gender = ?,
+      is_lactating = ?, is_pregnant = ?,
+      date_of_birth = ?, acquisition_date = ?, lactation = ?,
+      father_id = ?, mother_id = ?
+    WHERE id = ?`,
+    [
+      state.si_id !== undefined ? state.si_id : existing.si_id,
+      state.name !== undefined ? state.name : existing.name,
+      state.breed !== undefined ? state.breed : existing.breed,
+      state.gender !== undefined ? state.gender : existing.gender,
+      state.isLactating !== undefined ? (state.isLactating ? 1 : 0) : existing.is_lactating,
+      state.isPregnant !== undefined ? (state.isPregnant ? 1 : 0) : existing.is_pregnant,
+      state.dateOfBirth !== undefined ? state.dateOfBirth : existing.date_of_birth,
+      state.acquisitionDate !== undefined ? state.acquisitionDate : existing.acquisition_date,
+      state.lactation !== undefined ? state.lactation : existing.lactation,
+      state.fatherId !== undefined ? state.fatherId : existing.father_id,
+      state.motherId !== undefined ? state.motherId : existing.mother_id,
+      id,
+    ],
+  );
   return rowToZival(getAnimalById(id)!);
 }
 
@@ -179,7 +206,7 @@ export function replaceAnimalsFromServer(animals: ApiAnimal[]): void {
           id, client_id, server_id, si_id, name, breed, gender,
           is_lactating, is_pregnant, date_of_birth, acquisition_date, lactation,
           father_id, mother_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           a.id,
           `server:${a.id}`,
@@ -191,6 +218,7 @@ export function replaceAnimalsFromServer(animals: ApiAnimal[]): void {
           a.isLactating ? 1 : 0,
           a.isPregnant ? 1 : 0,
           a.dateOfBirth,
+          a.acquisitionDate ?? null,
           a.lactation,
           a.fatherId ?? null,
           a.motherId ?? null,

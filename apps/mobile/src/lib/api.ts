@@ -199,6 +199,7 @@ export interface ApiAnimal {
   isLactating: boolean;
   isPregnant: boolean;
   dateOfBirth: string | null;
+  acquisitionDate?: string | null;
   lactation: number | null;
   fatherId: number | null;
   motherId: number | null;
@@ -228,7 +229,19 @@ export function createAnimal(token: string, payload: CreateAnimalPayload): Promi
   return postAuth<ApiAnimal>("/animals", payload, token);
 }
 
-export type UpdateAnimalPayload = Partial<Pick<ApiAnimal, "isLactating" | "isPregnant">>;
+export type UpdateAnimalPayload = Partial<{
+  name: string;
+  si_id: string;
+  breed: string | null;
+  gender: string | null;
+  isLactating: boolean;
+  isPregnant: boolean;
+  dateOfBirth: string | null;
+  acquisitionDate: string | null;
+  lactation: number | null;
+  fatherId: number | null;
+  motherId: number | null;
+}>;
 
 export function updateAnimal(token: string, id: number, payload: UpdateAnimalPayload): Promise<ApiAnimal> {
   return patch<ApiAnimal>(`/animals/${id}`, payload, token);

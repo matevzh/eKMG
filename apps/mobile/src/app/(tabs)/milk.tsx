@@ -6,6 +6,7 @@ import { Screen } from "@/components/screen";
 import { Card, PillTabs, Row } from "@/components/ui";
 import { DOSTAVE, MOLZENJA } from "@/constants/data";
 import { C, F } from "@/constants/theme";
+import { formatEuDate } from "@/lib/dates";
 
 type MilkTab = "molzenja" | "dostave";
 
@@ -33,7 +34,7 @@ export default function MilkScreen() {
                 <View style={styles.dateWrap}>
                   <Calendar size={13} color={C.soil} />
                   <Text style={styles.dateText}>
-                    {m.datum} · {m.cas}
+                    {formatEuDate(m.datum)} · {m.cas}
                   </Text>
                 </View>
                 <Text style={styles.amount}>{m.kolicina_mleka} L</Text>
@@ -51,7 +52,7 @@ export default function MilkScreen() {
           DOSTAVE.map((d) => (
             <Card key={d.id}>
               <View style={styles.cardHeader}>
-                <Text style={styles.dateText}>{d.datum}</Text>
+                <Text style={styles.dateText}>{formatEuDate(d.datum)}</Text>
                 <Text style={styles.amount}>{d.kolicina_litrov} L</Text>
               </View>
               <View style={[styles.metaRow, styles.metaRowSpaced]}>

@@ -17,6 +17,7 @@ import {
 } from "react-native";
 
 import { C, F } from "@/constants/theme";
+import { formatEuDate } from "@/lib/dates";
 
 export function EarTag({ children, size = 12 }: { children: ReactNode; size?: number }) {
   return (
@@ -344,7 +345,9 @@ export function DateField({
     <View style={styles.fieldWrap}>
       <Text style={styles.fieldLabel}>{label}</Text>
       <Pressable onPress={() => setShow(true)} style={styles.selectInput}>
-        <Text style={[styles.selectValue, !value && styles.selectPlaceholder]}>{value || placeholder}</Text>
+        <Text style={[styles.selectValue, !value && styles.selectPlaceholder]}>
+          {value ? formatEuDate(value) : placeholder}
+        </Text>
         <CalendarDays size={16} color={C.faint} />
       </Pressable>
 

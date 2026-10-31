@@ -6,7 +6,9 @@ import {
   getAnimalById,
   insertPendingAnimal,
   listAnimalsLocal,
+  resolveServerAnimalId,
   updateAnimalLocal,
+  type LocalAnimalUpdate,
 } from "@/lib/db/animals";
 import { getDb } from "@/lib/db/client";
 import { deleteOutboxMatching, enqueueOutbox } from "@/lib/db/outbox";
@@ -85,6 +87,61 @@ export async function addAnimal(_token: string, input: NewAnimalInput): Promise<
   });
 
   enqueueOutbox("animal.create", { clientId });
+  reloadFromDb();
+  refreshSyncStatusFromDb();
+  void syncNow();
+  return zival;
+}
+
+export type EditAnimalInput = NewAnimalInput;
+
+export async function updateAnimal(_token: string, id: number, input: EditAnimalInput): Promise<Zival | null> {
+  const row = getAnimalById(id);
+  if (!row) return null;
+
+  const patch: LocalAnimalUpdate = {
+    name: input.ime,
+    si_id: input.si_id,
+    breed: input.breed || null,
+    gender: input.spol || null,
+    isLactating: input.isLactating,
+    isPregnant: input.isPregnant,
+    dateOfBirth: isoOrUndefined(input.datum_rojstva) ?? null,
+    acquisitionDate: isoOrUndefined(input.datum_pridobitve) ?? null,
+    lactation: input.laktacija,
+    fatherId: input.fatherId ?? null,
+    motherId: input.motherId ?? null,
+  };
+
+  const zival = updateAnimalLocal(id, patch);
+  if (!zival) return null;
+
+  // Never-synced animal: create outbox will read current row at flush time.
+  if (row.server_id == null && id < 0) {
+    reloadFromDb();
+    void syncNow();
+    return zival;
+  }
+
+  const serverId = row.server_id ?? (id > 0 ? id : null);
+  if (serverId != null) {
+    enqueueOutbox("animal.patch", {
+      serverId,
+      clientId: row.client_id,
+      name: patch.name,
+      si_id: patch.si_id,
+      breed: patch.breed,
+      gender: patch.gender,
+      isLactating: patch.isLactating,
+      isPregnant: patch.isPregnant,
+      dateOfBirth: patch.dateOfBirth,
+      acquisitionDate: patch.acquisitionDate,
+      lactation: patch.lactation,
+      fatherId: resolveServerAnimalId(patch.fatherId ?? null) ?? null,
+      motherId: resolveServerAnimalId(patch.motherId ?? null) ?? null,
+    });
+  }
+
   reloadFromDb();
   refreshSyncStatusFromDb();
   void syncNow();

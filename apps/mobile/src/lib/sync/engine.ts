@@ -185,8 +185,18 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
       const serverId = Number(p.serverId);
       if (!Number.isFinite(serverId) || serverId <= 0) return;
       await api.updateAnimal(token, serverId, {
+        name: p.name != null ? String(p.name) : undefined,
+        si_id: p.si_id != null ? String(p.si_id) : undefined,
+        breed: p.breed !== undefined ? (p.breed as string | null) : undefined,
+        gender: p.gender !== undefined ? (p.gender as string | null) : undefined,
         isLactating: p.isLactating != null ? !!p.isLactating : undefined,
         isPregnant: p.isPregnant != null ? !!p.isPregnant : undefined,
+        dateOfBirth: p.dateOfBirth !== undefined ? (p.dateOfBirth as string | null) : undefined,
+        acquisitionDate:
+          p.acquisitionDate !== undefined ? (p.acquisitionDate as string | null) : undefined,
+        lactation: p.lactation !== undefined ? (p.lactation as number | null) : undefined,
+        fatherId: p.fatherId !== undefined ? (p.fatherId as number | null) : undefined,
+        motherId: p.motherId !== undefined ? (p.motherId as number | null) : undefined,
       });
       return;
     }

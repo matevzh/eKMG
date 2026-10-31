@@ -5,6 +5,7 @@ import { Screen } from "@/components/screen";
 import { Card, SectionLabel } from "@/components/ui";
 import { ODHODKI, PRIHODKI } from "@/constants/data";
 import { C, F } from "@/constants/theme";
+import { formatEuDate } from "@/lib/dates";
 
 export default function FinanceScreen() {
   const totalIn = PRIHODKI.reduce((a, b) => a + b.kolicina, 0);
@@ -36,7 +37,7 @@ export default function FinanceScreen() {
             <View style={styles.itemRow}>
               <View>
                 <Text style={styles.itemTitle}>{p.kategorija}</Text>
-                <Text style={styles.itemMeta}>{p.datum}</Text>
+                <Text style={styles.itemMeta}>{formatEuDate(p.datum)}</Text>
               </View>
               <Text style={[styles.itemAmount, { color: C.green }]}>+{p.kolicina.toFixed(2)} €</Text>
             </View>
@@ -52,7 +53,7 @@ export default function FinanceScreen() {
               <View>
                 <Text style={styles.itemTitle}>{o.kategorija}</Text>
                 <Text style={styles.itemMeta}>
-                  {o.datum} · {o.prodajalec}
+                  {formatEuDate(o.datum)} · {o.prodajalec}
                 </Text>
               </View>
               <Text style={[styles.itemAmount, { color: C.red }]}>−{o.kolicina.toFixed(2)} €</Text>

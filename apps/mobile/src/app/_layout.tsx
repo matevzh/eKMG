@@ -94,6 +94,7 @@ function AppShell({ fontsLoaded }: { fontsLoaded: boolean }) {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="animal/[id]" />
         <Stack.Screen name="animal/new" />
+        <Stack.Screen name="animal/edit" />
         <Stack.Screen name="login" />
         <Stack.Screen name="register" />
         <Stack.Screen name="farm-setup" />
