@@ -42,10 +42,6 @@ export class UpdateAnimalDto {
     acquisitionType?: string;
 
     @IsOptional()
-    @IsDateString()
-    dateOfTagging?: string;
-
-    @IsOptional()
     @IsNumber()
     fatherId?: number | null;
 

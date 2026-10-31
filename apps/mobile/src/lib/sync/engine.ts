@@ -172,7 +172,6 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
         isPregnant: !!local.is_pregnant,
         dateOfBirth: local.date_of_birth ?? undefined,
         acquisitionDate: local.acquisition_date ?? undefined,
-        dateOfTagging: local.date_of_tagging ?? undefined,
         lactation: local.lactation ?? undefined,
         fatherId: resolveServerAnimalId(local.father_id) ?? null,
         motherId: resolveServerAnimalId(local.mother_id) ?? null,

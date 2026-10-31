@@ -45,10 +45,6 @@ export class CreateAnimalDto {
     acquisitionDate?: string;
 
     @IsOptional()
-    @IsDateString()
-    dateOfTagging?: string;
-
-    @IsOptional()
     @IsInt()
     fatherId?: number | null;
 

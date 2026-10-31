@@ -60,7 +60,6 @@ export class AnimalsService {
             lactation: animal.lactation,
             dateOfBirth: animal.dateOfBirth,
             acquisitionDate: animal.acquisitionDate,
-            dateOfTagging: animal.dateOfTagging,
             birthFarmId: birthfarm.id,
             fatherId: animal.fatherId ?? null,
             motherId: animal.motherId ?? null,

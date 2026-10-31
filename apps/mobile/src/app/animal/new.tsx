@@ -33,7 +33,6 @@ export default function NewAnimalScreen() {
   const [spol, setSpol] = useState<string>(GENDERS[0].value);
   const [datumRojstva, setDatumRojstva] = useState("");
   const [datumPridobitve, setDatumPridobitve] = useState("");
-  const [datumOznacitve, setDatumOznacitve] = useState("");
   const [laktacija, setLaktacija] = useState("");
   const [isLactating, setIsLactating] = useState(false);
   const [isPregnant, setIsPregnant] = useState(false);
@@ -81,7 +80,6 @@ export default function NewAnimalScreen() {
         isPregnant,
         datum_rojstva: datumRojstva.trim(),
         datum_pridobitve: datumPridobitve.trim(),
-        datum_oznacitve: datumOznacitve.trim(),
         laktacija: Number.parseInt(laktacija, 10) || 0,
         motherId: motherId ? Number(motherId) : null,
         fatherId: fatherId ? Number(fatherId) : null,
@@ -121,7 +119,6 @@ export default function NewAnimalScreen() {
           </View>
           <DateField label="Datum rojstva" value={datumRojstva} onChange={setDatumRojstva} />
           <DateField label="Datum pridobitve" value={datumPridobitve} onChange={setDatumPridobitve} />
-          <DateField label="Datum označitve" value={datumOznacitve} onChange={setDatumOznacitve} />
           {/*<TextField
             label="Zaporedna laktacija"
             value={laktacija}

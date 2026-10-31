@@ -55,6 +55,12 @@ const MIGRATIONS: { version: number; sql: string }[] = [
       ALTER TABLE animals ADD COLUMN mother_id INTEGER;
     `,
   },
+  {
+    version: 3,
+    sql: `
+      ALTER TABLE animals DROP COLUMN date_of_tagging;
+    `,
+  },
 ];
 
 export function runMigrations(db: SQLiteDatabase): void {

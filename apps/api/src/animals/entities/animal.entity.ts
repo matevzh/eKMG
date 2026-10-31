@@ -42,9 +42,6 @@ export class Animal {
     @Column({ type: 'date', nullable: true })
     acquisitionDate?: string;
 
-    @Column({ type: 'date', nullable: true })
-    dateOfTagging?: string;
-
     @CreateDateColumn()
     createdAt!: Date;
 

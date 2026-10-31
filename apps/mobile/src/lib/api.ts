@@ -213,7 +213,6 @@ export interface CreateAnimalPayload {
   isPregnant?: boolean;
   dateOfBirth?: string;
   acquisitionDate?: string;
-  dateOfTagging?: string;
   lactation?: number;
   fatherId?: number | null;
   motherId?: number | null;

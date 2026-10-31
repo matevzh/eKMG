@@ -54,7 +54,6 @@ export interface NewAnimalInput {
   isPregnant: boolean;
   datum_rojstva: string;
   datum_pridobitve: string;
-  datum_oznacitve: string;
   laktacija: number;
   /** Local animal ids; optional. */
   fatherId?: number | null;
@@ -80,7 +79,6 @@ export async function addAnimal(_token: string, input: NewAnimalInput): Promise<
     isPregnant: input.isPregnant,
     dateOfBirth: isoOrUndefined(input.datum_rojstva),
     acquisitionDate: isoOrUndefined(input.datum_pridobitve),
-    dateOfTagging: isoOrUndefined(input.datum_oznacitve),
     lactation: input.laktacija,
     fatherId: input.fatherId ?? null,
     motherId: input.motherId ?? null,

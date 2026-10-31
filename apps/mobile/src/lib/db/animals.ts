@@ -17,7 +17,6 @@ export interface AnimalRow {
   is_pregnant: number;
   date_of_birth: string | null;
   acquisition_date: string | null;
-  date_of_tagging: string | null;
   lactation: number | null;
   father_id: number | null;
   mother_id: number | null;
@@ -32,7 +31,6 @@ export interface LocalAnimalCreate {
   isPregnant: boolean;
   dateOfBirth?: string;
   acquisitionDate?: string;
-  dateOfTagging?: string;
   lactation?: number;
   fatherId?: number | null;
   motherId?: number | null;
@@ -82,9 +80,9 @@ export function insertPendingAnimal(input: LocalAnimalCreate): { zival: Zival; c
   getDb().runSync(
     `INSERT INTO animals (
       id, client_id, server_id, si_id, name, breed, gender,
-      is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation,
+      is_lactating, is_pregnant, date_of_birth, acquisition_date, lactation,
       father_id, mother_id
-    ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       localId,
       clientId,
@@ -96,7 +94,6 @@ export function insertPendingAnimal(input: LocalAnimalCreate): { zival: Zival; c
       input.isPregnant ? 1 : 0,
       input.dateOfBirth ?? null,
       input.acquisitionDate ?? null,
-      input.dateOfTagging ?? null,
       input.lactation ?? null,
       input.fatherId ?? null,
       input.motherId ?? null,
@@ -143,9 +140,9 @@ export function bindAnimalServerId(clientId: string, serverId: number): void {
     db.runSync(
       `INSERT INTO animals (
         id, client_id, server_id, si_id, name, breed, gender,
-        is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation,
+        is_lactating, is_pregnant, date_of_birth, acquisition_date, lactation,
         father_id, mother_id
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         serverId,
         clientId,
@@ -158,7 +155,6 @@ export function bindAnimalServerId(clientId: string, serverId: number): void {
         row.is_pregnant,
         row.date_of_birth,
         row.acquisition_date,
-        row.date_of_tagging,
         row.lactation,
         row.father_id,
         row.mother_id,
@@ -181,9 +177,9 @@ export function replaceAnimalsFromServer(animals: ApiAnimal[]): void {
       db.runSync(
         `INSERT INTO animals (
           id, client_id, server_id, si_id, name, breed, gender,
-          is_lactating, is_pregnant, date_of_birth, acquisition_date, date_of_tagging, lactation,
+          is_lactating, is_pregnant, date_of_birth, acquisition_date, lactation,
           father_id, mother_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)`,
         [
           a.id,
           `server:${a.id}`,
