@@ -5,6 +5,7 @@ import { Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from "reac
 import { Screen } from "@/components/screen";
 import { SyncBanner } from "@/components/sync-banner";
 import { Card, Empty, SectionLabel, SelectField, TextField } from "@/components/ui";
+import { CUSTOM_EVENT_TITLE, EVENT_TITLE_OPTIONS } from "@/constants/data";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
@@ -27,12 +28,6 @@ const MESECI = [
   "december",
 ];
 const DNEVI = ["pon", "tor", "sre", "čet", "pet", "sob", "ned"];
-
-// Preset event titles in the add-opravilo dropdown. "Drugo" is UI-only: the
-// user then types a custom title, which is what gets saved.
-const EVENT_TITLES = ["Predvidena telitev", "Veterinarski pregled", "Semenitev", "Premik", "Drugo"];
-const CUSTOM_TITLE = "Drugo";
-const EVENT_TITLE_OPTIONS = EVENT_TITLES.map((t) => ({ value: t, label: t }));
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const toKey = (year: number, month: number, day: number) => `${year}-${pad(month + 1)}-${pad(day)}`;
@@ -109,7 +104,7 @@ export default function CalendarScreen() {
     });
   };
 
-  const resolvedTitle = naslov === CUSTOM_TITLE ? customNaslov.trim() : naslov.trim();
+  const resolvedTitle = naslov === CUSTOM_EVENT_TITLE ? customNaslov.trim() : naslov.trim();
 
   const resetForm = () => {
     setNaslov("");
@@ -295,12 +290,12 @@ export default function CalendarScreen() {
                 options={EVENT_TITLE_OPTIONS}
                 onChange={(value) => {
                   setNaslov(value);
-                  if (value !== CUSTOM_TITLE) setCustomNaslov("");
+                  if (value !== CUSTOM_EVENT_TITLE) setCustomNaslov("");
                 }}
                 placeholder="Izberi opravilo"
               />
             </View>
-            {naslov === CUSTOM_TITLE && (
+            {naslov === CUSTOM_EVENT_TITLE && (
               <View style={styles.zivalField}>
                 <TextField
                   label="Druga vrsta"

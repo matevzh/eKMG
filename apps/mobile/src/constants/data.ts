@@ -149,3 +149,17 @@ export function animalSexLabel(gender?: string | null): "Bik" | "Krava" | null {
   if (isFemaleAnimal(gender)) return "Krava";
   return null;
 }
+
+// Preset event titles in the add-opravilo UI. "Drugo" is UI-only: the user
+// then types a custom title, which is what gets saved.
+export const EVENT_TITLES = [
+  "Predvidena telitev",
+  "Veterinarski pregled",
+  "Semenitev",
+  "Premik",
+  "Drugo",
+] as const;
+
+export const CUSTOM_EVENT_TITLE = "Drugo";
+
+export const EVENT_TITLE_OPTIONS = EVENT_TITLES.map((t) => ({ value: t, label: t }));

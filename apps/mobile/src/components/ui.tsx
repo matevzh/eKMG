@@ -320,14 +320,18 @@ export function DateField({
   value,
   onChange,
   placeholder = "Izberi datum…",
+  /** When true, future dates are allowed (e.g. calendar events). Default caps at today. */
+  allowFuture = false,
 }: {
   label: string;
   value: string; // YYYY-MM-DD or ""
   onChange: (value: string) => void;
   placeholder?: string;
+  allowFuture?: boolean;
 }) {
   const [show, setShow] = useState(false);
   const current = value ? new Date(`${value}T00:00:00`) : new Date();
+  const maximumDate = allowFuture ? undefined : new Date();
 
   function onAndroidChange(event: DateTimePickerEvent, selected?: Date) {
     setShow(false);
@@ -345,7 +349,12 @@ export function DateField({
       </Pressable>
 
       {show && Platform.OS !== "ios" && (
-        <DateTimePicker value={current} mode="date" onChange={onAndroidChange} maximumDate={new Date()} />
+        <DateTimePicker
+          value={current}
+          mode="date"
+          onChange={onAndroidChange}
+          maximumDate={maximumDate}
+        />
       )}
 
       {Platform.OS === "ios" && (
@@ -356,7 +365,7 @@ export function DateField({
                 value={current}
                 mode="date"
                 display="spinner"
-                maximumDate={new Date()}
+                maximumDate={maximumDate}
                 onChange={(_, selected) => selected && onChange(toISODate(selected))}
               />
               <Pressable style={styles.dateDoneButton} onPress={() => setShow(false)}>

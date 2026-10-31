@@ -1,22 +1,58 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Baby, CalendarClock, Tag, Trash2, Truck } from "lucide-react-native";
+import { Baby, CalendarClock, Plus, Tag, Trash2, Truck } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Card, EarTag, Empty, PillTabs, Row, SectionLabel, StatePicker, TopBar } from "@/components/ui";
-import { animalSexLabel, EMPTY_DETAIL, isFemaleAnimal, isMaleAnimal } from "@/constants/data";
+import {
+  Card,
+  DateField,
+  EarTag,
+  Empty,
+  PillTabs,
+  Row,
+  SectionLabel,
+  SelectField,
+  StatePicker,
+  TextField,
+  TopBar,
+} from "@/components/ui";
+import {
+  animalSexLabel,
+  CUSTOM_EVENT_TITLE,
+  EMPTY_DETAIL,
+  EVENT_TITLE_OPTIONS,
+  isFemaleAnimal,
+  isMaleAnimal,
+} from "@/constants/data";
 import { C, F } from "@/constants/theme";
 import { removeAnimal, updateAnimalState, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
 import { addEventPushListener } from "@/lib/notifications";
 import { syncNow } from "@/lib/sync/engine";
-import { loadOpravila, useOpravila } from "@/lib/tasks";
+import { createOpravilo, loadOpravila, useOpravila } from "@/lib/tasks";
 
 const MESECI = [
   "jan", "feb", "mar", "apr", "maj", "jun",
   "jul", "avg", "sep", "okt", "nov", "dec",
 ];
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+function todayKey(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
 // Format a "YYYY-MM-DD" key as e.g. "5. mar 2026".
 function fmtDate(key: string): string {
@@ -33,6 +69,12 @@ export default function AnimalDetailScreen() {
   const [tab, setTab] = useState<DetailTab>("pregled");
   const [deleting, setDeleting] = useState(false);
   const [savingState, setSavingState] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [naslov, setNaslov] = useState("");
+  const [customNaslov, setCustomNaslov] = useState("");
+  const [opomba, setOpomba] = useState("");
+  const [datum, setDatum] = useState(todayKey);
+  const [savingEvent, setSavingEvent] = useState(false);
   const animals = useAnimals();
   const allOpravila = useOpravila();
 
@@ -43,7 +85,7 @@ export default function AnimalDetailScreen() {
   const sexLabel = animalSexLabel(z?.gender);
 
   const animalId = z?.id;
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const dayKey = todayKey();
 
   useEffect(() => {
     if (!token) return;
@@ -56,13 +98,60 @@ export default function AnimalDetailScreen() {
   const animalTasks = useMemo(() => {
     const linked = allOpravila.filter((o) => o.zivalId === animalId);
     return [...linked].sort((a, b) => {
-      const aUpcoming = a.datum >= todayKey;
-      const bUpcoming = b.datum >= todayKey;
+      const aUpcoming = a.datum >= dayKey;
+      const bUpcoming = b.datum >= dayKey;
       if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
       // Upcoming: soonest first. Past: most recent first.
       return aUpcoming ? a.datum.localeCompare(b.datum) : b.datum.localeCompare(a.datum);
     });
-  }, [allOpravila, animalId, todayKey]);
+  }, [allOpravila, animalId, dayKey]);
+
+  const resolvedTitle = naslov === CUSTOM_EVENT_TITLE ? customNaslov.trim() : naslov.trim();
+
+  function resetEventForm() {
+    setNaslov("");
+    setCustomNaslov("");
+    setOpomba("");
+    setDatum(todayKey());
+  }
+
+  function openEventModal() {
+    resetEventForm();
+    setModalOpen(true);
+  }
+
+  function closeEventModal() {
+    resetEventForm();
+    setModalOpen(false);
+  }
+
+  async function addOpravilo() {
+    const title = resolvedTitle;
+    if (!title || !z || savingEvent) return;
+    if (!token) {
+      Alert.alert("Seja je potekla", "Prijavi se znova.");
+      return;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(datum)) {
+      Alert.alert("Datum", "Izberi datum opravila.");
+      return;
+    }
+    setSavingEvent(true);
+    try {
+      await createOpravilo(token, {
+        naslov: title,
+        opomba: opomba.trim() || undefined,
+        datum,
+        notificationId: null,
+        zivalId: z.id,
+      });
+      closeEventModal();
+    } catch (err) {
+      Alert.alert("Napaka", err instanceof Error ? err.message : "Opravila ni bilo mogoče shraniti.");
+    } finally {
+      setSavingEvent(false);
+    }
+  }
 
   function confirmDelete() {
     if (!z) return;
@@ -205,12 +294,22 @@ export default function AnimalDetailScreen() {
               />
               {/*<Row label="Laktacija" value={`#${z.laktacija}`} />*/}
             </Card>
-            <SectionLabel>Opravila</SectionLabel>
+            <View style={styles.sectionHeader}>
+              <SectionLabel>Opravila</SectionLabel>
+              <Pressable
+                onPress={openEventModal}
+                hitSlop={8}
+                style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
+                accessibilityLabel="Dodaj opravilo"
+              >
+                <Plus size={16} color={C.paper} />
+              </Pressable>
+            </View>
             {animalTasks.length === 0 ? (
               <Empty text="Ni opravil za to žival." />
             ) : (
               animalTasks.map((o) => {
-                const past = o.datum < todayKey;
+                const past = o.datum < dayKey;
                 return (
                   <Card key={o.id}>
                     <View style={styles.eventHeader}>
@@ -266,6 +365,76 @@ export default function AnimalDetailScreen() {
           </View>
         )}
       </ScrollView>
+
+      <Modal visible={modalOpen} transparent animationType="fade" onRequestClose={closeEventModal}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Novo opravilo</Text>
+            <Text style={styles.modalAnimal}>
+              {z.ime} · {z.si_id}
+            </Text>
+            <View style={styles.field}>
+              <SelectField
+                label="Vrsta opravila"
+                value={naslov}
+                options={EVENT_TITLE_OPTIONS}
+                onChange={(value) => {
+                  setNaslov(value);
+                  if (value !== CUSTOM_EVENT_TITLE) setCustomNaslov("");
+                }}
+                placeholder="Izberi opravilo"
+              />
+            </View>
+            {naslov === CUSTOM_EVENT_TITLE && (
+              <View style={styles.field}>
+                <TextField
+                  label="Druga vrsta"
+                  value={customNaslov}
+                  onChangeText={setCustomNaslov}
+                  placeholder="Vnesi vrsto opravila"
+                  autoCapitalize="sentences"
+                />
+              </View>
+            )}
+            <View style={styles.field}>
+              <DateField label="Datum" value={datum} onChange={setDatum} allowFuture />
+            </View>
+            <TextInput
+              value={opomba}
+              onChangeText={setOpomba}
+              placeholder="Opomba (neobvezno)"
+              placeholderTextColor={C.faint}
+              style={[styles.input, styles.inputMultiline]}
+              multiline
+            />
+            <Text style={styles.modalHint}>Opomnik boš prejel teden dni pred opravilom ob 8.00.</Text>
+            <View style={styles.modalActions}>
+              <Pressable
+                onPress={closeEventModal}
+                style={({ pressed }) => [styles.modalButton, styles.modalCancel, pressed && styles.deletePressed]}
+              >
+                <Text style={styles.modalCancelText}>Prekliči</Text>
+              </Pressable>
+              <Pressable
+                onPress={addOpravilo}
+                disabled={!resolvedTitle || savingEvent}
+                style={({ pressed }) => [
+                  styles.modalButton,
+                  styles.modalSave,
+                  (!resolvedTitle || savingEvent) && styles.modalSaveDisabled,
+                  pressed && styles.deletePressed,
+                ]}
+              >
+                {savingEvent ? (
+                  <ActivityIndicator size="small" color={C.paper} />
+                ) : (
+                  <Text style={styles.modalSaveText}>Shrani</Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -328,6 +497,23 @@ const styles = StyleSheet.create({
   list: {
     gap: 8,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  addButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: C.green,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12,
+  },
+  addButtonPressed: {
+    opacity: 0.85,
+  },
   eventHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -344,5 +530,88 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: F.sans,
     marginLeft: "auto",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(35, 48, 31, 0.45)",
+    justifyContent: "center",
+    padding: 24,
+  },
+  modalCard: {
+    backgroundColor: C.card,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: C.line,
+    padding: 18,
+  },
+  modalTitle: {
+    fontFamily: F.display,
+    fontSize: 18,
+    color: C.ink,
+  },
+  modalAnimal: {
+    color: C.soil,
+    fontSize: 12,
+    fontFamily: F.sansMedium,
+    marginTop: 2,
+    marginBottom: 12,
+  },
+  field: {
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: C.line,
+    borderRadius: 10,
+    backgroundColor: C.bg,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    fontSize: 13.5,
+    fontFamily: F.sans,
+    color: C.ink,
+    marginBottom: 8,
+  },
+  inputMultiline: {
+    minHeight: 64,
+    textAlignVertical: "top",
+  },
+  modalHint: {
+    color: C.faint,
+    fontSize: 11.5,
+    fontFamily: F.sans,
+    marginBottom: 14,
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 8,
+  },
+  modalButton: {
+    borderRadius: 999,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    minWidth: 88,
+    alignItems: "center",
+  },
+  modalCancel: {
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: C.card,
+  },
+  modalCancelText: {
+    color: C.ink,
+    fontSize: 12.5,
+    fontFamily: F.sansMedium,
+  },
+  modalSave: {
+    backgroundColor: C.green,
+  },
+  modalSaveDisabled: {
+    opacity: 0.4,
+  },
+  modalSaveText: {
+    color: C.paper,
+    fontSize: 12.5,
+    fontFamily: F.sansMedium,
   },
 });
