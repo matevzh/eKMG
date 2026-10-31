@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { SyncBanner } from "@/components/sync-banner";
 import { Card, EarTag, TopBar } from "@/components/ui";
+import { isFemaleAnimal, isMaleAnimal } from "@/constants/data";
 import { C, F } from "@/constants/theme";
 import { loadAnimals, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
@@ -80,11 +81,17 @@ export default function AnimalsScreen() {
           keyExtractor={(z) => String(z.id)}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item: z }) => (
-            <Card onPress={() => router.push({ pathname: "/animal/[id]", params: { id: z.id } })}>
+          renderItem={({ item: z }) => {
+            const female = isFemaleAnimal(z.gender);
+            const male = isMaleAnimal(z.gender);
+            return (
+            <Card
+              onPress={() => router.push({ pathname: "/animal/[id]", params: { id: z.id } })}
+              style={male ? styles.cardBull : undefined}
+            >
               <View style={styles.itemRow}>
                 <View style={styles.itemLeft}>
-                  <View style={styles.avatar}>
+                  <View style={[styles.avatar, male && styles.avatarBull]}>
                     <Tag size={16} color={C.green} />
                   </View>
                   <View style={styles.nameCol}>
@@ -93,13 +100,19 @@ export default function AnimalsScreen() {
                   </View>
                 </View>
                 <View style={styles.itemRight}>
-                  <Text style={styles.stateLabel}>{z.isLactating ? "Molzena" : "Presušena"}</Text>
-                  <Text style={styles.stateLabel}>{z.isPregnant ? "Breja" : "Ni breja"}</Text>
+                  {female ? (
+                    <>
+                      <Text style={styles.stateLabel}>{z.isLactating ? "Molzena" : "Presušena"}</Text>
+                      <Text style={styles.stateLabel}>{z.isPregnant ? "Breja" : "Ni breja"}</Text>
+                    </>
+                  ) : null}
+                  {male ? <Text style={styles.stateLabel}>Bik</Text> : null}
                   <Text style={styles.breed}>{z.pasma}</Text>
                 </View>
               </View>
             </Card>
-          )}
+            );
+          }}
         />
       </View>
     </SafeAreaView>
@@ -149,6 +162,9 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingBottom: 24,
   },
+  cardBull: {
+    backgroundColor: "#E8F1F7",
+  },
   itemRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -166,6 +182,9 @@ const styles = StyleSheet.create({
     backgroundColor: C.mist,
     alignItems: "center",
     justifyContent: "center",
+  },
+  avatarBull: {
+    backgroundColor: "#E8F1F7",
   },
   nameCol: {
     gap: 2,

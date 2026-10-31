@@ -1,11 +1,11 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Baby, CalendarClock, HeartPulse, Syringe, Tag, Trash2, Truck } from "lucide-react-native";
+import { Baby, CalendarClock, Tag, Trash2, Truck } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Card, EarTag, Empty, PillTabs, Row, SectionLabel, StatePicker, TopBar } from "@/components/ui";
-import { EMPTY_DETAIL } from "@/constants/data";
+import { animalSexLabel, EMPTY_DETAIL, isFemaleAnimal, isMaleAnimal } from "@/constants/data";
 import { C, F } from "@/constants/theme";
 import { removeAnimal, updateAnimalState, useAnimals } from "@/lib/animals-store";
 import { useAuth } from "@/lib/auth-context";
@@ -24,7 +24,7 @@ function fmtDate(key: string): string {
   return `${d}. ${MESECI[m - 1]} ${y}`;
 }
 
-type DetailTab = "pregled" | "zdravje" | "osemenjevanje" | "premiki";
+type DetailTab = "pregled" | "osemenjevanje" | "premiki";
 
 export default function AnimalDetailScreen() {
   const router = useRouter();
@@ -38,6 +38,9 @@ export default function AnimalDetailScreen() {
 
   const z = animals.find((a) => a.id === Number(id));
   const d = EMPTY_DETAIL;
+  const female = isFemaleAnimal(z?.gender);
+  const male = isMaleAnimal(z?.gender);
+  const sexLabel = animalSexLabel(z?.gender);
 
   const animalId = z?.id;
   const todayKey = new Date().toISOString().slice(0, 10);
@@ -134,39 +137,40 @@ export default function AnimalDetailScreen() {
       />
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <View style={styles.avatar}>
+          <View style={[styles.avatar, male && styles.avatarBull]}>
             <Tag size={22} color={C.green} />
           </View>
           <View style={styles.nameCol}>
             <Text style={styles.name}>{z.ime}</Text>
             <EarTag size={11}>{z.si_id}</EarTag>
           </View>
-          <View style={styles.stateControls}>
-            <StatePicker
-              label="Molznost"
-              enabledLabel="Molzena"
-              disabledLabel="Presušena"
-              tone="green"
-              value={z.isLactating}
-              onChange={(value) => onChangeState("isLactating", value)}
-              saving={savingState}
-            />
-            <StatePicker
-              label="Brejost"
-              enabledLabel="Breja"
-              disabledLabel="Ni breja"
-              tone="amber"
-              value={z.isPregnant}
-              onChange={(value) => onChangeState("isPregnant", value)}
-              saving={savingState}
-            />
-          </View>
+          {female ? (
+            <View style={styles.stateControls}>
+              <StatePicker
+                label="Molznost"
+                enabledLabel="Molzena"
+                disabledLabel="Presušena"
+                tone="green"
+                value={z.isLactating}
+                onChange={(value) => onChangeState("isLactating", value)}
+                saving={savingState}
+              />
+              <StatePicker
+                label="Brejost"
+                enabledLabel="Breja"
+                disabledLabel="Ni breja"
+                tone="amber"
+                value={z.isPregnant}
+                onChange={(value) => onChangeState("isPregnant", value)}
+                saving={savingState}
+              />
+            </View>
+          ) : null}
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScroll}>
           <PillTabs
             tabs={[
               { key: "pregled", label: "Pregled" },
-              { key: "zdravje", label: "Zdravje" },
               { key: "osemenjevanje", label: "Osemenjevanje" },
               { key: "premiki", label: "Premiki" },
             ]}
@@ -180,6 +184,7 @@ export default function AnimalDetailScreen() {
         {tab === "pregled" && (
           <View style={styles.list}>
             <Card>
+              <Row label="Spol" value={sexLabel ?? "—"} />
               <Row label="Pasma" value={z.pasma} />
               <Row label="Datum rojstva" value={z.datum_rojstva} />
               <Row
@@ -225,38 +230,6 @@ export default function AnimalDetailScreen() {
               d.telitve.map((t, i) => (
                 <Card key={i}>
                   <Row icon={Baby} label="Datum telitve" value={t.datum} />
-                </Card>
-              ))
-            )}
-          </View>
-        )}
-
-        {tab === "zdravje" && (
-          <View style={styles.list}>
-            <SectionLabel>Zdravstveni dogodki</SectionLabel>
-            {d.zdravstveni_dogodki.length === 0 ? (
-              <Empty text="Ni zabeleženih zdravstvenih dogodkov." />
-            ) : (
-              d.zdravstveni_dogodki.map((e, i) => (
-                <Card key={i}>
-                  <View style={styles.eventHeader}>
-                    <HeartPulse size={14} color={C.red} />
-                    <Text style={styles.eventType}>{e.tip}</Text>
-                    <Text style={styles.eventDate}>{e.datum}</Text>
-                  </View>
-                  <Row label="Diagnoza" value={e.diagnoza} compact />
-                  <Row label="Veterinar" value={e.ime_veterinarja} compact />
-                </Card>
-              ))
-            )}
-            <SectionLabel>Terapije</SectionLabel>
-            {d.terapije.length === 0 ? (
-              <Empty text="Ni zabeleženih terapij." />
-            ) : (
-              d.terapije.map((t, i) => (
-                <Card key={i}>
-                  <Row icon={Syringe} label="Doza" value={t.doza} compact />
-                  <Row label="Karenca" value={t.karenca} compact />
                 </Card>
               ))
             )}
@@ -321,8 +294,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  avatarBull: {
+    backgroundColor: "#E8F1F7",
+  },
   nameCol: {
     gap: 2,
+    flexShrink: 1,
   },
   name: {
     fontFamily: F.display,

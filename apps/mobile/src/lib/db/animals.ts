@@ -41,7 +41,7 @@ function rowToZival(row: AnimalRow): Zival {
     id: row.id,
     si_id: row.si_id,
     ime: row.name,
-    pasma: row.breed ? breedLabel(row.breed) : "—",
+    pasma: row.breed ? breedLabel(row.breed, row.gender) : "—",
     gender: row.gender ?? undefined,
     isLactating: !!row.is_lactating,
     isPregnant: !!row.is_pregnant,
