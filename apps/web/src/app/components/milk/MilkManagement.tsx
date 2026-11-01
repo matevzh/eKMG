@@ -22,89 +22,27 @@ export function MilkManagement() {
     "sessions"
   );
 
-  // Mock data for milk sessions
-  const milkSessions = [
-    {
-      id: 1,
-      date: "2026-02-28",
-      time: "Morning",
-      animalID: "A1234",
-      animalName: "Bella",
-      quantity: 28,
-    },
-    {
-      id: 2,
-      date: "2026-02-28",
-      time: "Evening",
-      animalID: "A1234",
-      animalName: "Bella",
-      quantity: 26,
-    },
-    {
-      id: 3,
-      date: "2026-02-28",
-      time: "Morning",
-      animalID: "A1235",
-      animalName: "Daisy",
-      quantity: 25,
-    },
-    {
-      id: 4,
-      date: "2026-02-28",
-      time: "Evening",
-      animalID: "A1235",
-      animalName: "Daisy",
-      quantity: 24,
-    },
-  ];
+  const milkSessions: {
+    id: number;
+    date: string;
+    time: string;
+    animalID: string;
+    animalName: string;
+    quantity: number;
+  }[] = [];
 
-  // Mock data for deliveries
-  const deliveries = [
-    {
-      id: 1,
-      date: "2026-02-27",
-      quantity: 850,
-      processor: "Alpine Dairy Co.",
-      status: "Delivered",
-      price: 0.42,
-    },
-    {
-      id: 2,
-      date: "2026-02-25",
-      quantity: 845,
-      processor: "Alpine Dairy Co.",
-      status: "Delivered",
-      price: 0.42,
-    },
-    {
-      id: 3,
-      date: "2026-02-23",
-      quantity: 860,
-      processor: "Alpine Dairy Co.",
-      status: "Delivered",
-      price: 0.42,
-    },
-  ];
+  const deliveries: {
+    id: number;
+    date: string;
+    quantity: number;
+    processor: string;
+    status: string;
+    price: number;
+  }[] = [];
 
-  // Mock data for analytics
-  const weeklyData = [
-    { day: "Mon", morning: 420, evening: 410 },
-    { day: "Tue", morning: 430, evening: 415 },
-    { day: "Wed", morning: 425, evening: 420 },
-    { day: "Thu", morning: 435, evening: 425 },
-    { day: "Fri", morning: 440, evening: 430 },
-    { day: "Sat", morning: 425, evening: 420 },
-    { day: "Sun", morning: 420, evening: 415 },
-  ];
+  const weeklyData: { day: string; morning: number; evening: number }[] = [];
 
-  const monthlyTrend = [
-    { month: "Sep", total: 25200 },
-    { month: "Oct", total: 25800 },
-    { month: "Nov", total: 24900 },
-    { month: "Dec", total: 25500 },
-    { month: "Jan", total: 26100 },
-    { month: "Feb", total: 23800 },
-  ];
+  const monthlyTrend: { month: string; total: number }[] = [];
 
   const [sessionForm, setSessionForm] = useState({
     date: new Date().toISOString().split("T")[0],

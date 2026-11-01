@@ -117,7 +117,7 @@ export default function HomeScreen() {
   const kmgMid = farm?.kmg_mid ?? user?.farm?.kmg_mid;
   const metaParts = [farm?.location || undefined, kmgMid ? `KMG-MID ${kmgMid}` : undefined].filter(Boolean);
 
-  // Milk/Finance are mock-only; preview/production use real features instead.
+  // Milk/Finance are not API-backed yet; preview/production hide those shortcuts.
   const showMockActions = process.env.EXPO_PUBLIC_ENV === "development";
   const actions: { label: string; icon: LucideIcon; onPress: () => void }[] = showMockActions
     ? [

@@ -8,10 +8,7 @@ export function AnimalList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
 
-  // Mock data
-  const animals: any[] = [
-
-  ];
+  const animals: any[] = [];
 
   const filteredAnimals = animals.filter((animal) => {
     const matchesSearch =

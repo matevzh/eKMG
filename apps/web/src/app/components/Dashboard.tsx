@@ -1,4 +1,4 @@
-import { AlertCircle, Home, Heart, Droplet, TrendingUp, Bell } from "lucide-react";
+import { AlertCircle, Home, Heart, Droplet, Bell } from "lucide-react";
 import { Link } from "react-router";
 import { getUrgentNotifications, getNotificationCount } from "../utils/notificationService";
 import { useTranslation } from "react-i18next";
@@ -12,19 +12,19 @@ export function Dashboard() {
   const stats = [
     {
       label: t("dashboard.stats.totalAnimals"),
-      value: "124",
+      value: "0",
       icon: Home,
       color: "bg-blue-500",
     },
     {
       label: t("dashboard.stats.activeTreatments"),
-      value: "8",
+      value: "0",
       icon: Heart,
       color: "bg-red-500",
     },
     {
       label: t("dashboard.stats.todayMilk"),
-      value: "850",
+      value: "0",
       icon: Droplet,
       color: "bg-cyan-500",
     },
@@ -36,12 +36,7 @@ export function Dashboard() {
     },
   ];
 
-  const recentAnimals = [
-    { id: "A1234", name: "Bella", type: "Cow", status: "Healthy", lastCheck: "2026-02-27" },
-    { id: "A1235", name: "Daisy", type: "Cow", status: "Treatment", lastCheck: "2026-02-28" },
-    { id: "A1236", name: "Luna", type: "Cow", status: "Healthy", lastCheck: "2026-02-26" },
-    { id: "A1237", name: "Molly", type: "Heifer", status: "Healthy", lastCheck: "2026-02-28" },
-  ];
+  const recentAnimals: { id: string; name: string; type: string; status: string; lastCheck: string }[] = [];
 
   return (
     <div className="space-y-6">

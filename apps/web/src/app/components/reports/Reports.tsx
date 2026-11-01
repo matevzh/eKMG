@@ -22,7 +22,7 @@ export function Reports() {
       id: 1,
       name: t("reports.healthInspection"),
       description: t("reports.healthInspectionDesc"),
-      lastGenerated: "2026-02-28",
+      lastGenerated: null as string | null,
       type: "PDF",
       generator: generateHealthInspectionReport,
     },
@@ -30,7 +30,7 @@ export function Reports() {
       id: 2,
       name: t("reports.medicineRegister"),
       description: t("reports.medicineRegisterDesc"),
-      lastGenerated: "2026-02-27",
+      lastGenerated: null as string | null,
       type: "PDF",
       generator: generateMedicineRegisterReport,
     },
@@ -38,7 +38,7 @@ export function Reports() {
       id: 3,
       name: t("reports.crgExport"),
       description: t("reports.crgExportDesc"),
-      lastGenerated: "2026-02-26",
+      lastGenerated: null as string | null,
       type: "XML",
       generator: exportCRGMovementXML,
     },
@@ -46,7 +46,7 @@ export function Reports() {
       id: 4,
       name: t("reports.milkProduction"),
       description: t("reports.milkProductionDesc"),
-      lastGenerated: "2026-02-25",
+      lastGenerated: null as string | null,
       type: "PDF",
       generator: generateMilkProductionReport,
     },
@@ -54,7 +54,7 @@ export function Reports() {
       id: 5,
       name: t("reports.gdprExport"),
       description: t("reports.gdprExportDesc"),
-      lastGenerated: "2026-02-20",
+      lastGenerated: null as string | null,
       type: "PDF",
       generator: generateGDPRDataExport,
     },
@@ -62,7 +62,7 @@ export function Reports() {
       id: 6,
       name: t("reports.subsidyDoc"),
       description: t("reports.subsidyDocDesc"),
-      lastGenerated: "2026-02-15",
+      lastGenerated: null as string | null,
       type: "PDF",
       generator: generateSubsidyDocumentationReport,
     },
@@ -100,7 +100,7 @@ export function Reports() {
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="w-4 h-4" />
                     <span>
-                      {t("reports.lastGenerated")}: {report.lastGenerated}
+                      {t("reports.lastGenerated")}: {report.lastGenerated ?? "—"}
                     </span>
                   </div>
                   <button

@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Baby, CalendarClock, Pencil, Plus, Tag, Trash2, Truck } from "lucide-react-native";
+import { CalendarClock, Pencil, Plus, Tag, Trash2, Truck } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -30,7 +30,6 @@ import {
 import {
   animalSexLabel,
   CUSTOM_EVENT_TITLE,
-  EMPTY_DETAIL,
   EVENT_TITLE_OPTIONS,
   isFemaleAnimal,
   isMaleAnimal,
@@ -74,7 +73,6 @@ export default function AnimalDetailScreen() {
   const allOpravila = useOpravila();
 
   const z = animals.find((a) => a.id === Number(id));
-  const d = EMPTY_DETAIL;
   const female = isFemaleAnimal(z?.gender);
   const male = isMaleAnimal(z?.gender);
   const sexLabel = animalSexLabel(z?.gender);
@@ -389,15 +387,7 @@ export default function AnimalDetailScreen() {
               })
             )}
             <SectionLabel>Telitve</SectionLabel>
-            {d.telitve.length === 0 ? (
-              <Empty text="Ni zabeleženih telitev." />
-            ) : (
-              d.telitve.map((t, i) => (
-                <Card key={i}>
-                  <Row icon={Baby} label="Datum telitve" value={t.datum} />
-                </Card>
-              ))
-            )}
+            <Empty text="Ni zabeleženih telitev." />
           </View>
         )}
 

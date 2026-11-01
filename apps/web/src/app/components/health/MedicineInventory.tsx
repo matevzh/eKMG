@@ -4,53 +4,17 @@ import { useState } from "react";
 export function MedicineInventory() {
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // Mock data
-  const medicines = [
-    {
-      id: 1,
-      name: "Penicillin G",
-      type: "Antibiotic",
-      quantity: 15,
-      unit: "vials (10ml)",
-      lowStockThreshold: 5,
-      expiryDate: "2026-08-15",
-      withdrawalPeriod: 7,
-      location: "Cabinet A",
-    },
-    {
-      id: 2,
-      name: "Meloxicam",
-      type: "Anti-inflammatory",
-      quantity: 8,
-      unit: "bottles (100ml)",
-      lowStockThreshold: 3,
-      expiryDate: "2026-10-20",
-      withdrawalPeriod: 5,
-      location: "Cabinet A",
-    },
-    {
-      id: 3,
-      name: "Ivermectin",
-      type: "Antiparasitic",
-      quantity: 2,
-      unit: "bottles (50ml)",
-      lowStockThreshold: 5,
-      expiryDate: "2026-06-30",
-      withdrawalPeriod: 21,
-      location: "Cabinet B",
-    },
-    {
-      id: 4,
-      name: "Calcium Gluconate",
-      type: "Supplement",
-      quantity: 20,
-      unit: "bottles (500ml)",
-      lowStockThreshold: 10,
-      expiryDate: "2027-01-10",
-      withdrawalPeriod: 0,
-      location: "Cabinet C",
-    },
-  ];
+  const medicines: {
+    id: number;
+    name: string;
+    type: string;
+    quantity: number;
+    unit: string;
+    lowStockThreshold: number;
+    expiryDate: string;
+    withdrawalPeriod: number;
+    location: string;
+  }[] = [];
 
   const [formData, setFormData] = useState({
     name: "",

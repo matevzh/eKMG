@@ -3,8 +3,8 @@ import { CalendarDays, Droplet, Home, Tag, User, Wallet } from "lucide-react-nat
 
 import { C, F } from "@/constants/theme";
 
-// Milk and Finance still run on mock data — only show their tabs in local
-// development. Preview/production APKs hide them (href: null).
+// Milk and Finance are not wired to the API yet — only show their tabs in
+// local development. Preview/production APKs hide them (href: null).
 const showMockTabs = process.env.EXPO_PUBLIC_ENV === "development";
 const mockTabHref = showMockTabs ? undefined : null;
 

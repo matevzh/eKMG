@@ -9,84 +9,37 @@ export function LandManagement() {
   const [showAddFertilization, setShowAddFertilization] = useState(false);
   const [showAddSubsidy, setShowAddSubsidy] = useState(false);
 
-  // Mock data for GERK units
-  const gerkUnits = [
-    {
-      id: 1,
-      gerkID: "GERK-1234",
-      name: "Lower Meadow",
-      area: 5.2,
-      landUse: "Pasture",
-      crop: "Grass",
-      location: "Plot A",
-    },
-    {
-      id: 2,
-      gerkID: "GERK-1235",
-      name: "Upper Field",
-      area: 8.5,
-      landUse: "Arable",
-      crop: "Corn",
-      location: "Plot B",
-    },
-    {
-      id: 3,
-      gerkID: "GERK-1236",
-      name: "East Pasture",
-      area: 6.3,
-      landUse: "Pasture",
-      crop: "Grass",
-      location: "Plot C",
-    },
-  ];
+  const gerkUnits: {
+    id: number;
+    gerkID: string;
+    name: string;
+    area: number;
+    landUse: string;
+    crop: string;
+    location: string;
+  }[] = [];
 
-  // Mock data for fertilization
-  const fertilizations = [
-    {
-      id: 1,
-      gerkID: "GERK-1234",
-      name: "Lower Meadow",
-      date: "2026-02-15",
-      type: "Organic",
-      product: "Cattle Manure",
-      quantity: 15000,
-      unit: "kg",
-    },
-    {
-      id: 2,
-      gerkID: "GERK-1235",
-      name: "Upper Field",
-      date: "2026-02-10",
-      type: "Mineral",
-      product: "NPK 15-15-15",
-      quantity: 500,
-      unit: "kg",
-    },
-  ];
+  const fertilizations: {
+    id: number;
+    gerkID: string;
+    name: string;
+    date: string;
+    type: string;
+    product: string;
+    quantity: number;
+    unit: string;
+  }[] = [];
 
-  // Mock data for subsidies
-  const subsidies = [
-    {
-      id: 1,
-      year: 2026,
-      scheme: "Direct Payments",
-      gerkIDs: ["GERK-1234", "GERK-1235", "GERK-1236"],
-      totalArea: 20.0,
-      amount: 8500,
-      status: "Submitted",
-      submittedDate: "2026-02-01",
-    },
-    {
-      id: 2,
-      year: 2026,
-      scheme: "Agri-Environment",
-      gerkIDs: ["GERK-1234", "GERK-1236"],
-      totalArea: 11.5,
-      amount: 3450,
-      status: "Approved",
-      submittedDate: "2026-01-15",
-    },
-  ];
+  const subsidies: {
+    id: number;
+    year: number;
+    scheme: string;
+    gerkIDs: string[];
+    totalArea: number;
+    amount: number;
+    status: string;
+    submittedDate: string;
+  }[] = [];
 
   return (
     <div className="space-y-6">

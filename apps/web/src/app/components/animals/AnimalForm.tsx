@@ -7,18 +7,17 @@ export function AnimalForm() {
   const navigate = useNavigate();
   const isEditing = !!id;
 
-  // Mock existing data for editing
   const [formData, setFormData] = useState({
-    name: isEditing ? "Bella" : "",
-    id: isEditing ? "A1234" : "",
-    type: isEditing ? "Cow" : "Cow",
-    breed: isEditing ? "Holstein" : "",
-    birthDate: isEditing ? "2022-03-15" : "",
-    weight: isEditing ? "650" : "",
-    lactating: isEditing ? true : false,
-    motherID: isEditing ? "A0987" : "",
-    fatherID: isEditing ? "B0543" : "",
-    location: isEditing ? "Barn A - Stall 12" : "",
+    name: "",
+    id: "",
+    type: "Cow",
+    breed: "",
+    birthDate: "",
+    weight: "",
+    lactating: false,
+    motherID: "",
+    fatherID: "",
+    location: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {

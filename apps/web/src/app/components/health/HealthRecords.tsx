@@ -8,57 +8,18 @@ export function HealthRecords() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
 
-  // Mock data
-  const healthRecords = [
-    {
-      id: 1,
-      animalID: "A1234",
-      animalName: "Bella",
-      date: "2026-02-28",
-      type: "Treatment",
-      diagnosis: "Minor infection",
-      treatment: "Antibiotic - Penicillin 10ml",
-      vet: "Dr. Smith",
-      withdrawalPeriod: 7,
-      withdrawalEnd: "2026-03-07",
-    },
-    {
-      id: 2,
-      animalID: "A1235",
-      animalName: "Daisy",
-      date: "2026-02-27",
-      type: "Treatment",
-      diagnosis: "Mastitis",
-      treatment: "Anti-inflammatory - Meloxicam 15ml",
-      vet: "Dr. Johnson",
-      withdrawalPeriod: 5,
-      withdrawalEnd: "2026-03-04",
-    },
-    {
-      id: 3,
-      animalID: "A1236",
-      animalName: "Luna",
-      date: "2026-02-26",
-      type: "Checkup",
-      diagnosis: "Healthy",
-      treatment: "None",
-      vet: "Dr. Smith",
-      withdrawalPeriod: 0,
-      withdrawalEnd: null,
-    },
-    {
-      id: 4,
-      animalID: "A1237",
-      animalName: "Molly",
-      date: "2026-02-25",
-      type: "Vaccination",
-      diagnosis: "Preventive care",
-      treatment: "Annual vaccination",
-      vet: "Dr. Smith",
-      withdrawalPeriod: 0,
-      withdrawalEnd: null,
-    },
-  ];
+  const healthRecords: {
+    id: number;
+    animalID: string;
+    animalName: string;
+    date: string;
+    type: string;
+    diagnosis: string;
+    treatment: string;
+    vet: string;
+    withdrawalPeriod: number;
+    withdrawalEnd: string | null;
+  }[] = [];
 
   const [formData, setFormData] = useState({
     animalID: "",
