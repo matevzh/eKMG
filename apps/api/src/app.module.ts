@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './config/data-source';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -17,15 +19,32 @@ import { NotificationsModule } from './notifications/notifications.module';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => [
+        {
+          name: 'default',
+          ttl: Number(config.get('THROTTLE_TTL') ?? 60_000),
+          limit: Number(config.get('THROTTLE_LIMIT') ?? 120),
+        },
+      ],
+    }),
     TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
     AuthModule,
     FarmsModule,
     AnimalsModule,
     NotificationsModule,
-    EventsModule
+    EventsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

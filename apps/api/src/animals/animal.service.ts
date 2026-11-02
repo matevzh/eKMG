@@ -69,14 +69,19 @@ export class AnimalsService {
             return await this.animalRepository.save(newAnimal);
         } catch (error) {
             // Unique violation on si_id or (farm, clientId) (Postgres error code 23505).
+            // Remote DB is the multi-device source of truth: return the existing row so
+            // offline clients converge instead of staying forever out of sync.
             if (error instanceof QueryFailedError && (error as any).code === '23505') {
-                // Race on idempotent clientId: another request won the insert.
                 if (animal.clientId) {
                     const byClient = await this.animalRepository.findOne({
                         where: { birthFarmId: birthfarm.id, clientId: animal.clientId },
                     });
                     if (byClient) return byClient;
                 }
+                const bySi = await this.animalRepository.findOne({
+                    where: { birthFarmId: birthfarm.id, si_id: animal.si_id },
+                });
+                if (bySi) return bySi;
                 throw new ConflictException(`Žival z ušesno znamko ${animal.si_id} že obstaja.`);
             }
             throw error;

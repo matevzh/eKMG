@@ -53,10 +53,22 @@ describe("AnimalsService", () => {
     expect(animalRepository.save).not.toHaveBeenCalled();
   });
 
-  it("create maps unique si_id violations to ConflictException", async () => {
+  it("create returns existing farm row on unique si_id violation", async () => {
     const err = new QueryFailedError("INSERT", [], new Error("dup"));
     (err as any).code = "23505";
     animalRepository.save.mockRejectedValue(err);
+    const existing = { id: 7, si_id: "SI123", birthFarmId: 10 } as Animal;
+    animalRepository.findOne.mockResolvedValue(existing);
+
+    const result = await service.create({ name: "Mila", si_id: "SI123" } as any, 10);
+    expect(result).toBe(existing);
+  });
+
+  it("create still conflicts when unique violation has no matching farm row", async () => {
+    const err = new QueryFailedError("INSERT", [], new Error("dup"));
+    (err as any).code = "23505";
+    animalRepository.save.mockRejectedValue(err);
+    animalRepository.findOne.mockResolvedValue(null);
 
     await expect(
       service.create({ name: "Mila", si_id: "SI123" } as any, 10),

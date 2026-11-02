@@ -4,6 +4,8 @@ The app is online-only today: [`animals-store.ts`](apps/mobile/src/lib/animals-s
 
 Chosen conflict rule: **flush this device’s outbox, then replace SQLite with `GET /animals` + `GET /events`.** No conflict UI. Login still needs the network once; after that the herd and calendar work offline.
 
+**Multi-device:** the Railway/Postgres API is the source of truth. A cow only appears on other phones after its create has landed on the server and those phones have synced (foreground / online). Local SQLite is a cache + outbox, not a second authority.
+
 ```mermaid
 flowchart LR
   UI[Calendar_Animals_screens] --> Stores[animals-store_and_tasks]

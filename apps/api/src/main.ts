@@ -6,6 +6,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
 
+  // Railway (and most reverse proxies) set X-Forwarded-For — needed so
+  // ThrottlerGuard rate-limits by real client IP, not the proxy hop.
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     transform: false,

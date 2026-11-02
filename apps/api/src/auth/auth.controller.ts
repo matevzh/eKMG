@@ -1,4 +1,5 @@
 import { Body, Controller, HttpException, HttpStatus, Logger, Post } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { UserRegisterDto } from "./user-register.dto";
 import { AuthService } from "./auth.service";
 import { UserLoginDto } from "./user-login.dto";
@@ -9,6 +10,8 @@ export class AuthController {
 
     constructor(private readonly authService: AuthService) {}
 
+    // Stricter than the global default — slows credential stuffing / mass signup.
+    @Throttle({ default: { limit: 10, ttl: 60_000 } })
     @Post('register')
     async register(@Body() userRegisterDto: UserRegisterDto) {
         try {
@@ -29,6 +32,7 @@ export class AuthController {
         }
     }
 
+    @Throttle({ default: { limit: 10, ttl: 60_000 } })
     @Post('login')
     async login(@Body() userLoginDto: UserLoginDto) {
         try {
