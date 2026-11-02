@@ -289,11 +289,13 @@ export default function AnimalDetailScreen() {
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View style={[styles.avatar, male && styles.avatarBull]}>
-            <Tag size={22} color={C.green} />
+            <Tag size={22} color={male ? C.blue : C.green} />
           </View>
           <View style={styles.nameCol}>
             <Text style={styles.name}>{z.ime}</Text>
-            <EarTag size={11}>{z.si_id}</EarTag>
+            <EarTag size={11} tone={male ? "bull" : "default"}>
+              {z.si_id}
+            </EarTag>
           </View>
           {female ? (
             <View style={styles.stateControls}>
@@ -569,7 +571,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   avatarBull: {
-    backgroundColor: "#E8F1F7",
+    backgroundColor: C.mistBlue,
   },
   nameCol: {
     gap: 2,

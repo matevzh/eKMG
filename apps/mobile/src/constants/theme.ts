@@ -8,10 +8,13 @@ export const C = {
   amber: "#C77D2E",
   line: "#E2D9C3",
   red: "#A6432F",
-  mist: "#E7EFE3", // pale green fill (avatars, ear tags)
+  mist: "#E7EFE3", // pale green fill (avatars)
+  mistBlue: "#E5F0FF", // pale blue fill (ear tags)
   muted: "#8C8470",
   faint: "#A9A28C",
   paper: "#FDFBF6",
+  blue: "#007AFF",
+  blueDark: "#1B4F8A", // bull SI ear-tag text/border
 } as const;
 
 // With custom fonts, React Native needs the exact family name per weight.

@@ -1,7 +1,7 @@
 # Graph Report - eKMG  (2026-11-02)
 
 ## Corpus Check
-- 219 files · ~163,909 words
+- 219 files · ~163,984 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 12 file(s) not represented in the graph (top: (none) 7, .css 4, .example 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `54c6a6b0`
+- Built from commit: `660c3d55`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -420,11 +420,11 @@ Nodes (4): API tests, Apps, eKMG, Local development
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `CreateEventDto` connect `CreateEventDto` to `@nestjs/common`, `api.ts`?**
-  _High betweenness centrality (0.250) - this node is a cross-community bridge._
-- **Why does `SQLite offline sync (animals + calendar)` connect `api.ts` to `engine.ts`?**
-  _High betweenness centrality (0.249) - this node is a cross-community bridge._
-- **Why does `Small API change (needed so retries do not duplicate events)` connect `api.ts` to `CreateEventDto`?**
   _High betweenness centrality (0.248) - this node is a cross-community bridge._
+- **Why does `SQLite offline sync (animals + calendar)` connect `api.ts` to `engine.ts`?**
+  _High betweenness centrality (0.247) - this node is a cross-community bridge._
+- **Why does `Small API change (needed so retries do not duplicate events)` connect `api.ts` to `CreateEventDto`?**
+  _High betweenness centrality (0.246) - this node is a cross-community bridge._
 - **What connects `$schema`, `collection`, `sourceRoot` to the rest of the system?**
   _463 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `ref_react` be split into smaller, more focused modules?**

@@ -3090,7 +3090,7 @@
       "file_type": "code",
       "norm_label": "checkbox()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L437"
+      "source_location": "L449"
     },
     {
       "id": "apps_mobile_src_components_ui_primarybutton",
@@ -3102,7 +3102,7 @@
       "file_type": "code",
       "norm_label": "primarybutton()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L408"
+      "source_location": "L420"
     },
     {
       "id": "apps_mobile_src_components_ui_textfield",
@@ -3114,7 +3114,7 @@
       "file_type": "code",
       "norm_label": "textfield()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L205"
+      "source_location": "L217"
     },
     {
       "id": "apps_mobile_src_components_ui_topbar",
@@ -3126,7 +3126,7 @@
       "file_type": "code",
       "norm_label": "topbar()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L104"
+      "source_location": "L116"
     },
     {
       "id": "apps_mobile_src_lib_auth_context_useauth",
@@ -3798,7 +3798,7 @@
       "file_type": "code",
       "norm_label": "statepicker()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L30"
+      "source_location": "L42"
     },
     {
       "id": "apps_mobile_src_constants_data_animalsexlabel",
@@ -5118,7 +5118,7 @@
       "file_type": "code",
       "norm_label": "datefield()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L319"
+      "source_location": "L331"
     },
     {
       "id": "apps_mobile_src_components_ui_datefield_onandroidchange",
@@ -5130,7 +5130,7 @@
       "file_type": "code",
       "norm_label": "onandroidchange()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L337"
+      "source_location": "L349"
     },
     {
       "id": "apps_mobile_src_components_ui_selectfield",
@@ -5142,7 +5142,7 @@
       "file_type": "code",
       "norm_label": "selectfield()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L256"
+      "source_location": "L268"
     },
     {
       "id": "apps_mobile_src_components_ui_toisodate",
@@ -5154,7 +5154,7 @@
       "file_type": "code",
       "norm_label": "toisodate()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L312"
+      "source_location": "L324"
     },
     {
       "id": "apps_mobile_src_lib_dates_formateudate",
@@ -6834,7 +6834,7 @@
       "file_type": "code",
       "norm_label": "card()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L122"
+      "source_location": "L134"
     },
     {
       "id": "apps_mobile_src_components_ui_empty",
@@ -6846,7 +6846,7 @@
       "file_type": "code",
       "norm_label": "empty()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L167"
+      "source_location": "L179"
     },
     {
       "id": "apps_mobile_src_components_ui_pilltabs",
@@ -6858,7 +6858,7 @@
       "file_type": "code",
       "norm_label": "pilltabs()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L178"
+      "source_location": "L190"
     },
     {
       "id": "apps_mobile_src_components_ui_row",
@@ -6870,7 +6870,7 @@
       "file_type": "code",
       "norm_label": "row()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L145"
+      "source_location": "L157"
     },
     {
       "id": "apps_mobile_src_components_ui_secondarybutton",
@@ -6882,7 +6882,7 @@
       "file_type": "code",
       "norm_label": "secondarybutton()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L385"
+      "source_location": "L397"
     },
     {
       "id": "apps_mobile_src_components_ui_sectionlabel",
@@ -6894,7 +6894,7 @@
       "file_type": "code",
       "norm_label": "sectionlabel()",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L141"
+      "source_location": "L153"
     },
     {
       "id": "apps_web_src_app_components_ui_collapsible_collapsible",
@@ -9885,7 +9885,7 @@
       "file_type": "code",
       "norm_label": "f",
       "source_file": "apps/mobile/src/constants/theme.ts",
-      "source_location": "L20"
+      "source_location": "L23"
     },
     {
       "id": "ref_expo_router",
@@ -10917,7 +10917,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L547"
+      "source_location": "L549"
     },
     {
       "id": "apps_mobile_src_constants_data",
@@ -12589,7 +12589,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "apps/mobile/src/app/(tabs)/animals.tsx",
-      "source_location": "L123"
+      "source_location": "L122"
     },
     {
       "id": "apps_mobile_src_app_tabs_index",
@@ -16506,7 +16506,7 @@
       "file_type": "code",
       "norm_label": "styles",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L456"
+      "source_location": "L468"
     },
     {
       "id": "ref_lucide_react_native",
@@ -18923,7 +18923,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L300",
+      "source_location": "L302",
       "weight": 1.0
     },
     {
@@ -18935,7 +18935,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L322",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -18947,7 +18947,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L337",
+      "source_location": "L339",
       "weight": 1.0
     },
     {
@@ -18959,7 +18959,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L338",
+      "source_location": "L340",
       "weight": 1.0
     },
     {
@@ -18971,7 +18971,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L359",
+      "source_location": "L361",
       "weight": 1.0
     },
     {
@@ -18983,7 +18983,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L379",
+      "source_location": "L381",
       "weight": 1.0
     },
     {
@@ -18995,7 +18995,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L477",
+      "source_location": "L479",
       "weight": 1.0
     },
     {
@@ -19007,7 +19007,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L490",
+      "source_location": "L492",
       "weight": 1.0
     },
     {
@@ -19019,7 +19019,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L502",
+      "source_location": "L504",
       "weight": 1.0
     },
     {
@@ -19756,18 +19756,6 @@
     },
     {
       "source": "apps_mobile_src_app_tabs_animals_animalsscreen",
-      "target": "apps_mobile_src_components_ui_eartag",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "apps/mobile/src/app/(tabs)/animals.tsx",
-      "source_location": "L100",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_mobile_src_app_tabs_animals_animalsscreen",
       "target": "apps_mobile_src_lib_auth_context_useauth",
       "relation": "calls",
       "_origin": "ast",
@@ -19872,6 +19860,18 @@
       "context": "call",
       "source_file": "apps/mobile/src/app/(tabs)/animals.tsx",
       "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_mobile_src_app_tabs_animals_animalsscreen",
+      "target": "apps_mobile_src_components_ui_eartag",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/mobile/src/app/(tabs)/animals.tsx",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -20591,7 +20591,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L349",
+      "source_location": "L361",
       "weight": 1.0
     },
     {
@@ -20603,7 +20603,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L372",
+      "source_location": "L384",
       "weight": 1.0
     },
     {
@@ -20615,7 +20615,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L340",
+      "source_location": "L352",
       "weight": 1.0
     },
     {
@@ -20627,7 +20627,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L169",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -47741,7 +47741,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/app/animal/[id].tsx",
-      "source_location": "L547",
+      "source_location": "L549",
       "weight": 1.0
     },
     {
@@ -48148,7 +48148,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/app/(tabs)/animals.tsx",
-      "source_location": "L123",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -48621,7 +48621,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L104",
+      "source_location": "L116",
       "weight": 1.0
     },
     {
@@ -48632,7 +48632,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L122",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -48643,7 +48643,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L141",
+      "source_location": "L153",
       "weight": 1.0
     },
     {
@@ -48654,7 +48654,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L145",
+      "source_location": "L157",
       "weight": 1.0
     },
     {
@@ -48665,7 +48665,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L167",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -48676,7 +48676,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L178",
+      "source_location": "L190",
       "weight": 1.0
     },
     {
@@ -48687,7 +48687,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L205",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -48709,18 +48709,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L256",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_mobile_src_components_ui",
-      "target": "apps_mobile_src_components_ui_statepicker",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L30",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -48731,7 +48720,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L312",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -48742,7 +48731,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L319",
+      "source_location": "L331",
       "weight": 1.0
     },
     {
@@ -48753,7 +48742,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L385",
+      "source_location": "L397",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_mobile_src_components_ui",
+      "target": "apps_mobile_src_components_ui_statepicker",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mobile/src/components/ui.tsx",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -48764,7 +48764,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L408",
+      "source_location": "L420",
       "weight": 1.0
     },
     {
@@ -48775,7 +48775,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L437",
+      "source_location": "L449",
       "weight": 1.0
     },
     {
@@ -48786,7 +48786,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L456",
+      "source_location": "L468",
       "weight": 1.0
     },
     {
@@ -48797,7 +48797,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/components/ui.tsx",
-      "source_location": "L337",
+      "source_location": "L349",
       "weight": 1.0
     },
     {
@@ -48995,7 +48995,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/mobile/src/constants/theme.ts",
-      "source_location": "L20",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -57465,5 +57465,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "54c6a6b06be4dd839dec0a3fd5a802e3a8bb3d75"
+  "built_at_commit": "660c3d55725270748b1393d52c6d7277445ce423"
 }

@@ -19,10 +19,22 @@ import {
 import { C, F } from "@/constants/theme";
 import { formatEuDate } from "@/lib/dates";
 
-export function EarTag({ children, size = 12 }: { children: ReactNode; size?: number }) {
+export function EarTag({
+  children,
+  size = 12,
+  tone = "default",
+}: {
+  children: ReactNode;
+  size?: number;
+  /** Bulls use blue ear-tag chrome; cows keep the green default. */
+  tone?: "default" | "bull";
+}) {
+  const bull = tone === "bull";
   return (
-    <View style={styles.earTag}>
-      <Text style={[styles.earTagText, { fontSize: size }]}>{children}</Text>
+    <View style={[styles.earTag, bull && styles.earTagBull]}>
+      <Text style={[styles.earTagText, bull && styles.earTagTextBull, { fontSize: size }]}>
+        {children}
+      </Text>
     </View>
   );
 }
@@ -463,10 +475,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
+  earTagBull: {
+    backgroundColor: C.mistBlue,
+    borderColor: C.blueDark,
+  },
   earTagText: {
     fontFamily: F.mono,
     color: C.green,
     letterSpacing: 0.5,
+  },
+  earTagTextBull: {
+    color: C.blueDark,
   },
   statePickerText: {
     fontSize: 11,

@@ -88,16 +88,15 @@ export default function AnimalsScreen() {
             return (
             <Card
               onPress={() => router.push({ pathname: "/animal/[id]", params: { id: z.id } })}
-              style={male ? styles.cardBull : undefined}
             >
               <View style={styles.itemRow}>
                 <View style={styles.itemLeft}>
                   <View style={[styles.avatar, male && styles.avatarBull]}>
-                    <Tag size={16} color={C.green} />
+                    <Tag size={16} color={male ? C.blue : C.green} />
                   </View>
                   <View style={styles.nameCol}>
                     <Text style={styles.name}>{z.ime}</Text>
-                    <EarTag>{z.si_id}</EarTag>
+                    <EarTag tone={male ? "bull" : "default"}>{z.si_id}</EarTag>
                   </View>
                 </View>
                 <View style={styles.itemRight}>
@@ -185,7 +184,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   avatarBull: {
-    backgroundColor: "#E8F1F7",
+    backgroundColor: C.mistBlue,
   },
   nameCol: {
     gap: 2,
