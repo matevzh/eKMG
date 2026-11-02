@@ -193,6 +193,7 @@ export async function register(payload: RegisterPayload): Promise<AuthResult> {
 export interface ApiAnimal {
   id: number;
   si_id: string;
+  clientId?: string | null;
   name: string;
   breed: string | null;
   gender: string | null;

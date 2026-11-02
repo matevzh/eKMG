@@ -100,7 +100,13 @@ export function stopSyncListeners(): void {
   started = false;
 }
 
-/** Drain outbox then full-pull replace. Concurrent callers share one promise. */
+/**
+ * Drain outbox, then replace local SQLite from the API.
+ * Railway/Postgres is the multi-device source of truth: after a successful sync,
+ * every phone’s herd/calendar matches the remote snapshot (other devices only
+ * see animals that made it onto the server).
+ * Concurrent callers share one promise.
+ */
 export function syncNow(): Promise<void> {
   if (syncPromise) return syncPromise;
   syncPromise = runSync().finally(() => {
@@ -259,20 +265,29 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
         }
       }
 
-      const created = await api.createAnimal(token, {
-        name: local.name,
-        si_id: local.si_id,
-        breed: local.breed ?? undefined,
-        gender: local.gender ?? undefined,
-        isLactating: !!local.is_lactating,
-        isPregnant: !!local.is_pregnant,
-        dateOfBirth: local.date_of_birth ?? undefined,
-        acquisitionDate: local.acquisition_date ?? undefined,
-        lactation: local.lactation ?? undefined,
-        fatherId: resolveServerAnimalId(local.father_id) ?? null,
-        motherId: resolveServerAnimalId(local.mother_id) ?? null,
-        clientId,
-      });
+      let created: api.ApiAnimal;
+      try {
+        created = await api.createAnimal(token, {
+          name: local.name,
+          si_id: local.si_id,
+          breed: local.breed ?? undefined,
+          gender: local.gender ?? undefined,
+          isLactating: !!local.is_lactating,
+          isPregnant: !!local.is_pregnant,
+          dateOfBirth: local.date_of_birth ?? undefined,
+          acquisitionDate: local.acquisition_date ?? undefined,
+          lactation: local.lactation ?? undefined,
+          fatherId: resolveServerAnimalId(local.father_id) ?? null,
+          motherId: resolveServerAnimalId(local.mother_id) ?? null,
+          clientId,
+        });
+      } catch (err) {
+        // Converge on remote: if the ear tag (or clientId) already exists server-side,
+        // bind to that row instead of leaving a phone-only orphan.
+        const remote = await resolveRemoteAnimal(token, clientId, local.si_id);
+        if (!remote) throw err;
+        created = remote;
+      }
       bindAnimalServerId(clientId, created.id);
       emitAnimalsDataChanged();
       return;
@@ -353,12 +368,26 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
   }
 }
 
+async function resolveRemoteAnimal(
+  token: string,
+  clientId: string,
+  siId: string,
+): Promise<api.ApiAnimal | null> {
+  const animals = await api.getAnimals(token);
+  return (
+    animals.find((a) => a.clientId === clientId) ??
+    animals.find((a) => a.si_id === siId) ??
+    null
+  );
+}
+
 async function pullSnapshot(token: string): Promise<void> {
   const remaining = listOutbox();
   if (remaining.length > 0) {
     throw new Error("Outbox ni prazen — sinhronizacija prekinjena.");
   }
 
+  // Remote wins: wipe-and-replace so every device matches Postgres.
   const [animals, events] = await Promise.all([api.getAnimals(token), api.getEvents(token)]);
   replaceAnimalsFromServer(animals);
   replaceEventsFromServer(events);

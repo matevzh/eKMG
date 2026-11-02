@@ -8,6 +8,7 @@ import { C, F } from "@/constants/theme";
 import * as api from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { router, useFocusEffect } from "expo-router";
+import Constants from "expo-constants";
 
 const DASH = "—";
 
@@ -141,6 +142,7 @@ export default function ProfileScreen() {
           <Text style={[styles.privacyLabel, styles.deleteLabel]}>Izbriši račun</Text>
           {deleting && <ActivityIndicator size="small" color={C.red} />}
         </Pressable>
+        <Text style={styles.version}>Build {Constants.expoConfig?.extra?.eas?.projectId}</Text>
       </Card>
 
       <View style={styles.signOutWrap}>
@@ -197,6 +199,11 @@ const styles = StyleSheet.create({
   },
   deleteLabel: {
     color: C.red,
+  },
+  version: {
+    color: C.faint,
+    fontSize: 12,
+    fontFamily: F.sans,
   },
   divider: {
     height: 1,
