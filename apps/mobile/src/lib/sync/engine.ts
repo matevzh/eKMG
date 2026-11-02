@@ -6,6 +6,7 @@ import {
   bindAnimalServerId,
   getAnimalByClientId,
   getAnimalById,
+  listPendingAnimals,
   replaceAnimalsFromServer,
   resolveServerAnimalId,
 } from "@/lib/db/animals";
@@ -16,7 +17,13 @@ import {
   replaceEventsFromServer,
 } from "@/lib/db/events";
 import { setFarmId, setMeta } from "@/lib/db/meta";
-import { deleteOutbox, listOutbox, type OutboxRow } from "@/lib/db/outbox";
+import {
+  deleteOutbox,
+  enqueueOutbox,
+  hasOutboxOp,
+  listOutbox,
+  type OutboxRow,
+} from "@/lib/db/outbox";
 import { emitAnimalsDataChanged, emitEventsDataChanged } from "./bus";
 import { refreshSyncStatusFromDb, setOnline, setSyncing } from "./status";
 
@@ -118,6 +125,9 @@ async function runSync(): Promise<void> {
   refreshSyncStatusFromDb({ online: true, syncing: true });
 
   try {
+    // Local animals with no server_id must have an animal.create in the outbox.
+    // If the create row was lost (or never written), re-queue before draining.
+    ensurePendingAnimalCreatesEnqueued();
     await drainOutbox(authToken);
     await pullSnapshot(authToken);
 
@@ -135,11 +145,97 @@ async function runSync(): Promise<void> {
   }
 }
 
+/**
+ * Re-queue creates for on-device-only animals that have no matching outbox row.
+ * Parents are queued before offspring so FIFO drain can succeed.
+ */
+function ensurePendingAnimalCreatesEnqueued(): void {
+  const pending = listPendingAnimals();
+  if (pending.length === 0) return;
+
+  const queued = new Set(
+    listOutbox()
+      .filter((r) => r.op === "animal.create")
+      .map((r) => String(r.payload.clientId)),
+  );
+
+  const remaining = [...pending];
+  let guard = remaining.length + 2;
+  while (remaining.length > 0 && guard-- > 0) {
+    let progress = false;
+    for (let i = 0; i < remaining.length; ) {
+      const animal = remaining[i];
+      if (queued.has(animal.client_id)) {
+        remaining.splice(i, 1);
+        continue;
+      }
+
+      const parentsReady = [animal.father_id, animal.mother_id].every((parentLocalId) => {
+        if (parentLocalId == null) return true;
+        const parent = getAnimalById(parentLocalId);
+        if (!parent) return true;
+        if (parent.server_id != null || parent.id > 0) return true;
+        // Parent is also pending — wait until its create is queued first.
+        return queued.has(parent.client_id);
+      });
+
+      if (!parentsReady) {
+        i += 1;
+        continue;
+      }
+
+      if (!hasOutboxOp("animal.create", (p) => p.clientId === animal.client_id)) {
+        enqueueOutbox("animal.create", { clientId: animal.client_id });
+      }
+      queued.add(animal.client_id);
+      remaining.splice(i, 1);
+      progress = true;
+    }
+
+    if (!progress) {
+      // Cycle / missing parent create — queue the rest so sync can surface an error.
+      for (const animal of remaining) {
+        if (!queued.has(animal.client_id)) {
+          enqueueOutbox("animal.create", { clientId: animal.client_id });
+          queued.add(animal.client_id);
+        }
+      }
+      break;
+    }
+  }
+}
+
+function animalCreateBlockedByUnsyncedParent(row: OutboxRow): boolean {
+  if (row.op !== "animal.create") return false;
+  const local = getAnimalByClientId(String(row.payload.clientId));
+  if (!local) return false;
+  return [local.father_id, local.mother_id].some((parentLocalId) => {
+    if (parentLocalId == null) return false;
+    const parent = getAnimalById(parentLocalId);
+    return !!(parent && resolveServerAnimalId(parentLocalId) == null);
+  });
+}
+
+/**
+ * Keep FIFO unless the head is an animal.create blocked on an unsynced parent —
+ * then drain that parent's create first so the child can proceed.
+ */
+function pickNextOutboxRow(rows: OutboxRow[]): OutboxRow {
+  const head = rows[0];
+  if (!animalCreateBlockedByUnsyncedParent(head)) return head;
+  for (const row of rows) {
+    if (row.op === "animal.create" && !animalCreateBlockedByUnsyncedParent(row)) {
+      return row;
+    }
+  }
+  return head;
+}
+
 async function drainOutbox(token: string): Promise<void> {
   while (true) {
     const rows = listOutbox();
     if (rows.length === 0) return;
-    const row = rows[0];
+    const row = pickNextOutboxRow(rows);
     await applyOutboxRow(token, row);
     deleteOutbox(row.id);
   }
@@ -159,7 +255,7 @@ async function applyOutboxRow(token: string, row: OutboxRow): Promise<void> {
       for (const parentLocalId of [local.father_id, local.mother_id]) {
         if (parentLocalId == null) continue;
         if (getAnimalById(parentLocalId) && resolveServerAnimalId(parentLocalId) == null) {
-          throw new Error("Parent animal is not synced yet");
+          throw new Error("Starševska žival še ni sinhronizirana — poskusi znova.");
         }
       }
 

@@ -132,7 +132,7 @@ export default function HomeScreen() {
 
   return (
     <Screen title="Domov">
-      {/* <SyncBanner /> */}
+      <SyncBanner />
       <View style={styles.header}>
         <Text style={styles.date}>{slovenianDate(new Date())}</Text>
         <Text style={styles.farmName}>{farmName}</Text>

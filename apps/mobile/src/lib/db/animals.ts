@@ -80,6 +80,13 @@ export function getAnimalByClientId(clientId: string): AnimalRow | null {
   return getDb().getFirstSync<AnimalRow>("SELECT * FROM animals WHERE client_id = ?", [clientId]) ?? null;
 }
 
+/** Animals that exist only on-device (create never confirmed by the server). */
+export function listPendingAnimals(): AnimalRow[] {
+  return getDb().getAllSync<AnimalRow>(
+    "SELECT * FROM animals WHERE server_id IS NULL ORDER BY id ASC",
+  );
+}
+
 /** Prefer server id once the row is synced; otherwise undefined (parent still pending). */
 export function resolveServerAnimalId(localId: number | null | undefined): number | undefined {
   if (localId == null) return undefined;

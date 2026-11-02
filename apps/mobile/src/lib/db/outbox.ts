@@ -47,3 +47,8 @@ export function outboxCount(): number {
   const row = getDb().getFirstSync<{ n: number }>("SELECT COUNT(*) AS n FROM outbox");
   return row?.n ?? 0;
 }
+
+/** True if an animal.create for this clientId is already queued. */
+export function hasOutboxOp(op: OutboxOp, predicate: (payload: Record<string, unknown>) => boolean): boolean {
+  return listOutbox().some((r) => r.op === op && predicate(r.payload));
+}

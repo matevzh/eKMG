@@ -45,6 +45,7 @@ export default function AnimalsScreen() {
         }
       />
       <View style={styles.content}>
+        <SyncBanner />
         <View style={styles.searchBox}>
           <Search size={15} color={C.faint} />
           <TextInput
