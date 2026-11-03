@@ -1,6 +1,6 @@
 import { Link, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { BackHandler, Pressable, StyleSheet, Text, View } from "react-native";
+import { BackHandler, Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { KeyboardForm } from "@/components/keyboard-form";
@@ -43,12 +43,14 @@ export default function RegisterScreen() {
     setStep(1);
   }
 
-  async function goNext() {
+  function goNext() {
+    Keyboard.dismiss();
     setError(null);
     setStep(2);
   }
 
   async function onSubmit() {
+    Keyboard.dismiss();
     setError(null);
     setSubmitting(true);
     try {

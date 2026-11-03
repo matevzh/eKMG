@@ -36,7 +36,9 @@ export function KeyboardForm({ children, headerOffset = 0, contentStyle }: Props
           { paddingBottom: Math.max(32, insets.bottom + 24) },
           contentStyle,
         ]}
-        keyboardShouldPersistTaps="handled"
+        // "always" so the first tap on Naprej / submit fires while the keyboard
+        // is open (with "handled", that tap often only dismisses the keyboard).
+        keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
         automaticallyAdjustKeyboardInsets
         showsVerticalScrollIndicator={false}
