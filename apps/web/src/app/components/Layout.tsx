@@ -2,24 +2,21 @@ import { Outlet, Link, useLocation } from "react-router";
 import { Home, Heart, Droplet, Sprout, FileText, Menu, X, Calendar, Bell } from "lucide-react";
 import { useState } from "react";
 import { getUnreadCount } from "../utils/notificationService";
-import { useTranslation } from "react-i18next";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 export function Layout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const unreadCount = getUnreadCount();
-  const { t } = useTranslation();
   const navigation = [
-    { name: t("nav.dashboard"), href: "/", icon: Home },
-    { name: t("nav.animals"), href: "/animals", icon: Home },
-    { name: t("nav.health"), href: "/health", icon: Heart },
-    { name: t("nav.medicine"), href: "/medicine", icon: Heart },
-    { name: t("nav.milk"), href: "/milk", icon: Droplet },
-    { name: t("nav.land"), href: "/land", icon: Sprout },
-    { name: t("nav.calendar"), href: "/calendar", icon: Calendar },
-    { name: t("nav.notifications"), href: "/notifications", icon: Bell },
-    { name: t("nav.reports"), href: "/reports", icon: FileText },
+    { name: "Dashboard", href: "/", icon: Home },
+    { name: "Živali", href: "/animals", icon: Home },
+    { name: "Zdravje", href: "/health", icon: Heart },
+    { name: "Zdravila", href: "/medicine", icon: Heart },
+    { name: "Mleko", href: "/milk", icon: Droplet },
+    { name: "Polja", href: "/land", icon: Sprout },
+    { name: "Koledar", href: "/calendar", icon: Calendar },
+    { name: "Obvestila", href: "/notifications", icon: Bell },
+    { name: "Poročila", href: "/reports", icon: FileText },
   ];
 
   const isActive = (href: string) => {
@@ -37,10 +34,9 @@ export function Layout() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
               <Home className="w-8 h-8 text-primary" />
-              <h1 className="text-xl font-semibold">{t("app.name")}</h1>
+              <h1 className="text-xl font-semibold">eKMG nadzorna plošča</h1>
             </div>
             <div className="flex items-center gap-4">
-              <LanguageSwitcher />
               <ThemeSwitcher />
               {/* Notification Bell - Desktop */}
               <Link

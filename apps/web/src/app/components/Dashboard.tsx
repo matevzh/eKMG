@@ -1,35 +1,33 @@
 import { AlertCircle, Home, Heart, Droplet, Bell } from "lucide-react";
 import { Link } from "react-router";
 import { getUrgentNotifications, getNotificationCount } from "../utils/notificationService";
-import { useTranslation } from "react-i18next";
 
 export function Dashboard() {
-  const { t } = useTranslation();
   // Get real notifications from service
   const urgentNotifications = getUrgentNotifications();
   const totalNotificationCount = getNotificationCount();
 
   const stats = [
     {
-      label: t("dashboard.stats.totalAnimals"),
+      label: "Skupno število živali",
       value: "0",
       icon: Home,
       color: "bg-blue-500",
     },
     {
-      label: t("dashboard.stats.activeTreatments"),
+      label: "Aktivna zdravila",
       value: "0",
       icon: Heart,
       color: "bg-red-500",
     },
     {
-      label: t("dashboard.stats.todayMilk"),
+      label: "Današnje mleko",
       value: "0",
       icon: Droplet,
       color: "bg-cyan-500",
     },
     {
-      label: t("dashboard.stats.notifications"),
+      label: "Obvestila",
       value: totalNotificationCount.toString(),
       icon: AlertCircle,
       color: "bg-yellow-500",
@@ -41,8 +39,8 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900">{t("dashboard.title")}</h2>
-        <p className="text-gray-600 mt-1">{t("app.tagline")}</p>
+        <h2 className="text-2xl font-semibold text-gray-900">Nadzorna plošča</h2>
+        <p className="text-gray-600 mt-1">Pregled stanja in aktivnosti na vašem storitvu</p>
       </div>
 
       {/* Stats Grid */}
@@ -69,16 +67,16 @@ export function Dashboard() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">
-            {t("dashboard.urgentNotifications")}
+            Urgentna obvestila
           </h3>
           <Link to="/notifications" className="text-sm text-green-600 hover:text-green-700">
-            {t("dashboard.viewAll")}
+            Pregled vseh
           </Link>
         </div>
         {urgentNotifications.length === 0 ? (
           <div className="text-center py-8">
             <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-600">{t("dashboard.noNotifications")}</p>
+            <p className="text-gray-600">Ni nobenih obvestil</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -102,10 +100,10 @@ export function Dashboard() {
                     {alert.daysUntil < 0
                       ? alert.date
                       : alert.daysUntil === 0
-                      ? t("dashboard.today")
+                      ? "Danes"
                       : alert.daysUntil === 1
-                      ? t("dashboard.tomorrow")
-                      : t("dashboard.inDays", { count: alert.daysUntil })}
+                      ? "Jutri"
+                      : `Za ${alert.daysUntil} dni`}
                     {" • "}
                     {alert.date}
                   </p>
@@ -119,21 +117,21 @@ export function Dashboard() {
       {/* Recent Animals */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">{t("dashboard.recentAnimals")}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Nedavne živali</h3>
           <Link to="/animals" className="text-sm text-green-600 hover:text-green-700">
-            {t("dashboard.viewAll")} →
+            Pregled vseh →
           </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">{t("dashboard.id")}</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">{t("dashboard.name")}</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">{t("dashboard.type")}</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">{t("dashboard.status")}</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">ID</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Ime</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Tip</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Status</th>
                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                  {t("dashboard.lastCheck")}
+                  Zadnji pregled
                 </th>
               </tr>
             </thead>

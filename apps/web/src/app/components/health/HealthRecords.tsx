@@ -1,9 +1,7 @@
 import { Plus, Search, AlertTriangle } from "lucide-react";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useState } from "react"; 
 
 export function HealthRecords() {
-  const { t } = useTranslation();
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
@@ -64,15 +62,15 @@ export function HealthRecords() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">{t("health.title")}</h2>
-          <p className="text-gray-600 mt-1">{t("health.subtitle")}</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Zdravstveni zapis</h2> 
+          <p className="text-gray-600 mt-1">Pregled in upravljanje zdravstvenih zapisov na vašem storitvu</p>
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
-          {t("health.addRecord")}
+          Dodaj novi zdravstveni zapis
         </button>
       </div>
 
@@ -80,13 +78,13 @@ export function HealthRecords() {
       {showAddForm && (
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            {t("health.addRecord")}
+            Dodaj novi zdravstveni zapis
           </h3>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("health.animal")} ID *
+                  ID živali *
                 </label>
                 <input
                   type="text"
@@ -99,7 +97,7 @@ export function HealthRecords() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("health.date")} *
+                  Datum *
                 </label>
                 <input
                   type="date"
@@ -111,7 +109,7 @@ export function HealthRecords() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("health.type")} *
+                  Tip *
                 </label>
                 <select
                   required
@@ -119,15 +117,15 @@ export function HealthRecords() {
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
-                  <option value="Checkup">{t("health.types.checkup")}</option>
-                  <option value="Treatment">{t("health.types.treatment")}</option>
-                  <option value="Vaccination">{t("health.types.vaccination")}</option>
-                  <option value="Surgery">{t("health.types.surgery")}</option>
+                  <option value="Checkup">Pregled</option>
+                  <option value="Treatment">Zdravljenje</option>
+                  <option value="Vaccination">Vakcinacija</option>
+                  <option value="Surgery">Operacija</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("health.veterinarian")} *
+                  Veterinar *
                 </label>
                 <input
                   type="text"
@@ -140,7 +138,7 @@ export function HealthRecords() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("health.diagnosis")} *
+                  Dignostika *
                 </label>
                 <input
                   type="text"
@@ -153,7 +151,7 @@ export function HealthRecords() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("medicine.title")}
+                  Zdravljenje
                 </label>
                 <input
                   type="text"
@@ -165,7 +163,7 @@ export function HealthRecords() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t("health.withdrawal")}
+                  Odstranitev zdravila
                 </label>
                 <input
                   type="number"
@@ -183,14 +181,14 @@ export function HealthRecords() {
                 type="submit"
                 className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
               >
-                {t("common.save")}
+              Shrani
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddForm(false)}
                 className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               >
-                {t("common.cancel")}
+                Prekliči
               </button>
             </div>
           </form>

@@ -1,22 +1,34 @@
-import { Bell, X, AlertCircle, AlertTriangle, Info, CheckCircle } from "lucide-react";
+import { Bell, AlertCircle, AlertTriangle, Info, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
-import { useTranslation } from "react-i18next";
-import {
-  getAllNotifications,
-  getUnreadCount,
-  type Notification,
-} from "../../utils/notificationService";
+import { getAllNotifications } from "../../utils/notificationService";
+
+const TYPE_LABELS: Record<string, string> = {
+  withdrawal: "Karenca",
+  deadline: "Rok",
+  health: "Zdravje",
+  vaccination: "Cepljenje",
+  subsidy: "Subvencija",
+  fertilization: "Gnojenje",
+  inspection: "Inšpekcija",
+  medicine: "Zdravilo",
+  birth: "Porod",
+};
+
+const FILTER_LABELS: Record<string, string> = {
+  all: "Vse",
+  critical: "Kritično",
+  high: "Visoko",
+  medium: "Srednje",
+  low: "Nizko",
+};
 
 export function NotificationCenter() {
-  const { t } = useTranslation();
   const [filter, setFilter] = useState<"all" | "critical" | "high" | "medium" | "low">("all");
   const allNotifications = getAllNotifications();
-  const unreadCount = getUnreadCount();
 
-  const filteredNotifications = filter === "all" 
-    ? allNotifications 
-    : allNotifications.filter(n => n.priority === filter);
+  const filteredNotifications =
+    filter === "all" ? allNotifications : allNotifications.filter((n) => n.priority === filter);
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
@@ -48,33 +60,36 @@ export function NotificationCenter() {
     }
   };
 
-  const getTypeLabel = (type: string) => {
-    return t(`notifications.types.${type}` as const, { defaultValue: type });
+  const priorityStats = {
+    critical: allNotifications.filter((n) => n.priority === "critical").length,
+    high: allNotifications.filter((n) => n.priority === "high").length,
+    medium: allNotifications.filter((n) => n.priority === "medium").length,
+    low: allNotifications.filter((n) => n.priority === "low").length,
   };
 
-  const priorityStats = {
-    critical: allNotifications.filter(n => n.priority === "critical").length,
-    high: allNotifications.filter(n => n.priority === "high").length,
-    medium: allNotifications.filter(n => n.priority === "medium").length,
-    low: allNotifications.filter(n => n.priority === "low").length,
+  const daysLabel = (daysUntil: number, date: string) => {
+    if (daysUntil < 0) return date;
+    if (daysUntil === 0) return "Danes";
+    if (daysUntil === 1) return "Jutri";
+    return `Čez ${daysUntil} dni`;
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900">{t("notifications.title")}</h2>
-        <p className="text-gray-600 mt-1">{t("notifications.subtitle")}</p>
+        <h2 className="text-2xl font-semibold text-gray-900">Obvestila</h2>
+        <p className="text-gray-600 mt-1">
+          Bodite obveščeni o prihajajočih rokih in pomembnih dogodkih
+        </p>
       </div>
 
-      {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-white rounded-lg shadow-sm p-4 border-2 border-purple-200">
           <div className="flex items-center gap-3">
             <Bell className="w-8 h-8 text-purple-600" />
             <div>
               <p className="text-2xl font-bold text-gray-900">{allNotifications.length}</p>
-              <p className="text-sm text-gray-600">{t("notifications.total")}</p>
+              <p className="text-sm text-gray-600">Skupaj</p>
             </div>
           </div>
         </div>
@@ -83,7 +98,7 @@ export function NotificationCenter() {
             <AlertCircle className="w-8 h-8 text-red-600" />
             <div>
               <p className="text-2xl font-bold text-gray-900">{priorityStats.critical}</p>
-              <p className="text-sm text-gray-600">{t("notifications.critical")}</p>
+              <p className="text-sm text-gray-600">Kritično</p>
             </div>
           </div>
         </div>
@@ -92,7 +107,7 @@ export function NotificationCenter() {
             <AlertTriangle className="w-8 h-8 text-orange-600" />
             <div>
               <p className="text-2xl font-bold text-gray-900">{priorityStats.high}</p>
-              <p className="text-sm text-gray-600">{t("notifications.high")}</p>
+              <p className="text-sm text-gray-600">Visoko</p>
             </div>
           </div>
         </div>
@@ -101,7 +116,7 @@ export function NotificationCenter() {
             <Info className="w-8 h-8 text-blue-600" />
             <div>
               <p className="text-2xl font-bold text-gray-900">{priorityStats.medium}</p>
-              <p className="text-sm text-gray-600">{t("notifications.medium")}</p>
+              <p className="text-sm text-gray-600">Srednje</p>
             </div>
           </div>
         </div>
@@ -110,52 +125,48 @@ export function NotificationCenter() {
             <CheckCircle className="w-8 h-8 text-green-600" />
             <div>
               <p className="text-2xl font-bold text-gray-900">{priorityStats.low}</p>
-              <p className="text-sm text-gray-600">{t("notifications.low")}</p>
+              <p className="text-sm text-gray-600">Nizko</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Important Notice */}
       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
           <Bell className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-green-900">
-              {t("notifications.systemActive")}
-            </h3>
+            <h3 className="font-semibold text-green-900">Sistem pametnih obvestil aktiven</h3>
             <p className="text-sm text-green-800 mt-1">
-              {t("notifications.systemDescription")}
+              Vsi roki in pomembni dogodki so nenehno nadzorovani. Prejeli boste obvestila:
             </p>
             <ul className="text-sm text-green-800 mt-2 space-y-1 list-disc list-inside">
-              <li>{t("notifications.advanceNotice.subsidy")}</li>
-              <li>{t("notifications.advanceNotice.vaccination")}</li>
-              <li>{t("notifications.advanceNotice.inspection")}</li>
-              <li>{t("notifications.advanceNotice.withdrawal")}</li>
-              <li>{t("notifications.advanceNotice.birth")}</li>
-              <li>{t("notifications.advanceNotice.medicine")}</li>
+              <li>Roki za subvencije: 30 dni (1 mesec) vnaprej</li>
+              <li>Cepljenja: 14 dni (2 tedna) vnaprej</li>
+              <li>Inšpekcije in poročila: 14 dni (2 tedna) vnaprej</li>
+              <li>Karenca: 10 dni vnaprej</li>
+              <li>Pričakovani porodi: 14 dni (2 tedna) vnaprej</li>
+              <li>Rok uporabe zdravil: 30 dni vnaprej</li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Filter Tabs */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <div className="flex flex-wrap gap-2">
-          {["all", "critical", "high", "medium", "low"].map((f) => (
+          {(["all", "critical", "high", "medium", "low"] as const).map((f) => (
             <button
               key={f}
-              onClick={() => setFilter(f as any)}
+              onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
                 filter === f
                   ? "bg-green-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {t(`notifications.${f}` as const)}
+              {FILTER_LABELS[f]}
               {f !== "all" && (
                 <span className="ml-2 px-2 py-0.5 bg-white bg-opacity-30 rounded-full text-xs">
-                  {priorityStats[f as keyof typeof priorityStats]}
+                  {priorityStats[f]}
                 </span>
               )}
             </button>
@@ -163,21 +174,13 @@ export function NotificationCenter() {
         </div>
       </div>
 
-      {/* Notifications List */}
       <div className="space-y-3">
         {filteredNotifications.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {t("notifications.allCaughtUp")}
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Vse opravljeno!</h3>
             <p className="text-gray-600">
-              {t("notifications.noNotificationsMessage", {
-                filter:
-                  filter === "all"
-                    ? t("notifications.all").toLowerCase()
-                    : t(`notifications.${filter}` as const).toLowerCase(),
-              })}
+              Trenutno ni {FILTER_LABELS[filter].toLowerCase()} obvestil.
             </p>
           </div>
         ) : (
@@ -185,7 +188,7 @@ export function NotificationCenter() {
             <div
               key={notification.id}
               className={`bg-white rounded-lg shadow-sm border-l-4 overflow-hidden ${getPriorityColor(
-                notification.priority
+                notification.priority,
               )}`}
             >
               <div className="p-4">
@@ -197,7 +200,7 @@ export function NotificationCenter() {
                         <h3 className="font-semibold text-gray-900">{notification.title}</h3>
                         <div className="flex flex-wrap items-center gap-2 mt-1">
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                            {getTypeLabel(notification.type)}
+                            {TYPE_LABELS[notification.type] ?? notification.type}
                           </span>
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
                             {notification.module}
@@ -207,10 +210,10 @@ export function NotificationCenter() {
                               notification.priority === "critical"
                                 ? "bg-red-100 text-red-800"
                                 : notification.priority === "high"
-                                ? "bg-orange-100 text-orange-800"
-                                : notification.priority === "medium"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-green-100 text-green-800"
+                                  ? "bg-orange-100 text-orange-800"
+                                  : notification.priority === "medium"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-green-100 text-green-800"
                             }`}
                           >
                             {notification.priority.toUpperCase()}
@@ -223,17 +226,11 @@ export function NotificationCenter() {
                             notification.daysUntil <= 2
                               ? "text-red-600"
                               : notification.daysUntil <= 5
-                              ? "text-orange-600"
-                              : "text-gray-900"
+                                ? "text-orange-600"
+                                : "text-gray-900"
                           }`}
                         >
-                          {notification.daysUntil < 0
-                            ? notification.date
-                            : notification.daysUntil === 0
-                            ? t("dashboard.today")
-                            : notification.daysUntil === 1
-                            ? t("dashboard.tomorrow")
-                            : t("dashboard.inDays", { count: notification.daysUntil })}
+                          {daysLabel(notification.daysUntil, notification.date)}
                         </p>
                         <p className="text-xs text-gray-600">{notification.date}</p>
                       </div>
@@ -244,7 +241,7 @@ export function NotificationCenter() {
                         to={notification.actionUrl}
                         className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
                       >
-                        {t("notifications.viewDetails")}
+                        Prikaži podrobnosti →
                       </Link>
                     )}
                   </div>

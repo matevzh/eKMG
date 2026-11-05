@@ -14,12 +14,12 @@ export function AnimalDetail() {
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </Link>
         <div className="flex-1">
-          <h2 className="text-2xl font-semibold text-gray-900">Animal not found</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">Žival ne obstaja</h2>
           <p className="text-gray-600">{id}</p>
         </div>
       </div>
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <p className="text-gray-500">No animal data loaded yet.</p>
+        <p className="text-gray-500">Podatki o živali še niso naloženi.</p>
       </div>
     </div>
   );

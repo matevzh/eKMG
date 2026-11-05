@@ -1,9 +1,7 @@
 import { Plus, MapPin, Sprout } from "lucide-react";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 export function LandManagement() {
-  const { t } = useTranslation();
   const [selectedView, setSelectedView] = useState<"gerk" | "fertilization" | "subsidies">("gerk");
   const [showAddGerk, setShowAddGerk] = useState(false);
   const [showAddFertilization, setShowAddFertilization] = useState(false);
@@ -45,12 +43,11 @@ export function LandManagement() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">{t("land.title")}</h2>
-          <p className="text-gray-600 mt-1">{t("land.subtitle")}</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Zemljišča in subvencije</h2>
+          <p className="text-gray-600 mt-1">Upravljajte GERK enote in zahtevke za subvencije</p>
         </div>
       </div>
 
-      {/* View Selector */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <div className="flex flex-wrap gap-2">
           <button
@@ -60,8 +57,8 @@ export function LandManagement() {
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            >
-            {t("land.addUnit")}
+          >
+            GERK enote
           </button>
           <button
             onClick={() => setSelectedView("fertilization")}
@@ -70,8 +67,8 @@ export function LandManagement() {
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            >
-            {t("notifications.types.fertilization")}
+          >
+            Gnojenje
           </button>
           <button
             onClick={() => setSelectedView("subsidies")}
@@ -80,13 +77,12 @@ export function LandManagement() {
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            >
-            {t("land.subsidyClaims")}
+          >
+            Zahtevki za subvencije
           </button>
         </div>
       </div>
 
-      {/* GERK Units View */}
       {selectedView === "gerk" && (
         <>
           <div className="flex justify-end">
@@ -95,13 +91,13 @@ export function LandManagement() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              Add GERK Unit
+              Dodaj zemljiško enoto
             </button>
           </div>
 
           {showAddGerk && (
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">New GERK Unit</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Nova GERK enota</h3>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -116,62 +112,58 @@ export function LandManagement() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. GERK-1234"
+                      placeholder="npr. GERK-1234"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Name *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ime *</label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Lower Meadow"
+                      placeholder="npr. Spodnji travnik"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Area (ha) *
+                      Površina (ha) *
                     </label>
                     <input
                       type="number"
                       step="0.1"
                       required
-                      placeholder="e.g. 5.2"
+                      placeholder="npr. 5.2"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Land Use *
+                      Raba zemljišča *
                     </label>
                     <select
                       required
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                      <option value="Pasture">Pasture</option>
-                      <option value="Arable">Arable</option>
-                      <option value="Meadow">Meadow</option>
-                      <option value="Forest">Forest</option>
+                      <option value="Pasture">Pašnik</option>
+                      <option value="Arable">Njiva</option>
+                      <option value="Meadow">Travnik</option>
+                      <option value="Forest">Gozd</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Crop</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pridelek</label>
                     <input
                       type="text"
-                      placeholder="e.g. Grass, Corn"
+                      placeholder="npr. Trava, koruza"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Location
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Lokacija</label>
                     <input
                       type="text"
-                      placeholder="e.g. Plot A"
+                      placeholder="npr. Parcelna A"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -181,14 +173,14 @@ export function LandManagement() {
                     type="submit"
                     className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
-                    Add Unit
+                    Dodaj
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddGerk(false)}
                     className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                   >
-                    Cancel
+                    Prekliči
                   </button>
                 </div>
               </form>
@@ -209,19 +201,19 @@ export function LandManagement() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Area:</span>
+                    <span className="text-gray-600">Površina:</span>
                     <span className="text-gray-900 font-medium">{unit.area} ha</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Land Use:</span>
+                    <span className="text-gray-600">Raba:</span>
                     <span className="text-gray-900">{unit.landUse}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Crop:</span>
+                    <span className="text-gray-600">Pridelek:</span>
                     <span className="text-gray-900">{unit.crop}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Location:</span>
+                    <span className="text-gray-600">Lokacija:</span>
                     <span className="text-gray-900">{unit.location}</span>
                   </div>
                 </div>
@@ -231,7 +223,6 @@ export function LandManagement() {
         </>
       )}
 
-      {/* Fertilization View */}
       {selectedView === "fertilization" && (
         <>
           <div className="flex justify-end">
@@ -240,13 +231,13 @@ export function LandManagement() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              Record Fertilization
+              Zabeleži gnojenje
             </button>
           </div>
 
           {showAddFertilization && (
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">New Fertilization Record</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Nov zapis gnojenja</h3>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -262,7 +253,7 @@ export function LandManagement() {
                       required
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                      <option value="">Select GERK unit...</option>
+                      <option value="">Izberi GERK enoto...</option>
                       {gerkUnits.map((unit) => (
                         <option key={unit.id} value={unit.gerkID}>
                           {unit.gerkID} - {unit.name}
@@ -271,7 +262,7 @@ export function LandManagement() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Datum *</label>
                     <input
                       type="date"
                       required
@@ -279,39 +270,39 @@ export function LandManagement() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Type *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Vrsta *</label>
                     <select
                       required
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                      <option value="Organic">Organic</option>
-                      <option value="Mineral">Mineral</option>
+                      <option value="Organic">Organsko</option>
+                      <option value="Mineral">Mineralno</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Product *
+                      Sredstvo *
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Cattle Manure"
+                      placeholder="npr. Goveji gnoj"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Quantity *
+                      Količina *
                     </label>
                     <input
                       type="number"
                       required
-                      placeholder="e.g. 15000"
+                      placeholder="npr. 15000"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Unit *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Enota *</label>
                     <select
                       required
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -327,14 +318,14 @@ export function LandManagement() {
                     type="submit"
                     className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
-                    Save Record
+                    Shrani
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddFertilization(false)}
                     className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                   >
-                    Cancel
+                    Prekliči
                   </button>
                 </div>
               </form>
@@ -346,16 +337,16 @@ export function LandManagement() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Date</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Datum</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      GERK Unit
+                      GERK enota
                     </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Type</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Vrsta</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      Product
+                      Sredstvo
                     </th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      Quantity
+                      Količina
                     </th>
                   </tr>
                 </thead>
@@ -393,7 +384,6 @@ export function LandManagement() {
         </>
       )}
 
-      {/* Subsidies View */}
       {selectedView === "subsidies" && (
         <>
           <div className="flex justify-end">
@@ -402,13 +392,15 @@ export function LandManagement() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              New Subsidy Claim
+              Nov zahtevek za subvencijo
             </button>
           </div>
 
           {showAddSubsidy && (
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">New Subsidy Claim</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Nov zahtevek za subvencijo
+              </h3>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -417,7 +409,7 @@ export function LandManagement() {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Year *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Leto *</label>
                     <input
                       type="number"
                       required
@@ -427,21 +419,21 @@ export function LandManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Scheme *
+                      Program *
                     </label>
                     <select
                       required
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                      <option value="Direct Payments">Direct Payments</option>
-                      <option value="Agri-Environment">Agri-Environment</option>
-                      <option value="Organic Farming">Organic Farming</option>
-                      <option value="Young Farmer">Young Farmer</option>
+                      <option value="Direct Payments">Neposredna plačila</option>
+                      <option value="Agri-Environment">Kmetijsko-okoljski ukrepi</option>
+                      <option value="Organic Farming">Ekološko kmetovanje</option>
+                      <option value="Young Farmer">Mladi kmet</option>
                     </select>
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      GERK Units (select multiple)
+                      GERK enote (izberi več)
                     </label>
                     <div className="border border-gray-300 rounded-lg p-3 max-h-40 overflow-y-auto">
                       {gerkUnits.map((unit) => (
@@ -460,11 +452,11 @@ export function LandManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Expected Amount (€)
+                      Pričakovani znesek (€)
                     </label>
                     <input
                       type="number"
-                      placeholder="e.g. 8500"
+                      placeholder="npr. 8500"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -474,14 +466,14 @@ export function LandManagement() {
                     type="submit"
                     className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
-                    Submit Claim
+                    Oddaj zahtevek
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddSubsidy(false)}
                     className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                   >
-                    Cancel
+                    Prekliči
                   </button>
                 </div>
               </form>
@@ -498,7 +490,7 @@ export function LandManagement() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{subsidy.scheme}</h3>
-                      <p className="text-sm text-gray-600">Year {subsidy.year}</p>
+                      <p className="text-sm text-gray-600">Leto {subsidy.year}</p>
                     </div>
                   </div>
                   <span
@@ -506,8 +498,8 @@ export function LandManagement() {
                       subsidy.status === "Approved"
                         ? "bg-green-100 text-green-800"
                         : subsidy.status === "Submitted"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-800"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-gray-100 text-gray-800"
                     }`}
                   >
                     {subsidy.status}
@@ -515,19 +507,19 @@ export function LandManagement() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">GERK Units</p>
+                    <p className="text-sm text-gray-600">GERK enote</p>
                     <p className="font-medium text-gray-900">{subsidy.gerkIDs.length}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Total Area</p>
+                    <p className="text-sm text-gray-600">Skupna površina</p>
                     <p className="font-medium text-gray-900">{subsidy.totalArea} ha</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Amount</p>
+                    <p className="text-sm text-gray-600">Znesek</p>
                     <p className="font-medium text-gray-900">€{subsidy.amount}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Submitted</p>
+                    <p className="text-sm text-gray-600">Oddano</p>
                     <p className="font-medium text-gray-900">{subsidy.submittedDate}</p>
                   </div>
                 </div>

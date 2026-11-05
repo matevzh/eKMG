@@ -1,10 +1,8 @@
 import { Link } from "react-router";
 import { Plus, Search, Filter } from "lucide-react";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 export function AnimalList() {
-  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
 
@@ -22,15 +20,15 @@ export function AnimalList() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">{t("animals.title")}</h2>
-          <p className="text-gray-600 mt-1">{t("animals.subtitle")}</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Seznam živali</h2>
+          <p className="text-gray-600 mt-1">Pregled in upravljanje živali na vašem storitvu</p>
         </div>
         <Link
           to="/animals/new"
           className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
-          {t("animals.addNew")}
+          Dodaj novo žival
         </Link>
       </div>
 
@@ -41,7 +39,7 @@ export function AnimalList() {
             <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder={t("animals.search")}
+              placeholder="Ime živali"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -54,11 +52,11 @@ export function AnimalList() {
               onChange={(e) => setFilterType(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             >
-              <option value="all">{t("animals.filterAll")}</option>
-              <option value="Cow">{t("animals.filterCows")}</option>
-              <option value="Heifer">{t("animals.filterHeifers")}</option>
-              <option value="Calf">{t("animals.filterCalves")}</option>
-              <option value="Bull">{t("animals.filterBulls")}</option>
+              <option value="all">Vse</option>
+              <option value="Cow">Krave</option>
+              <option value="Heifer">Telica</option>
+              <option value="Calf">Teliček</option>
+              <option value="Bull">Bikov</option>
             </select>
           </div>
         </div>
@@ -89,21 +87,21 @@ export function AnimalList() {
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t("dashboard.type")}</span>
+                <span className="text-gray-600">Tip</span>
                 <span className="text-gray-900 font-medium">{animal.type}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t("animals.breed")}</span>
+                <span className="text-gray-600">Pasma</span>
                 <span className="text-gray-900">{animal.breed}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t("animals.birthDate")}</span>
+                <span className="text-gray-600">Datum rojstva</span>
                 <span className="text-gray-900">{animal.birthDate}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t("animals.gender")}</span>
+                <span className="text-gray-600">Spol</span>
                 <span className="text-gray-900">
-                  {animal.lactating ? t("common.yes") : t("common.no")}
+                  {animal.lactating ? "Da" : "Ne"}
                 </span>
               </div>
             </div>
@@ -113,7 +111,7 @@ export function AnimalList() {
 
       {filteredAnimals.length === 0 && (
         <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-          <p className="text-gray-600">{t("common.noResults")}</p>
+          <p className="text-gray-600">Ni nobenih živali, ki bi ustrezale vašim kriterijem</p>
         </div>
       )}
     </div>

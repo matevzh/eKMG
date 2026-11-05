@@ -1,6 +1,5 @@
 import { Plus, TrendingUp, Calendar } from "lucide-react";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
   LineChart,
   Line,
@@ -15,11 +14,10 @@ import {
 } from "recharts";
 
 export function MilkManagement() {
-  const { t } = useTranslation();
   const [showAddSession, setShowAddSession] = useState(false);
   const [showAddDelivery, setShowAddDelivery] = useState(false);
   const [selectedView, setSelectedView] = useState<"sessions" | "deliveries" | "analytics">(
-    "sessions"
+    "sessions",
   );
 
   const milkSessions: {
@@ -74,12 +72,11 @@ export function MilkManagement() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">{t("milk.title")}</h2>
-          <p className="text-gray-600 mt-1">{t("milk.subtitle")}</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Upravljanje mleka</h2>
+          <p className="text-gray-600 mt-1">Sledite dnevni proizvodnji in kakovosti mleka</p>
         </div>
       </div>
 
-      {/* View Selector */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <div className="flex flex-wrap gap-2">
           <button
@@ -89,8 +86,8 @@ export function MilkManagement() {
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            >
-            {t("milk.production")}
+          >
+            Proizvodnja
           </button>
           <button
             onClick={() => setSelectedView("deliveries")}
@@ -99,8 +96,8 @@ export function MilkManagement() {
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            >
-            {t("milk.deliveries")}
+          >
+            Dostave
           </button>
           <button
             onClick={() => setSelectedView("analytics")}
@@ -109,13 +106,12 @@ export function MilkManagement() {
                 ? "bg-green-600 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            >
-            {t("reports.milkProduction")}
+          >
+            Poročilo o proizvodnji mleka
           </button>
         </div>
       </div>
 
-      {/* Milk Sessions View */}
       {selectedView === "sessions" && (
         <>
           <div className="flex justify-end">
@@ -124,21 +120,17 @@ export function MilkManagement() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              {t("milk.addRecord")}
+              Dodaj zapis mleka
             </button>
           </div>
 
           {showAddSession && (
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {t("milk.addRecord")}
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Dodaj zapis mleka</h3>
               <form onSubmit={handleSessionSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t("milk.date")} *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Datum *</label>
                     <input
                       type="date"
                       required
@@ -148,22 +140,20 @@ export function MilkManagement() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t("milk.time", { defaultValue: "Time" })}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Čas</label>
                     <select
                       required
                       value={sessionForm.time}
                       onChange={(e) => setSessionForm({ ...sessionForm, time: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                      <option value="Morning">{t("milk.morning")}</option>
-                      <option value="Evening">{t("milk.evening")}</option>
+                      <option value="Morning">Jutro</option>
+                      <option value="Evening">Večer</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Animal ID *
+                      ID živali *
                     </label>
                     <input
                       type="text"
@@ -172,13 +162,13 @@ export function MilkManagement() {
                       onChange={(e) =>
                         setSessionForm({ ...sessionForm, animalID: e.target.value })
                       }
-                      placeholder="e.g. A1234"
+                      placeholder="npr. A1234"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Quantity (L) *
+                      Količina (L) *
                     </label>
                     <input
                       type="number"
@@ -187,7 +177,7 @@ export function MilkManagement() {
                       onChange={(e) =>
                         setSessionForm({ ...sessionForm, quantity: e.target.value })
                       }
-                      placeholder="e.g. 28"
+                      placeholder="npr. 28"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -197,14 +187,14 @@ export function MilkManagement() {
                     type="submit"
                     className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
-                    Save Session
+                    Shrani
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddSession(false)}
                     className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                   >
-                    Cancel
+                    Prekliči
                   </button>
                 </div>
               </form>
@@ -216,13 +206,11 @@ export function MilkManagement() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Date</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Time</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Datum</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Čas</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Žival</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      Animal
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      Quantity (L)
+                      Količina (L)
                     </th>
                   </tr>
                 </thead>
@@ -249,7 +237,6 @@ export function MilkManagement() {
         </>
       )}
 
-      {/* Deliveries View */}
       {selectedView === "deliveries" && (
         <>
           <div className="flex justify-end">
@@ -258,17 +245,17 @@ export function MilkManagement() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Plus className="w-5 h-5" />
-              Record Delivery
+              Zabeleži dostavo
             </button>
           </div>
 
           {showAddDelivery && (
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">New Delivery</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Nova dostava</h3>
               <form onSubmit={handleDeliverySubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Datum *</label>
                     <input
                       type="date"
                       required
@@ -279,7 +266,7 @@ export function MilkManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Quantity (L) *
+                      Količina (L) *
                     </label>
                     <input
                       type="number"
@@ -288,13 +275,13 @@ export function MilkManagement() {
                       onChange={(e) =>
                         setDeliveryForm({ ...deliveryForm, quantity: e.target.value })
                       }
-                      placeholder="e.g. 850"
+                      placeholder="npr. 850"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Processor *
+                      Mlekarna *
                     </label>
                     <input
                       type="text"
@@ -303,13 +290,13 @@ export function MilkManagement() {
                       onChange={(e) =>
                         setDeliveryForm({ ...deliveryForm, processor: e.target.value })
                       }
-                      placeholder="e.g. Alpine Dairy Co."
+                      placeholder="npr. Mlekarna Celeia"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Price per L (€) *
+                      Cena na L (€) *
                     </label>
                     <input
                       type="number"
@@ -317,7 +304,7 @@ export function MilkManagement() {
                       required
                       value={deliveryForm.price}
                       onChange={(e) => setDeliveryForm({ ...deliveryForm, price: e.target.value })}
-                      placeholder="e.g. 0.42"
+                      placeholder="npr. 0.42"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -327,14 +314,14 @@ export function MilkManagement() {
                     type="submit"
                     className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
-                    Save Delivery
+                    Shrani
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowAddDelivery(false)}
                     className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
                   >
-                    Cancel
+                    Prekliči
                   </button>
                 </div>
               </form>
@@ -346,17 +333,17 @@ export function MilkManagement() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Date</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Datum</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      Quantity (L)
+                      Količina (L)
                     </th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      Processor
+                      Mlekarna
                     </th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                      Price/L
+                      Cena/L
                     </th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Total</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Skupaj</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
                       Status
                     </th>
@@ -388,13 +375,12 @@ export function MilkManagement() {
         </>
       )}
 
-      {/* Analytics View */}
       {selectedView === "analytics" && (
         <div className="space-y-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-green-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Weekly Production</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Tedenska proizvodnja</h3>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={weeklyData}>
@@ -403,8 +389,8 @@ export function MilkManagement() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="morning" fill="#10b981" name="Morning (L)" />
-                <Bar dataKey="evening" fill="#059669" name="Evening (L)" />
+                <Bar dataKey="morning" fill="#10b981" name="Jutro (L)" />
+                <Bar dataKey="evening" fill="#059669" name="Večer (L)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -412,7 +398,7 @@ export function MilkManagement() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Monthly Trend</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Mesečni trend</h3>
             </div>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={monthlyTrend}>
@@ -426,28 +412,27 @@ export function MilkManagement() {
                   dataKey="total"
                   stroke="#3b82f6"
                   strokeWidth={2}
-                  name="Total (L)"
+                  name="Skupaj (L)"
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Summary Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <p className="text-sm text-gray-600">This Week</p>
-              <p className="text-3xl font-semibold text-gray-900 mt-2">5,970 L</p>
-              <p className="text-sm text-green-600 mt-1">+2.5% vs last week</p>
+              <p className="text-sm text-gray-600">Ta teden</p>
+              <p className="text-3xl font-semibold text-gray-900 mt-2">5.970 L</p>
+              <p className="text-sm text-green-600 mt-1">+2,5 % glede na prejšnji teden</p>
             </div>
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <p className="text-sm text-gray-600">This Month</p>
-              <p className="text-3xl font-semibold text-gray-900 mt-2">23,800 L</p>
-              <p className="text-sm text-red-600 mt-1">-8.8% vs last month</p>
+              <p className="text-sm text-gray-600">Ta mesec</p>
+              <p className="text-3xl font-semibold text-gray-900 mt-2">23.800 L</p>
+              <p className="text-sm text-red-600 mt-1">−8,8 % glede na prejšnji mesec</p>
             </div>
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <p className="text-sm text-gray-600">Avg per Cow/Day</p>
+              <p className="text-sm text-gray-600">Povprečje na kravo/dan</p>
               <p className="text-3xl font-semibold text-gray-900 mt-2">27 L</p>
-              <p className="text-sm text-gray-600 mt-1">Based on 124 animals</p>
+              <p className="text-sm text-gray-600 mt-1">Na podlagi 124 živali</p>
             </div>
           </div>
         </div>

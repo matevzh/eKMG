@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import {
   format,
   startOfMonth,
@@ -26,7 +25,6 @@ interface CalendarEvent {
 }
 
 export function Calendar() {
-  const { t } = useTranslation();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
@@ -34,15 +32,15 @@ export function Calendar() {
   const allEvents: CalendarEvent[] = [];
 
   const eventTypes = [
-    { value: "all", label: t("calendar.filterAll"), color: "bg-gray-500" },
-    { value: "health", label: t("calendar.filterHealth"), color: "bg-blue-500" },
-    { value: "withdrawal", label: t("calendar.filterWithdrawal"), color: "bg-orange-500" },
-    { value: "vaccination", label: t("calendar.filterVaccination"), color: "bg-purple-500" },
-    { value: "birth", label: t("calendar.filterBirth"), color: "bg-pink-500" },
-    { value: "movement", label: t("calendar.filterMovement"), color: "bg-indigo-500" },
-    { value: "milk", label: t("calendar.filterMilk"), color: "bg-cyan-500" },
-    { value: "fertilization", label: t("calendar.filterFertilization"), color: "bg-green-500" },
-    { value: "subsidy", label: t("calendar.filterSubsidy"), color: "bg-yellow-500" },
+    { value: "all", label: "Vse", color: "bg-gray-500" },
+    { value: "health", label: "Zdravje", color: "bg-blue-500" },
+    { value: "withdrawal", label: "Zdravila", color: "bg-orange-500" },
+    { value: "vaccination", label: "Vakcinacije", color: "bg-purple-500" },
+    { value: "birth", label: "Rojstva", color: "bg-pink-500" },
+    { value: "movement", label: "Premiki", color: "bg-indigo-500" },
+    { value: "milk", label: "Mleko", color: "bg-cyan-500" },
+    { value: "fertilization", label: "Oplodnja", color: "bg-green-500" },
+    { value: "subsidy", label: "Subvencije", color: "bg-yellow-500" },
   ];
 
   const filteredEvents =
@@ -95,8 +93,8 @@ export function Calendar() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">{t("calendar.title")}</h2>
-          <p className="text-gray-600 mt-1">{t("calendar.subtitle")}</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Koledar dogodkov</h2>
+          <p className="text-gray-600 mt-1">Pregled dogodkov na vašem storitvu</p>
         </div>
       </div>
 
@@ -139,7 +137,7 @@ export function Calendar() {
                 onClick={() => setCurrentMonth(new Date())}
                 className="px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors text-sm text-gray-700"
               >
-                {t("calendar.today")}
+                Danes
               </button>
               <button
                 onClick={nextMonth}
@@ -205,7 +203,7 @@ export function Calendar() {
                     ))}
                     {events.length > 2 && (
                       <div className="text-xs text-gray-600 px-1.5">
-                        +{events.length - 2} more
+                        +{events.length - 2} več
                       </div>
                     )}
                   </div>
