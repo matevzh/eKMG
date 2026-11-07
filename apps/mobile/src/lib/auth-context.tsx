@@ -1,9 +1,9 @@
 import * as SecureStore from "expo-secure-store";
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import * as api from "@/lib/api";
 import type { AuthUser, LoginPayload, RegisterPayload } from "@/lib/api";
-import { clearLocalOnSignOut, configureSync } from "@/lib/sync/engine";
+import { clearAuthTokenKeepLocal, clearLocalOnSignOut, configureSync } from "@/lib/sync/engine";
 
 const STORAGE_KEY = "krave-auth";
 
@@ -17,6 +17,9 @@ interface AuthContextValue {
   token: string | null;
   isLoading: boolean;
   needsFarmSetup: boolean;
+  /** One-shot notice after JWT expiry (shown on the login screen). */
+  sessionExpiredNotice: string | null;
+  clearSessionExpiredNotice: () => void;
   signIn: (payload: LoginPayload) => Promise<void>;
   signUp: (payload: RegisterPayload) => Promise<void>;
   completeFarmSetup: () => void;
@@ -29,6 +32,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuth] = useState<StoredAuth | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [needsFarmSetup, setNeedsFarmSetup] = useState(false);
+  const [sessionExpiredNotice, setSessionExpiredNotice] = useState<string | null>(null);
+  const authRef = useRef<StoredAuth | null>(null);
+  authRef.current = auth;
 
   useEffect(() => {
     SecureStore.getItemAsync(STORAGE_KEY)
@@ -47,15 +53,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // When any authenticated API call gets 401, drop the session but keep offline data.
+  useEffect(() => {
+    api.setUnauthorizedHandler(() => {
+      if (!authRef.current) return;
+      clearAuthTokenKeepLocal();
+      setNeedsFarmSetup(false);
+      setSessionExpiredNotice("Seja je potekla. Prijavi se znova.");
+      void persist(null);
+    });
+    return () => api.setUnauthorizedHandler(null);
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user: auth?.user ?? null,
       token: auth?.token ?? null,
       isLoading,
       needsFarmSetup,
+      sessionExpiredNotice,
+      clearSessionExpiredNotice: () => setSessionExpiredNotice(null),
       signIn: async (payload) => {
         const result = await api.login(payload);
         setNeedsFarmSetup(false);
+        setSessionExpiredNotice(null);
         await persist({ token: result.access_token, user: result.user });
         configureSync(result.access_token, result.user.farm.id);
       },
@@ -63,17 +84,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const result = await api.register(payload);
         // Farm setup only when the server created a new farm — never when joining an existing one, so shared farm details can't be overwritten.
         setNeedsFarmSetup(result.needsFarmSetup ?? false);
+        setSessionExpiredNotice(null);
         await persist({ token: result.access_token, user: result.user });
         configureSync(result.access_token, result.user.farm.id);
       },
       completeFarmSetup: () => setNeedsFarmSetup(false),
       signOut: async () => {
         setNeedsFarmSetup(false);
+        setSessionExpiredNotice(null);
         clearLocalOnSignOut();
         await persist(null);
       },
     }),
-    [auth, isLoading, needsFarmSetup],
+    [auth, isLoading, needsFarmSetup, sessionExpiredNotice],
   );
 
   // Restore sync config when auth hydrates from SecureStore.

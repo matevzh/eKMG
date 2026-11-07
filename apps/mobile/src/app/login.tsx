@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,11 +9,17 @@ import { C, F } from "@/constants/theme";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginScreen() {
-  const { signIn } = useAuth();
+  const { signIn, sessionExpiredNotice, clearSessionExpiredNotice } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!sessionExpiredNotice) return;
+    setError(sessionExpiredNotice);
+    clearSessionExpiredNotice();
+  }, [sessionExpiredNotice, clearSessionExpiredNotice]);
 
   async function onSubmit() {
     setError(null);

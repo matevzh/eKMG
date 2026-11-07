@@ -62,6 +62,60 @@ export interface RegisterPayload {
   policyVersion: string;
 }
 
+export class ApiHttpError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "ApiHttpError";
+    this.status = status;
+  }
+}
+
+export function isUnauthorizedError(err: unknown): boolean {
+  return err instanceof ApiHttpError && err.status === 401;
+}
+
+const SESSION_EXPIRED_MESSAGE = "Seja je potekla. Prijavi se znova.";
+
+type UnauthorizedHandler = () => void;
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+let unauthorizedNotifyScheduled = false;
+
+/** AuthProvider registers this so expired JWTs clear the local session. */
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
+  unauthorizedHandler = handler;
+}
+
+function notifyUnauthorized(): void {
+  // Coalesce burst 401s from parallel sync/pull calls into one sign-out.
+  if (unauthorizedNotifyScheduled) return;
+  unauthorizedNotifyScheduled = true;
+  queue Promise.resolve().then(() => {
+    unauthorizedNotifyScheduled = false;
+    unauthorizedHandler?.();
+  });
+}
+
+function errorMessageFromPayload(payload: unknown, fallback: string): string {
+  const message = (payload as { message?: string | string[] } | null)?.message ?? fallback;
+  return Array.isArray(message) ? message.join("\n") : message;
+}
+
+function throwForFailedResponse(res: Response, payload: unknown, opts?: { auth?: boolean }): never {
+  // Only Bearer-authenticated calls treat 401 as an expired session.
+  // Login/register also use 401 for bad credentials and must not sign the user out.
+  if (opts?.auth && res.status === 401) {
+    notifyUnauthorized();
+    throw new ApiHttpError(401, SESSION_EXPIRED_MESSAGE);
+  }
+
+  throw new ApiHttpError(
+    res.status,
+    errorMessageFromPayload(payload, "Nekaj je šlo narobe. Poskusi znova."),
+  );
+}
+
 async function post<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     method: "POST",
@@ -72,8 +126,7 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   const payload = await res.json().catch(() => null);
 
   if (!res.ok) {
-    const message = payload?.message ?? "Nekaj je šlo narobe. Poskusi znova.";
-    throw new Error(Array.isArray(message) ? message.join("\n") : message);
+    throwForFailedResponse(res, payload);
   }
 
   return payload as T;
@@ -92,8 +145,7 @@ async function postAuth<T>(path: string, body: unknown, token: string): Promise<
   const payload = await res.json().catch(() => null);
 
   if (!res.ok) {
-    const message = payload?.message ?? "Nekaj je šlo narobe. Poskusi znova.";
-    throw new Error(Array.isArray(message) ? message.join("\n") : message);
+    throwForFailedResponse(res, payload, { auth: true });
   }
 
   return payload as T;
@@ -107,8 +159,7 @@ async function get<T>(path: string, token: string): Promise<T> {
   const payload = await res.json().catch(() => null);
 
   if (!res.ok) {
-    const message = payload?.message ?? "Nekaj je šlo narobe. Poskusi znova.";
-    throw new Error(Array.isArray(message) ? message.join("\n") : message);
+    throwForFailedResponse(res, payload, { auth: true });
   }
 
   return payload as T;
@@ -127,8 +178,7 @@ async function patch<T>(path: string, body: unknown, token: string): Promise<T> 
   const payload = await res.json().catch(() => null);
 
   if (!res.ok) {
-    const message = payload?.message ?? "Nekaj je šlo narobe. Poskusi znova.";
-    throw new Error(Array.isArray(message) ? message.join("\n") : message);
+    throwForFailedResponse(res, payload, { auth: true });
   }
 
   return payload as T;
@@ -142,8 +192,7 @@ async function del(path: string, token: string): Promise<void> {
 
   if (!res.ok) {
     const payload = await res.json().catch(() => null);
-    const message = payload?.message ?? "Nekaj je šlo narobe. Poskusi znova.";
-    throw new Error(Array.isArray(message) ? message.join("\n") : message);
+    throwForFailedResponse(res, payload, { auth: true });
   }
 }
 

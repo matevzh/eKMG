@@ -34,6 +34,15 @@ let started = false;
 let unsubNet: (() => void) | null = null;
 let unsubApp: { remove: () => void } | null = null;
 
+/** Drop the in-memory token after JWT expiry — keep SQLite so re-login can resume sync. */
+export function clearAuthTokenKeepLocal(): void {
+  authToken = null;
+  setMeta("sync_error", null);
+  setMeta("syncing", null);
+  setSyncing(false);
+  refreshSyncStatusFromDb({ syncing: false });
+}
+
 export function configureSync(token: string | null, nextFarmId: number | null): void {
   const prevFarm = farmId;
   authToken = token;
@@ -142,8 +151,13 @@ async function runSync(): Promise<void> {
     emitAnimalsDataChanged();
     emitEventsDataChanged();
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Sinhronizacija ni uspela.";
-    setMeta("sync_error", message);
+    // Expired JWT: auth layer signs the user out; don't leave a red sync banner behind.
+    if (api.isUnauthorizedError(err)) {
+      setMeta("sync_error", null);
+    } else {
+      const message = err instanceof Error ? err.message : "Sinhronizacija ni uspela.";
+      setMeta("sync_error", message);
+    }
   } finally {
     setMeta("syncing", null);
     setSyncing(false);
